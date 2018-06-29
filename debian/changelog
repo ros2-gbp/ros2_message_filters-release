@@ -1,0 +1,317 @@
+ros-bouncy-message-filters (2.0.0-1bionic) bionic; urgency=high
+
+  * Change build tool from catkin to ament in CMakeLists.txt
+  * ROS APIs move to ROS2 APIs
+  * Drop boost dependency, using C++14 instead
+  * Add message_event.h message_trait.h parameter_adapter.h which are missing in ROS2 core
+  * Update existing test cases and add a fuzz test(default disable)
+  * Drop unused setup.py
+  * Add a README
+  * Bug fixes
+  * Contributor: Jing Wang, Ethan Gao
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 06 Jun 2018 00:00:00 -0000
+
+ros-bouncy-message-filters (1.13.5-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 09 Nov 2017 00:00:00 -0000
+
+ros-bouncy-message-filters (1.13.4-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 02 Nov 2017 00:00:00 -0000
+
+ros-bouncy-message-filters (1.13.3-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 25 Oct 2017 00:00:00 -0000
+
+ros-bouncy-message-filters (1.13.2-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 15 Aug 2017 00:00:00 -0000
+
+ros-bouncy-message-filters (1.13.1-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 27 Jul 2017 00:00:00 -0000
+
+ros-bouncy-message-filters (1.13.0-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 22 Feb 2017 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.7-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 17 Feb 2017 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.6-1bionic) bionic; urgency=high
+
+  * use boost::bind to bind the callback function (#906 <https://github.com/ros/ros_comm/pull/906>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 26 Oct 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.5-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 30 Sep 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.4-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 19 Sep 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.3-1bionic) bionic; urgency=high
+
+  * add fast approximate time synchronization in message_filters (in pure Python) (#802 <https://github.com/ros/ros_comm/issues/802>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sat, 17 Sep 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.2-1bionic) bionic; urgency=high
+
+  * allow saving timestamp-less messages to Cache, add getLast method (#806 <https://github.com/ros/ros_comm/pull/806>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 03 Jun 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.1-1bionic) bionic; urgency=high
+
+  * use directory specific compiler flags (#785 <https://github.com/ros/ros_comm/pull/785>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 18 Apr 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.12.0-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 18 Mar 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.18-1bionic) bionic; urgency=high
+
+  * fix compiler warnings
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 17 Mar 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.17-1bionic) bionic; urgency=high
+
+  * use boost::make_shared instead of new for constructing boost::shared_ptr (#740 <https://github.com/ros/ros_comm/issues/740>)
+  * add __getattr__ to handle sub in message_filters as standard one (#700 <https://github.com/ros/ros_comm/pull/700>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 11 Mar 2016 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.16-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 09 Nov 2015 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.15-1bionic) bionic; urgency=high
+
+  * add unregister() method to message_filter.Subscriber (#683 <https://github.com/ros/ros_comm/pull/683>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 13 Oct 2015 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.14-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sat, 19 Sep 2015 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.13-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 28 Apr 2015 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.12-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 27 Apr 2015 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.11-1bionic) bionic; urgency=high
+
+  * implement message filter cache in Python (#599 <https://github.com/ros/ros_comm/pull/599>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 16 Apr 2015 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.10-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 22 Dec 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.9-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 18 Aug 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.8-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 04 Aug 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.7-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 18 Jul 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.6-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 10 Jul 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.5-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 24 Jun 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.4-1bionic) bionic; urgency=high
+
+  * add approximate Python time synchronizer (used to be in camera_calibration) (#424 <https://github.com/ros/ros_comm/issues/424>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 16 Jun 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.3-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 21 May 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.2-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 08 May 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.1-1bionic) bionic; urgency=high
+
+  * update API to use boost::signals2 (#267 <https://github.com/ros/ros_comm/issues/267>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 07 May 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.11.0-1bionic) bionic; urgency=high
+
+  * suppress boost::signals deprecation warning (#362 <https://github.com/ros/ros_comm/issues/362>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 04 Mar 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.10.0-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 11 Feb 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.54-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 27 Jan 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.53-1bionic) bionic; urgency=high
+
+  * add kwargs for message_filters.Subscriber
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 14 Jan 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.52-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 08 Jan 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.51-1bionic) bionic; urgency=high
+
+  * update code after refactoring into rosbag_storage and roscpp_core (#299 <https://github.com/ros/ros_comm/issues/299>)
+  * fix segmentation fault on OS X 10.9 (clang / libc++)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 07 Jan 2014 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.50-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 04 Oct 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.49-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 16 Sep 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.48-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 21 Aug 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.47-1bionic) bionic; urgency=high
+
+  * check for CATKIN_ENABLE_TESTING to enable configure without tests
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 03 Jul 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.46-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 18 Jun 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.45-1bionic) bionic; urgency=high
+
+  * fix template syntax for signal_.template addCallback() to work with Intel compiler
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 06 Jun 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.44-1bionic) bionic; urgency=high
+
+  * fix install destination for dll's under Windows
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 21 Mar 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.43-1bionic) bionic; urgency=high
+
+  * fix exports of message filter symbols for Windows
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 13 Mar 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.42-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 08 Mar 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.41-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 24 Jan 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.40-1bionic) bionic; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sun, 13 Jan 2013 00:00:00 -0000
+
+ros-bouncy-message-filters (1.9.39-1bionic) bionic; urgency=high
+
+  * first public release for Groovy
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sat, 29 Dec 2012 00:00:00 -0000
+
+
