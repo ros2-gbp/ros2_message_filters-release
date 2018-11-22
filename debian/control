@@ -1,0 +1,12 @@
+Source: ros-crystal-message-filters
+Section: misc
+Priority: extra
+Maintainer: Ethan Gao <ethan.gao@linux.intel.com>
+Build-Depends: debhelper (>= 9.0.0), ros-crystal-ament-cmake-gtest, ros-crystal-ament-cmake-pytest, ros-crystal-ament-cmake-python, ros-crystal-ament-cmake-ros, ros-crystal-ament-lint-auto, ros-crystal-builtin-interfaces, ros-crystal-rclcpp, ros-crystal-rclpy, ros-crystal-sensor-msgs, ros-crystal-std-msgs, ros-crystal-ros-workspace
+Homepage: https://github.com/intel/ros2_message_filters
+Standards-Version: 3.9.2
+
+Package: ros-crystal-message-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-crystal-ros-workspace
+Description: A set of ROS2 message filters which take in messages and may output those messages at a later time, based on the conditions that filter needs met.
