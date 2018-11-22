@@ -25,12 +25,13 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ROSCPP_PARAMETER_ADAPTER_H
-#define ROSCPP_PARAMETER_ADAPTER_H
+#ifndef MESSAGE_FILTERS__PARAMETER_ADAPTER_H_
+#define MESSAGE_FILTERS__PARAMETER_ADAPTER_H_
 
-#include "message_event.h"
 #include <memory>
 #include <type_traits>
+
+#include "message_filters/message_event.h"
 
 namespace message_filters
 {
@@ -40,11 +41,11 @@ namespace message_filters
  * retrieve a parameter type from an event type.
  *
  * ParameterAdapter is generally only useful for outside use when implementing things that require message callbacks
- * (such as the message_filters package)and you would like to support all the roscpp message parameter types
+ * (such as the message_filters package)and you would like to support all the rclcpp message parameter types
  *
  * The ParameterAdapter is templated on the callback parameter type (\b not the bare message type), and provides 3 things:
  *  - Message typedef, which provides the bare message type, no const or reference qualifiers
- *  - Event typedef, which provides the ros::MessageEvent type
+ *  - Event typedef, which provides the message_filters::MessageEvent type
  *  - Parameter typedef, which provides the actual parameter type (may be slightly different from M)
  *  - static getParameter(event) function, which returns a parameter type given the event
  *  - static bool is_const informs you whether or not the parameter type is a const message
@@ -173,6 +174,6 @@ struct ParameterAdapter<const MessageEvent<M>& >
   }
 };
 
-}
+}  // namespace message_filters
 
-#endif // ROSCPP_PARAMETER_ADAPTER_H
+#endif // MESSAGE_FILTERS__PARAMETER_ADAPTER_H_

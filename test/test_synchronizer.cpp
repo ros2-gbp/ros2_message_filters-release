@@ -452,12 +452,6 @@ TEST(Synchronizer, add9)
 
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
-//  ros::init(argc, argv, "blah");
-//
-//  ros::Time::init();
-//  ros::Time::setNow(ros::Time());
-  rclcpp::init(argc, argv);
-
   return RUN_ALL_TESTS();
 }
 

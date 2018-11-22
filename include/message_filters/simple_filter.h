@@ -32,18 +32,20 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef MESSAGE_FILTERS_SIMPLE_FILTER_H
-#define MESSAGE_FILTERS_SIMPLE_FILTER_H
+#ifndef MESSAGE_FILTERS__SIMPLE_FILTER_H_
+#define MESSAGE_FILTERS__SIMPLE_FILTER_H_
+
 #include <functional>
 #include <memory>
-#include "connection.h"
-#include "signal1.h"
-#include "message_event.h"
 #include <string>
+
+#include "message_filters/connection.h"
+#include "message_filters/signal1.h"
+#include "message_filters/message_event.h"
 
 namespace message_filters
 {
-using namespace std::placeholders;
+
 /**
  * \brief Convenience base-class for simple filters which output a single message
  *
@@ -81,7 +83,6 @@ public:
     return Connection(std::bind(&Signal::removeCallback, &signal_, signal_.addCallback(callback)));
   }
 
-
   /**
    * \brief Register a callback to be called when this filter has passed
    * \param callback The callback to call
@@ -89,7 +90,7 @@ public:
   template<typename P>
   Connection registerCallback(void(*callback)(P))
   {
-    typename CallbackHelper1<M>::Ptr helper = signal_.template addCallback<P>(std::bind(callback, _1));
+    typename CallbackHelper1<M>::Ptr helper = signal_.template addCallback<P>(std::bind(callback, std::placeholders::_1));
     return Connection(std::bind(&Signal::removeCallback, &signal_, helper));
   }
 
@@ -100,7 +101,7 @@ public:
   template<typename T, typename P>
   Connection registerCallback(void(T::*callback)(P), T* t)
   {
-    typename CallbackHelper1<M>::Ptr helper = signal_.template addCallback<P>(std::bind(callback, t, _1));
+    typename CallbackHelper1<M>::Ptr helper = signal_.template addCallback<P>(std::bind(callback, t, std::placeholders::_1));
     return Connection(std::bind(&Signal::removeCallback, &signal_, helper));
   }
 
@@ -140,7 +141,6 @@ private:
   std::string name_;
 };
 
-}
+}  // namespace message_filters
 
-#endif
-
+#endif  // MESSAGE_FILTERS__SIMPLE_FILTER_H_

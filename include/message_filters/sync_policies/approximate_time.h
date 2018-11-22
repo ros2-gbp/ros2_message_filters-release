@@ -32,21 +32,38 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef MESSAGE_FILTERS_SYNC_APPROXIMATE_TIME_H
-#define MESSAGE_FILTERS_SYNC_APPROXIMATE_TIME_H
+#ifndef MESSAGE_FILTERS__SYNC_APPROXIMATE_TIME_H_
+#define MESSAGE_FILTERS__SYNC_APPROXIMATE_TIME_H_
 
-#include "message_filters/synchronizer.h"
-#include "message_filters/connection.h"
-#include "message_filters/null_types.h"
-#include "message_filters/signal9.h"
-#include "message_filters/message_traits.h"
-
-#include <rclcpp/rclcpp.hpp>
 #include <cassert>
 #include <deque>
-#include <vector>
 #include <string>
 #include <tuple>
+#include <vector>
+
+#include <rclcpp/rclcpp.hpp>
+#include <rcutils/logging_macros.h>
+
+#include "message_filters/connection.h"
+#include "message_filters/message_traits.h"
+#include "message_filters/null_types.h"
+#include "message_filters/signal9.h"
+#include "message_filters/synchronizer.h"
+
+
+#ifndef RCUTILS_ASSERT
+// TODO(tfoote) remove this after it's implemented upstream
+// https://github.com/ros2/rcutils/pull/112
+#define RCUTILS_ASSERT assert
+#endif
+#ifndef RCUTILS_BREAK
+#include <cassert>
+// TODO(tfoote) remove this after it's implemented upstream
+// https://github.com/ros2/rcutils/pull/112
+#define RCUTILS_BREAK std::abort
+#endif
+// Uncomment below intead
+//#include <rcutils/assert.h>
 
 namespace message_filters
 {
@@ -90,7 +107,6 @@ struct ApproximateTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
   typedef std::vector<M6Event> M6Vector;
   typedef std::vector<M7Event> M7Vector;
   typedef std::vector<M8Event> M8Vector;
-//  typedef std::tuple<M0Event, M1Event, M2Event, M3Event, M4Event, M5Event, M6Event, M7Event, M8Event> Tuple;
   typedef Events Tuple;
   typedef std::tuple<M0Deque, M1Deque, M2Deque, M3Deque, M4Deque, M5Deque, M6Deque, M7Deque, M8Deque> DequeTuple;
   typedef std::tuple<M0Vector, M1Vector, M2Vector, M3Vector, M4Vector, M5Vector, M6Vector, M7Vector, M8Vector> VectorTuple;
@@ -106,11 +122,11 @@ struct ApproximateTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
   , inter_message_lower_bounds_(9, rclcpp::Duration(0, 0))
   , warned_about_incorrect_bound_(9, false)
   {
-    assert(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
+    RCUTILS_ASSERT(queue_size_ > 0);  // The synchronizer will tend to drop many messages with a queue size of 1. At least 2 is recommended.
   }
 
   ApproximateTime(const ApproximateTime& e)
-  : max_interval_duration_(rclcpp::Duration(std::numeric_limits<int32_t>::max(),999999999)) 
+  : max_interval_duration_(rclcpp::Duration(std::numeric_limits<int32_t>::max(),999999999))
   {
     *this = e;
   }
@@ -150,7 +166,7 @@ struct ApproximateTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
     }
     std::deque<typename std::tuple_element<i, Events>::type>& deque = std::get<i>(deques_);
     std::vector<typename std::tuple_element<i, Events>::type>& v = std::get<i>(past_);
-    assert(!deque.empty());
+    RCUTILS_ASSERT(!deque.empty());
     const typename std::tuple_element<i, Messages>::type &msg = *(deque.back()).getMessage();
     rclcpp::Time msg_time = mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(msg);
     rclcpp::Time previous_msg_time;
@@ -172,15 +188,17 @@ struct ApproximateTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
     }
     if (msg_time < previous_msg_time)
     {
-      std::cout << "Messages of type " << i << " arrived out of order (will print only once)";
+      RCUTILS_LOG_WARN_ONCE("Messages of type %d arrived out of order (will print only once)", i);
       warned_about_incorrect_bound_[i] = true;
     }
     else if ((msg_time - previous_msg_time) < inter_message_lower_bounds_[i])
     {
-      std::cout << "Messages of type " << i << " arrived closer (" <<
-        (msg_time - previous_msg_time).nanoseconds() <<
-        ") than the lower bound you provided (" <<
-        inter_message_lower_bounds_[i].nanoseconds() << ") (will print only once)";
+      RCUTILS_LOG_WARN_ONCE("Messages of type %d arrived closer ("
+        "%g ) than the lower bound you provided ("
+        "%g) (will print only once)",
+        i,
+        (msg_time - previous_msg_time).nanoseconds(),
+        inter_message_lower_bounds_[i].nanoseconds());
       warned_about_incorrect_bound_[i] = true;
     }
   }
@@ -223,7 +241,7 @@ struct ApproximateTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
       recover<7>();
       recover<8>();
       // Drop the oldest message in the offending topic
-      assert(!deque.empty());
+      RCUTILS_ASSERT(!deque.empty());
       deque.pop_front();
       has_dropped_messages_[i] = true;
       if (pivot_ != NO_PIVOT)
@@ -240,19 +258,19 @@ struct ApproximateTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
   void setAgePenalty(double age_penalty)
   {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
-    assert(age_penalty >= 0);
+    RCUTILS_ASSERT(age_penalty >= 0);
     age_penalty_ = age_penalty;
   }
 
   void setInterMessageLowerBound(int i, rclcpp::Duration lower_bound) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
-    assert(lower_bound >= rclcpp::Duration(0,0));
+    RCUTILS_ASSERT(lower_bound >= rclcpp::Duration(0,0));
     inter_message_lower_bounds_[i] = lower_bound;
   }
 
   void setMaxIntervalDuration(rclcpp::Duration max_interval_duration) {
     // For correctness we only need age_penalty > -1.0, but most likely a negative age_penalty is a mistake.
-    assert(max_interval_duration >= rclcpp::Duration(0,0));
+    RCUTILS_ASSERT(max_interval_duration >= rclcpp::Duration(0,0));
     max_interval_duration_ = max_interval_duration;
   }
 
@@ -262,7 +280,7 @@ private:
   void dequeDeleteFront()
   {
     std::deque<typename std::tuple_element<i, Events>::type>& deque = std::get<i>(deques_);
-    assert(!deque.empty());
+    RCUTILS_ASSERT(!deque.empty());
     deque.pop_front();
     if (deque.empty())
     {
@@ -303,7 +321,7 @@ private:
       dequeDeleteFront<8>();
       break;
     default:
-      std::abort();
+      RCUTILS_BREAK();
     }
   }
 
@@ -313,7 +331,7 @@ private:
   {
     std::deque<typename std::tuple_element<i, Events>::type>& deque = std::get<i>(deques_);
     std::vector<typename std::tuple_element<i, Events>::type>& vector = std::get<i>(past_);
-    assert(!deque.empty());
+    RCUTILS_ASSERT(!deque.empty());
     vector.push_back(deque.front());
     deque.pop_front();
     if (deque.empty())
@@ -354,7 +372,7 @@ private:
       dequeMoveFrontToPast<8>();
       break;
     default:
-      std::abort();
+      RCUTILS_BREAK();
     }
   }
 
@@ -418,7 +436,7 @@ private:
 
     std::vector<typename std::tuple_element<i, Events>::type>& v = std::get<i>(past_);
     std::deque<typename std::tuple_element<i, Events>::type>& q = std::get<i>(deques_);
-    assert(num_messages <= v.size());
+    RCUTILS_ASSERT(num_messages <= v.size());
     while (num_messages > 0)
     {
       q.push_front(v.back());
@@ -472,7 +490,7 @@ private:
       v.pop_back();
     }
 
-    assert(!q.empty());
+    RCUTILS_ASSERT(!q.empty());
 
     q.pop_front();
     if (!q.empty())
@@ -616,13 +634,13 @@ private:
     {
       return rclcpp::Time(0,0);  // Dummy return value
     }
-    assert(pivot_ != NO_PIVOT);
+    RCUTILS_ASSERT(pivot_ != NO_PIVOT);
 
     std::vector<typename std::tuple_element<i, Events>::type>& v = std::get<i>(past_);
     std::deque<typename std::tuple_element<i, Events>::type>& q = std::get<i>(deques_);
     if (q.empty())
     {
-      assert(!v.empty());  // Because we have a candidate
+      RCUTILS_ASSERT(!v.empty());  // Because we have a candidate
       rclcpp::Time last_msg_time = mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(*(v.back()).getMessage());
       rclcpp::Time msg_time_lower_bound = last_msg_time + inter_message_lower_bounds_[i];
       if (msg_time_lower_bound > pivot_time_)  // Take the max
@@ -663,7 +681,7 @@ private:
     virtual_times[6] = getVirtualTime<6>();
     virtual_times[7] = getVirtualTime<7>();
     virtual_times[8] = getVirtualTime<8>();
- 
+
     time = virtual_times[0];
     index = 0;
     for (int i = 0; i < RealTypeCount::value; i++)
@@ -746,7 +764,7 @@ private:
         }
       }
       // INVARIANT: we have a candidate and pivot
-      assert(pivot_ != NO_PIVOT);
+      RCUTILS_ASSERT(pivot_ != NO_PIVOT);
       //printf("start_index == %d, pivot_ == %d\n", start_index, pivot_);
       if (start_index == pivot_)  // TODO: replace with start_time == pivot_time_
       {
@@ -799,14 +817,14 @@ private:
 	    recover<7>(num_virtual_moves[7]);
 	    recover<8>(num_virtual_moves[8]);
             (void)num_non_empty_deques_before_virtual_search; // unused variable warning stopper
-            assert(num_non_empty_deques_before_virtual_search == num_non_empty_deques_);
+            RCUTILS_ASSERT(num_non_empty_deques_before_virtual_search == num_non_empty_deques_);
             break;
           }
           // Note: we cannot reach this point with start_index == pivot_ since in that case we would
           //       have start_time == pivot_time, in which case the two tests above are the negation
           //       of each other, so that one must be true. Therefore the while loop always terminates.
-	  assert(start_index != pivot_);
-	  assert(start_time < pivot_time_);
+	  RCUTILS_ASSERT(start_index != pivot_);
+	  RCUTILS_ASSERT(start_time < pivot_time_);
           dequeMoveFrontToPast(start_index);
           num_virtual_moves[start_index]++;
         } // while(1)
@@ -837,8 +855,7 @@ private:
   std::vector<bool> warned_about_incorrect_bound_;
 };
 
-} // namespace sync
-} // namespace message_filters
+}  // namespace sync
+}  // namespace message_filters
 
-#endif // MESSAGE_FILTERS_SYNC_APPROXIMATE_TIME_H
-
+#endif // MESSAGE_FILTERS__SYNC_APPROXIMATE_TIME_H_

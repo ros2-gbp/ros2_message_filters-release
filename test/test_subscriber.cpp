@@ -51,7 +51,7 @@ public:
   : count_(0)
   {}
 
-  void cb(const MsgConstPtr&)
+  void cb(const MsgConstPtr)
   {
     ++count_;
   }
@@ -61,18 +61,37 @@ public:
 
 TEST(Subscriber, simple)
 {
-  auto nh = std::make_shared<rclcpp::Node>("test_node");
+  auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  Subscriber<Msg> sub(nh.get(), "test_topic");
-  sub.registerCallback(std::bind(&Helper::cb, &h, _1));
-  auto pub = nh->create_publisher<Msg>("test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
+  auto pub = node->create_publisher<Msg>("test_topic");
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1.0, 0))
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
   {
     pub->publish(std::make_shared<Msg>());
     rclcpp::Rate(50).sleep();
-    rclcpp::spin_some(nh);
+    rclcpp::spin_some(node);
+  }
+
+  ASSERT_GT(h.count_, 0);
+}
+
+TEST(Subscriber, simple_raw)
+{
+  auto node = std::make_shared<rclcpp::Node>("test_node");
+  Helper h;
+  Subscriber<Msg> sub(node.get(), "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
+  auto pub = node->create_publisher<Msg>("test_topic");
+  rclcpp::Clock ros_clock;
+  auto start = ros_clock.now();
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
+    pub->publish(std::make_shared<Msg>());
+    rclcpp::Rate(50).sleep();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -80,22 +99,68 @@ TEST(Subscriber, simple)
 
 TEST(Subscriber, subUnsubSub)
 {
-  auto nh = std::make_shared<rclcpp::Node>("test_node");
+  auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  Subscriber<Msg> sub(nh.get(), "test_topic");
-  sub.registerCallback(std::bind(&Helper::cb, &h, _1));
-  auto pub = nh->create_publisher<Msg>("test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
+  auto pub = node->create_publisher<Msg>("test_topic");
 
   sub.unsubscribe();
   sub.subscribe();
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1.0, 0))
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
   {
     pub->publish(std::make_shared<Msg>());
     rclcpp::Rate(50).sleep();
-    rclcpp::spin_some(nh);
+    rclcpp::spin_some(node);
+  }
+
+  ASSERT_GT(h.count_, 0);
+}
+
+TEST(Subscriber, subUnsubSub_raw)
+{
+  auto node = std::make_shared<rclcpp::Node>("test_node");
+  Helper h;
+  Subscriber<Msg> sub(node.get(), "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
+  auto pub = node->create_publisher<Msg>("test_topic");
+
+  sub.unsubscribe();
+  sub.subscribe();
+
+  rclcpp::Clock ros_clock;
+  auto start = ros_clock.now();
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
+    pub->publish(std::make_shared<Msg>());
+    rclcpp::Rate(50).sleep();
+    rclcpp::spin_some(node);
+  }
+
+  ASSERT_GT(h.count_, 0);
+}
+
+TEST(Subscriber, switchRawAndShared)
+{
+  auto node = std::make_shared<rclcpp::Node>("test_node");
+  Helper h;
+  Subscriber<Msg> sub(node, "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
+  auto pub = node->create_publisher<Msg>("test_topic2");
+
+  sub.unsubscribe();
+  sub.subscribe(node.get(), "test_topic2");
+
+  rclcpp::Clock ros_clock;
+  auto start = ros_clock.now();
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
+    pub->publish(std::make_shared<Msg>());
+    rclcpp::Rate(50).sleep();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -103,20 +168,20 @@ TEST(Subscriber, subUnsubSub)
 
 TEST(Subscriber, subInChain)
 {
-  auto nh = std::make_shared<rclcpp::Node>("test_node");
+  auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
   Chain<Msg> c;
-  c.addFilter(std::make_shared<Subscriber<Msg> >(nh.get(), "test_topic"));
-  c.registerCallback(std::bind(&Helper::cb, &h, _1));
-  auto pub = nh->create_publisher<Msg>("test_topic");
+  c.addFilter(std::make_shared<Subscriber<Msg> >(node, "test_topic"));
+  c.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
+  auto pub = node->create_publisher<Msg>("test_topic");
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1.0, 0))
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
   {
     pub->publish(std::make_shared<Msg>());
     rclcpp::Rate(50).sleep();
-    rclcpp::spin_some(nh);
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -124,7 +189,7 @@ TEST(Subscriber, subInChain)
 
 struct ConstHelper
 {
-  void cb(const MsgConstPtr& msg)
+  void cb(const MsgConstPtr msg)
   {
     msg_ = msg;
   }
@@ -134,7 +199,7 @@ struct ConstHelper
 
 struct NonConstHelper
 {
-  void cb(const MsgPtr& msg)
+  void cb(const MsgPtr msg)
   {
     msg_ = msg;
   }
@@ -144,61 +209,66 @@ struct NonConstHelper
 
 TEST(Subscriber, singleNonConstCallback)
 {
-  auto nh = std::make_shared<rclcpp::Node>("test_node");
+  auto node = std::make_shared<rclcpp::Node>("test_node");
   NonConstHelper h;
-  Subscriber<Msg> sub(nh.get(), "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
-  auto pub = nh->create_publisher<Msg>("test_topic");
-  pub->publish(std::make_shared<Msg>());
+  auto pub = node->create_publisher<Msg>("test_topic");
+  auto msg = std::make_shared<Msg>();
+  pub->publish(msg);
 
   rclcpp::Rate(50).sleep();
-  rclcpp::spin_some(nh);
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
-//  ASSERT_EQ(msg.get(), h.msg_.get());
+  ASSERT_EQ(*msg.get(), *h.msg_.get());
 }
 
 TEST(Subscriber, multipleNonConstCallbacksFilterSubscriber)
 {
-  auto nh = std::make_shared<rclcpp::Node>("test_node");
+  auto node = std::make_shared<rclcpp::Node>("test_node");
   NonConstHelper h, h2;
-  Subscriber<Msg> sub(nh.get(), "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
   sub.registerCallback(&NonConstHelper::cb, &h2);
-  auto pub = nh->create_publisher<Msg>("test_topic");
-  pub->publish(std::make_shared<Msg>());
+  auto pub = node->create_publisher<Msg>("test_topic");
+  auto msg = std::make_shared<Msg>();
+  pub->publish(msg);
 
   rclcpp::Rate(50).sleep();
-  rclcpp::spin_some(nh);
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
   ASSERT_TRUE(h2.msg_);
-//  EXPECT_NE(msg.get(), h.msg_.get());
-//  EXPECT_NE(msg.get(), h2.msg_.get());
-//  EXPECT_NE(h.msg_.get(), h2.msg_.get());
+  EXPECT_NE(msg.get(), h.msg_.get());
+  EXPECT_NE(msg.get(), h2.msg_.get());
+  EXPECT_NE(h.msg_.get(), h2.msg_.get());
 }
 
 TEST(Subscriber, multipleCallbacksSomeFilterSomeDirect)
 {
-  auto nh = std::make_shared<rclcpp::Node>("test_node");
+  auto node = std::make_shared<rclcpp::Node>("test_node");
   NonConstHelper h, h2;
-  Subscriber<Msg> sub(nh.get(), "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
-//  ros::Subscriber sub2 = nh.subscribe("test_topic", 0, &NonConstHelper::cb, &h2);
-//  ros::Publisher pub = nh.advertise<Msg>("test_topic", 0);
+  auto sub2 = node->create_subscription<Msg>("test_topic", std::bind(&NonConstHelper::cb, &h2, std::placeholders::_1));
 
-  auto pub = nh->create_publisher<Msg>("test_topic");
-  pub->publish(std::make_shared<Msg>());
+  auto pub = node->create_publisher<Msg>("test_topic");
+  auto msg = std::make_shared<Msg>();
+  pub->publish(msg);
 
   rclcpp::Rate(50).sleep();
-  rclcpp::spin_some(nh);
+  rclcpp::spin_some(node);
+  rclcpp::Rate(50).sleep();
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
-//  ASSERT_TRUE(h2.msg_);
-//  EXPECT_NE(msg.get(), h.msg_.get());
-//  EXPECT_NE(msg.get(), h2.msg_.get());
-//  EXPECT_NE(h.msg_.get(), h2.msg_.get());
+  ASSERT_TRUE(h2.msg_);
+  EXPECT_NE(msg.get(), h.msg_.get());
+  EXPECT_NE(msg.get(), h2.msg_.get());
+  EXPECT_NE(h.msg_.get(), h2.msg_.get());
 }
+
 
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
@@ -207,5 +277,3 @@ int main(int argc, char **argv){
 
   return RUN_ALL_TESTS();
 }
-
-

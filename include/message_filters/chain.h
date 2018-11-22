@@ -32,17 +32,16 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef MESSAGE_FILTERS_CHAIN_H
-#define MESSAGE_FILTERS_CHAIN_H
-
-#include "simple_filter.h"
-#include "pass_through.h"
+#ifndef MESSAGE_FILTERS__CHAIN_H
+#define MESSAGE_FILTERS__CHAIN_H
 
 #include <vector>
 
+#include "message_filters/simple_filter.h"
+#include "message_filters/pass_through.h"
+
 namespace message_filters
 {
-using namespace std::placeholders;
 /**
  * \brief Base class for Chain, allows you to store multiple chains in the same container.  Provides filter retrieval
  * by index.
@@ -154,19 +153,19 @@ public:
   size_t addFilter(const std::shared_ptr<F>& filter)
   {
     FilterInfo info;
-    info.add_func = std::bind((void(F::*)(const EventType&))&F::add, filter.get(), _1);
+    info.add_func = std::bind((void(F::*)(const EventType&))&F::add, filter.get(), std::placeholders::_1);
     info.filter = filter;
     info.passthrough = std::make_shared<PassThrough<M> >();
 
     last_filter_connection_.disconnect();
     info.passthrough->connectInput(*filter);
-    last_filter_connection_ = info.passthrough->registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&Chain::lastFilterCB, this, _1)));
+    last_filter_connection_ = info.passthrough->registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&Chain::lastFilterCB, this, std::placeholders::_1)));
     if (!filters_.empty())
     {
       filter->connectInput(*filters_.back().passthrough);
     }
 
-    uint32_t count = filters_.size();
+    size_t count = filters_.size();
     filters_.push_back(info);
     return count;
   }
@@ -196,7 +195,7 @@ public:
   void connectInput(F& f)
   {
     incoming_connection_.disconnect();
-    incoming_connection_ = f.registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&Chain::incomingCB, this, _1)));
+    incoming_connection_ = f.registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&Chain::incomingCB, this, std::placeholders::_1)));
   }
 
   /**
@@ -250,6 +249,6 @@ private:
   Connection incoming_connection_;
   Connection last_filter_connection_;
 };
-}
+}  // namespace message_filters
 
-#endif // MESSAGE_FILTERS_CHAIN_H
+#endif  // MESSAGE_FILTERS__CHAIN_H_

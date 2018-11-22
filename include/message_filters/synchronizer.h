@@ -32,19 +32,19 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef MESSAGE_FILTERS_SYNCHRONIZER_H
-#define MESSAGE_FILTERS_SYNCHRONIZER_H
+#ifndef MESSAGE_FILTERS__SYNCHRONIZER_H_
+#define MESSAGE_FILTERS__SYNCHRONIZER_H_
 
-#include "connection.h"
-#include "null_types.h"
-#include "signal9.h"
-#include "message_event.h"
-
-#include <type_traits>
 #include <deque>
-#include <tuple>
-#include <vector>
 #include <string>
+#include <tuple>
+#include <type_traits>
+#include <vector>
+
+#include "message_filters/connection.h"
+#include "message_filters/null_types.h"
+#include "message_filters/message_event.h"
+#include "message_filters/signal9.h"
 
 namespace message_filters
 {
@@ -275,15 +275,15 @@ public:
   {
     disconnectAll();
 
-    input_connections_[0] = f0.registerCallback(std::function<void(const M0Event&)>(std::bind(&Synchronizer::template cb<0>, this, _1)));
-    input_connections_[1] = f1.registerCallback(std::function<void(const M1Event&)>(std::bind(&Synchronizer::template cb<1>, this, _1)));
-    input_connections_[2] = f2.registerCallback(std::function<void(const M2Event&)>(std::bind(&Synchronizer::template cb<2>, this, _1)));
-    input_connections_[3] = f3.registerCallback(std::function<void(const M3Event&)>(std::bind(&Synchronizer::template cb<3>, this, _1)));
-    input_connections_[4] = f4.registerCallback(std::function<void(const M4Event&)>(std::bind(&Synchronizer::template cb<4>, this, _1)));
-    input_connections_[5] = f5.registerCallback(std::function<void(const M5Event&)>(std::bind(&Synchronizer::template cb<5>, this, _1)));
-    input_connections_[6] = f6.registerCallback(std::function<void(const M6Event&)>(std::bind(&Synchronizer::template cb<6>, this, _1)));
-    input_connections_[7] = f7.registerCallback(std::function<void(const M7Event&)>(std::bind(&Synchronizer::template cb<7>, this, _1)));
-    input_connections_[8] = f8.registerCallback(std::function<void(const M8Event&)>(std::bind(&Synchronizer::template cb<8>, this, _1)));
+    input_connections_[0] = f0.registerCallback(std::function<void(const M0Event&)>(std::bind(&Synchronizer::template cb<0>, this, std::placeholders::_1)));
+    input_connections_[1] = f1.registerCallback(std::function<void(const M1Event&)>(std::bind(&Synchronizer::template cb<1>, this, std::placeholders::_1)));
+    input_connections_[2] = f2.registerCallback(std::function<void(const M2Event&)>(std::bind(&Synchronizer::template cb<2>, this, std::placeholders::_1)));
+    input_connections_[3] = f3.registerCallback(std::function<void(const M3Event&)>(std::bind(&Synchronizer::template cb<3>, this, std::placeholders::_1)));
+    input_connections_[4] = f4.registerCallback(std::function<void(const M4Event&)>(std::bind(&Synchronizer::template cb<4>, this, std::placeholders::_1)));
+    input_connections_[5] = f5.registerCallback(std::function<void(const M5Event&)>(std::bind(&Synchronizer::template cb<5>, this, std::placeholders::_1)));
+    input_connections_[6] = f6.registerCallback(std::function<void(const M6Event&)>(std::bind(&Synchronizer::template cb<6>, this, std::placeholders::_1)));
+    input_connections_[7] = f7.registerCallback(std::function<void(const M7Event&)>(std::bind(&Synchronizer::template cb<7>, this, std::placeholders::_1)));
+    input_connections_[8] = f8.registerCallback(std::function<void(const M8Event&)>(std::bind(&Synchronizer::template cb<8>, this, std::placeholders::_1)));
   }
 
   template<class C>
@@ -343,7 +343,7 @@ private:
   template<int i>
   void cb(const typename std::tuple_element<i, Events>::type& evt)
   {
-    this->add<i>(evt);
+    this->template add<i>(evt);
   }
 
   uint32_t queue_size_;
@@ -378,7 +378,7 @@ template<typename M0, typename M1, typename M2, typename M3, typename M4,
          typename M5, typename M6, typename M7, typename M8>
 struct PolicyBase
 {
-  typedef typename mp_count<std::tuple<M0, M1, M2, M3, M4, M5, M6, M7, M8>, NullType>::type RealTypeCount; 
+  typedef typename mp_count<std::tuple<M0, M1, M2, M3, M4, M5, M6, M7, M8>, NullType>::type RealTypeCount;
   typedef std::tuple<M0, M1, M2, M3, M4, M5, M6, M7, M8> Messages;
   typedef Signal9<M0, M1, M2, M3, M4, M5, M6, M7, M8> Signal;
   typedef std::tuple<MessageEvent<M0 const>, MessageEvent<M1 const>, MessageEvent<M2 const>,
@@ -396,6 +396,6 @@ struct PolicyBase
   typedef typename std::tuple_element<8, Events>::type M8Event;
 };
 
-} // namespace message_filters
+}  // namespace message_filters
 
-#endif // MESSAGE_FILTERS_SYNCHRONIZER_H
+#endif  // MESSAGE_FILTERS__SYNCHRONIZER_H_

@@ -32,14 +32,14 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef MESSAGE_FILTERS_TIME_SEQUENCER_H
-#define MESSAGE_FILTERS_TIME_SEQUENCER_H
+#ifndef MESSAGE_FILTERS__TIME_SEQUENCER_H_
+#define MESSAGE_FILTERS__TIME_SEQUENCER_H_
 
 #include <rclcpp/rclcpp.hpp>
 
-#include "connection.h"
-#include "simple_filter.h"
-#include "message_traits.h"
+#include "message_filters/connection.h"
+#include "message_filters/message_traits.h"
+#include "message_filters/simple_filter.h"
 
 namespace message_filters
 {
@@ -53,7 +53,7 @@ namespace message_filters
  *
  * \section behavior BEHAVIOR
 
- * At construction, the TimeSequencer takes a ros::Duration
+ * At construction, the TimeSequencer takes a rclcpp::Duration
  * "delay" which specifies how long to queue up messages to
  * provide a time sequencing over them.  As messages arrive they are
  * sorted according to their time stamps.  A callback for a message is
@@ -66,7 +66,7 @@ namespace message_filters
  *
  * \section connections CONNECTIONS
  *
- * TimeSequencer's input and output connections are both of the same signature as roscpp subscription callbacks, ie.
+ * TimeSequencer's input and output connections are both of the same signature as rclcpp subscription callbacks, ie.
 \verbatim
 void callback(const std::shared_ptr<M const>&);
 \endverbatim
@@ -85,14 +85,14 @@ public:
    * \param delay The minimum time to hold a message before passing it through.
    * \param update_rate The rate at which to check for messages which have passed "delay"
    * \param queue_size The number of messages to store
-   * \param nh (optional) The NodeHandle to use to create the ros::SteadyTimer that runs at update_rate
+   * \param node The Node to use to create the rclcpp::SteadyTimer that runs at update_rate
    */
   template<class F>
-  TimeSequencer(F& f, rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size, rclcpp::Node::SharedPtr nh = std::make_shared<rclcpp::Node>("test_node"))
+  TimeSequencer(F& f, rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size, rclcpp::Node::SharedPtr node)
   : delay_(delay)
   , update_rate_(update_rate)
   , queue_size_(queue_size)
-  , nh_(nh)
+  , node_(node)
   {
     init();
     connectInput(f);
@@ -106,17 +106,16 @@ public:
    * \param delay The minimum time to hold a message before passing it through.
    * \param update_rate The rate at which to check for messages which have passed "delay"
    * \param queue_size The number of messages to store
-   * \param nh (optional) The NodeHandle to use to create the ros::SteadyTimer that runs at update_rate
+   * \param node The Node to use to create the rclcpp::SteadyTimer that runs at update_rate
    */
-  TimeSequencer(rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size, rclcpp::Node::SharedPtr nh = std::make_shared<rclcpp::Node>("test_node"))
+  TimeSequencer(rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size, rclcpp::Node::SharedPtr node)
   : delay_(delay)
   , update_rate_(update_rate)
   , queue_size_(queue_size)
-  , nh_(nh)
+  , node_(node)
   {
     init();
   }
-
 
   /**
    * \brief Connect this filter's input to another filter's output.
@@ -125,7 +124,7 @@ public:
   void connectInput(F& f)
   {
     incoming_connection_.disconnect();
-    incoming_connection_ = f.registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&TimeSequencer::cb, this, _1)));
+    incoming_connection_ = f.registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&TimeSequencer::cb, this, std::placeholders::_1)));
   }
 
   ~TimeSequencer()
@@ -160,11 +159,6 @@ public:
     EventType evt(msg);
     add(evt);
   }
-
- rclcpp::Node::SharedPtr get_node(void)
- {
-   return nh_;
- }
 
 private:
   class MessageSort
@@ -219,15 +213,10 @@ private:
       }
     }
   }
-/*
-  void update(const ros::SteadyTimerEvent&)
-  {
-    dispatch();
-  }
-*/
+
   void init()
   {
-    update_timer_ = nh_->create_wall_timer(std::chrono::nanoseconds(update_rate_.nanoseconds()), [this]() {
+    update_timer_ = node_->create_wall_timer(std::chrono::nanoseconds(update_rate_.nanoseconds()), [this]() {
       dispatch();
       });
   }
@@ -235,7 +224,7 @@ private:
   rclcpp::Duration delay_;
   rclcpp::Duration update_rate_;
   uint32_t queue_size_;
-  rclcpp::Node::SharedPtr nh_;
+  rclcpp::Node::SharedPtr node_;
   rclcpp::TimerBase::SharedPtr update_timer_;
   Connection incoming_connection_;
 
@@ -245,6 +234,6 @@ private:
   rclcpp::Time last_time_;
 };
 
-}
+}  // namespace message_filters
 
-#endif
+#endif  // MESSAGE_FILTERS__TIME_SEQUENCER_H_

@@ -2,17 +2,51 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-2.0.0 (2018-06-06)
+3.0.0 (2018-11-22)
 ------------------
-* Change build tool from catkin to ament in CMakeLists.txt
-* ROS APIs move to ROS2 APIs
-* Drop boost dependency, using C++14 instead
-* Add message_event.h message_trait.h parameter_adapter.h which are missing in ROS2 core
-* Update existing test cases and add a fuzz test(default disable)
-* Drop unused setup.py
-* Add a README
-* Bug fixes
-* Contributor: Jing Wang, Ethan Gao
+* Move sensor_msgs to be a test dependency. (`#17 <https://github.com/ros2/message_filters/issues/17>`_)
+* Fix Duration signature for Windows CI. (`#16 <https://github.com/ros2/message_filters/issues/16>`_)
+* Add the ability to use raw pointers in Subscriber (`#14 <https://github.com/ros2/message_filters/issues/14>`_)
+* fixed using wrong type of stamp (`#12 <https://github.com/ros2/message_filters/issues/12>`_)
+* Add message trait support to frame id of message (`#13 <https://github.com/ros2/message_filters/issues/13>`_)
+* Merge pull request `#10 <https://github.com/ros2/message_filters/issues/10>`_ from ros2/fix_windows
+* Change argument name to better reflect behavior.
+* Fix signedness of some comparisons.
+* Correctly export and depend on ament_cmake_ros.
+* Cleanup windows warnings.
+* Fix visibility control.
+* Fix include guards and include order.
+* enable message_filters support of python interfaces and tests (`#7 <https://github.com/ros2/message_filters/issues/7>`_)
+* Remove references in pointer API calls.
+* Remove ROS1 specific connection header info from API.
+* demote std_msgs to test dependency
+* Update docs to remove nodehandle reference.
+* Use Node::SharedPtr instead of Node*
+* Make node required as an internal one is required to spin.
+* Add noncopyable base class
+* Deboostify and change from ros::Time to rclcpp::Time
+* Convert to ament_cmake
+* Changed invocation to `add` to conform template syntax (`#1388 <https://github.com/ros2/message_filters/issues/1388>`_)
+  This change fixes issue `#1383 <https://github.com/ros2/message_filters/issues/1383>`_
+* fix sphinx warning (`#1371 <https://github.com/ros2/message_filters/issues/1371>`_)
+* Contributors: Dirk Thomas, Ethan Gao, Gary Liu, Jørgen Nordmoen, Michael Carroll, Tully Foote
+
+
+1.14.2 (2018-06-06)
+-------------------
+
+1.14.1 (2018-05-21)
+-------------------
+
+1.14.0 (2018-05-21)
+-------------------
+* change invocation to `add` to conform template syntax (`#1388 <https://github.com/ros/ros_comm/issues/1388>`_)
+* fix sphinx warning (`#1371 <https://github.com/ros/ros_comm/issues/1371>`_)
+
+1.13.6 (2018-02-05)
+-------------------
+* use SteadyTimer in message_filters (`#1247 <https://github.com/ros/ros_comm/issues/1247>`_)
+* remove unnecessary xmlrpcpp dependency from message_filters (`#1264 <https://github.com/ros/ros_comm/issues/1264>`_)
 
 1.13.5 (2017-11-09)
 -------------------

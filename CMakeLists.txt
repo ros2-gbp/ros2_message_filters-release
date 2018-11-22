@@ -12,24 +12,23 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake_python REQUIRED)
-find_package(ament_cmake REQUIRED)
+find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rcutils)
 find_package(builtin_interfaces REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(sensor_msgs REQUIRED)
-#find_package(Boost REQUIRED COMPONENTS signals thread)
 
+add_library(${PROJECT_NAME} src/connection.cpp)
+if(WIN32)
+  target_compile_definitions(${PROJECT_NAME}
+    PRIVATE "MESSAGE_FILTERS_BUILDING_DLL")
+endif()
+target_include_directories(${PROJECT_NAME} PUBLIC include)
 
-include_directories(include)
-add_library(${PROJECT_NAME} SHARED src/connection.cpp)
 ament_target_dependencies(${PROJECT_NAME}
   "rclcpp"
   "rcutils"
-  "std_msgs"
   "builtin_interfaces"
-  "sensor_msgs")
-#target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
+  )
 
 install(
   TARGETS ${PROJECT_NAME}
@@ -39,8 +38,8 @@ install(
 )
 
 install(
-DIRECTORY "include/"
-DESTINATION include
+  DIRECTORY "include/"
+  DESTINATION include
 )
 
 find_package(python_cmake_module REQUIRED)
@@ -56,6 +55,7 @@ ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 
 if(BUILD_TESTING)
+  find_package(sensor_msgs REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   ament_lint_auto_find_test_dependencies()
 
@@ -65,7 +65,6 @@ if(BUILD_TESTING)
   if(TARGET ${PROJECT_NAME}-test_simple)
     target_link_libraries(${PROJECT_NAME}-test_simple ${PROJECT_NAME})
   endif()
-
 
   ament_add_gtest(${PROJECT_NAME}-msg_cache_unittest test/msg_cache_unittest.cpp)
   if(TARGET ${PROJECT_NAME}-msg_cache_unittest)
@@ -77,9 +76,16 @@ if(BUILD_TESTING)
     target_link_libraries(${PROJECT_NAME}-test_chain ${PROJECT_NAME})
   endif()
 
+  ament_add_gtest(${PROJECT_NAME}-test_time_sequencer test/time_sequencer_unittest.cpp)
+  if(TARGET ${PROJECT_NAME}-test_time_sequencer)
+    target_link_libraries(${PROJECT_NAME}-test_time_sequencer ${PROJECT_NAME})
+  endif()
+
   ament_add_gtest(${PROJECT_NAME}-test_subscriber test/test_subscriber.cpp)
   if(TARGET ${PROJECT_NAME}-test_subscriber)
     target_link_libraries(${PROJECT_NAME}-test_subscriber ${PROJECT_NAME})
+    target_include_directories(${PROJECT_NAME}-test_subscriber PUBLIC include)
+    ament_target_dependencies(${PROJECT_NAME}-test_subscriber "rclcpp" "sensor_msgs")
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-test_synchronizer test/test_synchronizer.cpp)
@@ -105,14 +111,15 @@ if(BUILD_TESTING)
   ament_add_gtest(${PROJECT_NAME}-test_fuzz test/test_fuzz.cpp SKIP_TEST)
   if(TARGET ${PROJECT_NAME}-test_fuzz)
     target_link_libraries(${PROJECT_NAME}-test_fuzz ${PROJECT_NAME})
+    target_include_directories(${PROJECT_NAME}-test_fuzz PUBLIC include)
+    ament_target_dependencies(${PROJECT_NAME}-test_fuzz "rclcpp" "sensor_msgs")
   endif()
 
+  # python tests with python interfaces of message filters
   find_package(ament_cmake_pytest REQUIRED)
-  ament_add_pytest_test(msfpytests test
-      PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}"
-      APPEND_ENV AMENT_PREFIX_PATH=${ament_index_build_path}
-        PYTHONPATH=${CMAKE_CURRENT_BINARY_DIR}
-      TIMEOUT 90
-  )
+  ament_add_pytest_test(directed.py "test/directed.py")
+  ament_add_pytest_test(test_approxsync.py "test/test_approxsync.py")
+  ament_add_pytest_test(test_message_filters_cache.py "test/test_message_filters_cache.py")
 endif()
+
 ament_package()
