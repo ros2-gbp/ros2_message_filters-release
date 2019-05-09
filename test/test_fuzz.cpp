@@ -32,6 +32,9 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
+// Initial file imported from
+// https://github.com/ros2/message_filters/blob/1866ddb86db5b5c7746556ea7544b6f34c00415b/test/time_sequencer_unittest.cpp
+
 #include <gtest/gtest.h>
 #include <random>
 
@@ -131,7 +134,7 @@ TEST(Subscriber, fuzz_subscriber)
   Helper h;
   Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h, _1));
-  auto pub = node->create_publisher<Msg>("test_topic");
+  auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
   auto msg = std::make_shared<Msg>();
@@ -140,7 +143,7 @@ TEST(Subscriber, fuzz_subscriber)
     h.count_ = 0;
     fuzz_msg(msg);
     msg->header.stamp = ros_clock.now();
-    pub->publish(msg);
+    pub->publish(*msg);
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node);
     ASSERT_EQ(h.count_, 1);
