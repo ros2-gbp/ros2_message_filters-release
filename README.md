@@ -1,3 +1,26 @@
+## message_filters (dashing) - 3.1.2-1
+
+The packages in the `message_filters` repository were released into the `dashing` distro by running `/usr/bin/bloom-release --rosdistro dashing --track dashing message_filters` on `Tue, 21 May 2019 01:28:06 -0000`
+
+The `message_filters` package was released.
+
+Version of package(s) in repository `message_filters`:
+
+- upstream repository: https://github.com/ros2/message_filters.git
+- release repository: https://github.com/ros2-gbp/ros2_message_filters-release.git
+- rosdistro version: `3.1.1-1`
+- old version: `3.1.1-1`
+- new version: `3.1.2-1`
+
+Versions of tools used:
+
+- bloom version: `0.8.0`
+- catkin_pkg version: `0.4.12`
+- rosdep version: `0.15.1`
+- rosdistro version: `0.7.4`
+- vcstools version: `0.1.40`
+
+
 ## message_filters (dashing) - 3.1.1-1
 
 The packages in the `message_filters` repository were released into the `dashing` distro by running `/usr/bin/bloom-release --rosdistro dashing --track dashing message_filters` on `Thu, 09 May 2019 00:52:25 -0000`
