@@ -1,0 +1,12 @@
+Source: ros-eloquent-message-filters
+Section: misc
+Priority: optional
+Maintainer: Ethan Gao <ethan.gao@linux.intel.com>
+Build-Depends: debhelper (>= 9.0.0), ros-eloquent-ament-cmake-gtest, ros-eloquent-ament-cmake-pytest, ros-eloquent-ament-cmake-python, ros-eloquent-ament-cmake-ros, ros-eloquent-ament-lint-auto, ros-eloquent-builtin-interfaces, ros-eloquent-python-cmake-module, ros-eloquent-rclcpp, ros-eloquent-rclpy, ros-eloquent-sensor-msgs, ros-eloquent-std-msgs, ros-eloquent-ros-workspace
+Homepage: https://github.com/intel/ros2_message_filters
+Standards-Version: 3.9.2
+
+Package: ros-eloquent-message-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-eloquent-ros-workspace
+Description: A set of ROS2 message filters which take in messages and may output those messages at a later time, based on the conditions that filter needs met.
