@@ -1,3 +1,26 @@
+## message_filters (eloquent) - 3.2.2-1
+
+The packages in the `message_filters` repository were released into the `eloquent` distro by running `/usr/bin/bloom-release --ros-distro eloquent --track eloquent message_filters` on `Sat, 09 Nov 2019 01:18:47 -0000`
+
+The `message_filters` package was released.
+
+Version of package(s) in repository `message_filters`:
+
+- upstream repository: https://github.com/ros2/message_filters.git
+- release repository: https://github.com/ros2-gbp/ros2_message_filters-release.git
+- rosdistro version: `3.2.1-1`
+- old version: `3.2.1-1`
+- new version: `3.2.2-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.0`
+- catkin_pkg version: `0.4.14`
+- rosdep version: `0.17.1`
+- rosdistro version: `0.7.5`
+- vcstools version: `0.1.42`
+
+
 ## message_filters (eloquent) - 3.2.1-1
 
 The packages in the `message_filters` repository were released into the `eloquent` distro by running `/usr/bin/bloom-release --rosdistro eloquent message_filters` on `Thu, 24 Oct 2019 01:10:53 -0000`
