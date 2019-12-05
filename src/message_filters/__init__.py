@@ -76,8 +76,7 @@ class Subscriber(SimpleFilter):
         SimpleFilter.__init__(self)
         self.node = args[0]
         self.topic = args[2]
-        kwargs.setdefault('qos_profile', 10)
-        self.sub = self.node.create_subscription(*args[1:], self.callback, **kwargs)
+        self.sub = self.node.create_subscription(*args[1:], self.callback, 10, **kwargs)
 
     def callback(self, msg):
         self.signalMessage(msg)
@@ -225,8 +224,7 @@ class TimeSynchronizer(SimpleFilter):
 
     def add(self, msg, my_queue, my_queue_index=None):
         self.lock.acquire()
-        stamp = Time.from_msg(msg.header.stamp)
-        my_queue[stamp.nanoseconds] = msg
+        my_queue[msg.header.stamp] = msg
         while len(my_queue) > self.queue_size:
             del my_queue[min(my_queue)]
         # common is the set of timestamps that occur in all queues

@@ -2,22 +2,10 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.2.3 (2019-11-18)
+3.1.3 (2019-12-05)
 ------------------
-* allow custom qos for message filters
-
-3.2.2 (2019-11-08)
-------------------
-* Fix  unhashable type 'Time' error (`#33 <https://github.com/ros2/message_filters/issues/33>`_)
-* Contributors: Jamie Diprose
-
-3.2.1 (2019-10-23)
-------------------
-* Resolve ambiguity with boost/bind.hpp (`#40 <https://github.com/ros2/message_filters/issues/40>`_)
+* Resolve ambiguity with boost/bind.hpp (`#42 <https://github.com/ros2/message_filters/issues/42>`_)
 * Contributors: Shane Loretz
-
-3.2.0 (2019-09-26)
-------------------
 
 3.1.2 (2019-05-20)
 ------------------
