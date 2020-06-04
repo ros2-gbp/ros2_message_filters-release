@@ -1,3 +1,26 @@
+## message_filters (foxy) - 3.2.4-1
+
+The packages in the `message_filters` repository were released into the `foxy` distro by running `/usr/bin/bloom-release -r foxy -t foxy message_filters` on `Thu, 04 Jun 2020 03:24:09 -0000`
+
+The `message_filters` package was released.
+
+Version of package(s) in repository `message_filters`:
+
+- upstream repository: https://github.com/ros2/message_filters.git
+- release repository: https://github.com/ros2-gbp/ros2_message_filters-release.git
+- rosdistro version: `3.2.3-2`
+- old version: `3.2.3-2`
+- new version: `3.2.4-1`
+
+Versions of tools used:
+
+- bloom version: `0.9.7`
+- catkin_pkg version: `0.4.20`
+- rosdep version: `0.19.0`
+- rosdistro version: `0.8.2`
+- vcstools version: `0.1.42`
+
+
 ## message_filters (foxy) - 3.2.3-2
 
 The packages in the `message_filters` repository were released into the `foxy` distro by running `/usr/bin/bloom-release -r foxy message_filters` on `Thu, 30 Apr 2020 08:07:13 -0000`
