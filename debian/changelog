@@ -1,0 +1,471 @@
+ros-humble-message-filters (4.3.1-2jammy) jammy; urgency=high
+
+  * Use RCL_ROS_TIME for message_traits::TimeStamp  (#72 <https://github.com/ros2/message_filters/issues/72>)
+  * Contributors: Kenji Brameld
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 25 Mar 2022 07:00:00 -0000
+
+ros-humble-message-filters (4.3.0-2jammy) jammy; urgency=high
+
+  * Install includes to include/${PROJECT_NAME} (#71 <https://github.com/ros2/message_filters/issues/71>)
+  * Update maintainers (#67 <https://github.com/ros2/message_filters/issues/67>)
+  * Contributors: Audrow Nash, Shane Loretz
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 01 Mar 2022 08:00:00 -0000
+
+ros-humble-message-filters (4.2.0-2jammy) jammy; urgency=high
+
+  * Suppress rclcpp deprecation warnings in unit tests (#62 <https://github.com/ros2/message_filters/issues/62>)
+  * Contributors: Abrar Rahman Protyasha
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 18 Oct 2021 07:00:00 -0000
+
+ros-humble-message-filters (4.1.0-2jammy) jammy; urgency=high
+
+  * Add missing overrides to subscriber.h (#60 <https://github.com/ros2/message_filters/issues/60>)
+  * Add lifecycle node support (#59 <https://github.com/ros2/message_filters/issues/59>)
+  * Correct package.xml and CMakeLists.txt (#58 <https://github.com/ros2/message_filters/issues/58>)
+  * Contributors: Hunter L. Allen, Michel Hidalgo, Rebecca Butler
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 29 Jul 2021 07:00:00 -0000
+
+ros-humble-message-filters (4.0.0-2jammy) jammy; urgency=high
+
+  * Expose Subscription Options - V2 (#56 <https://github.com/ros2/message_filters/issues/56>)
+  * Contributors: Audrow Nash
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 26 May 2021 07:00:00 -0000
+
+ros-humble-message-filters (3.2.6-2jammy) jammy; urgency=high
+
+  * Find and export dependencies properly (#54 <https://github.com/ros2/message_filters/issues/54>)
+  * Contributors: Michel Hidalgo
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 12 May 2021 07:00:00 -0000
+
+ros-humble-message-filters (3.2.5-2jammy) jammy; urgency=high
+
+  * Add pytest.ini so local tests don't display warning (#47 <https://github.com/ros2/message_filters/issues/47>)
+  * Contributors: Chris Lalancette
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 10 Dec 2020 08:00:00 -0000
+
+ros-humble-message-filters (3.2.4-2jammy) jammy; urgency=high
+
+  * export targets in a addition to include directories / libraries (#46 <https://github.com/ros2/message_filters/issues/46>)
+  * Contributors: Dirk Thomas
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 03 Jun 2020 07:00:00 -0000
+
+ros-humble-message-filters (3.2.3-2jammy) jammy; urgency=high
+
+  * allow custom qos for message filters
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 18 Nov 2019 08:00:00 -0000
+
+ros-humble-message-filters (3.2.2-2jammy) jammy; urgency=high
+
+  * Fix  unhashable type 'Time' error (#33 <https://github.com/ros2/message_filters/issues/33>)
+  * Contributors: Jamie Diprose
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 08 Nov 2019 08:00:00 -0000
+
+ros-humble-message-filters (3.2.1-2jammy) jammy; urgency=high
+
+  * Resolve ambiguity with boost/bind.hpp (#40 <https://github.com/ros2/message_filters/issues/40>)
+  * Contributors: Shane Loretz
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 23 Oct 2019 07:00:00 -0000
+
+ros-humble-message-filters (3.2.0-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 26 Sep 2019 07:00:00 -0000
+
+ros-humble-message-filters (3.1.2-2jammy) jammy; urgency=high
+
+  * Add .gitignore
+  * Fix deprecation warning
+  * Contributors: Jacob Perron
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 20 May 2019 07:00:00 -0000
+
+ros-humble-message-filters (3.1.1-2jammy) jammy; urgency=high
+
+  * changes to avoid deprecated API's (#26 <https://github.com/ros2/message_filters/issues/26>)
+  * Merge pull request #25 <https://github.com/ros2/message_filters/issues/25> from ros2/ivanpauno/deprecate-shared-ptr-publish
+  * adding code import references in comments (#6 <https://github.com/ros2/message_filters/issues/6>)
+  * Make format string agree with argument type. (#24 <https://github.com/ros2/message_filters/issues/24>)
+  * Contributors: Steven! Ragnarök, Tully Foote, William Woodall, ivanpauno
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 08 May 2019 07:00:00 -0000
+
+ros-humble-message-filters (3.1.0-2jammy) jammy; urgency=high
+
+  * Added direct dependency on python_cmake_module. (#19 <https://github.com/ros2/message_filters/issues/19>)
+  * Updated to use Python debug interpreter on Windows. (#18 <https://github.com/ros2/message_filters/issues/18>)
+  * Contributors: Dirk Thomas, Steven! Ragnarök
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sun, 14 Apr 2019 07:00:00 -0000
+
+ros-humble-message-filters (3.0.0-2jammy) jammy; urgency=high
+
+  * Move sensor_msgs to be a test dependency. (#17 <https://github.com/ros2/message_filters/issues/17>)
+  * Fix Duration signature for Windows CI. (#16 <https://github.com/ros2/message_filters/issues/16>)
+  * Add the ability to use raw pointers in Subscriber (#14 <https://github.com/ros2/message_filters/issues/14>)
+  * fixed using wrong type of stamp (#12 <https://github.com/ros2/message_filters/issues/12>)
+  * Add message trait support to frame id of message (#13 <https://github.com/ros2/message_filters/issues/13>)
+  * Merge pull request #10 <https://github.com/ros2/message_filters/issues/10> from ros2/fix_windows
+  * Change argument name to better reflect behavior.
+  * Fix signedness of some comparisons.
+  * Correctly export and depend on ament_cmake_ros.
+  * Cleanup windows warnings.
+  * Fix visibility control.
+  * Fix include guards and include order.
+  * enable message_filters support of python interfaces and tests (#7 <https://github.com/ros2/message_filters/issues/7>)
+  * Remove references in pointer API calls.
+  * Remove ROS1 specific connection header info from API.
+  * demote std_msgs to test dependency
+  * Update docs to remove nodehandle reference.
+  * Use Node::SharedPtr instead of Node*
+  * Make node required as an internal one is required to spin.
+  * Add noncopyable base class
+  * Deboostify and change from ros::Time to rclcpp::Time
+  * Convert to ament_cmake
+  * Changed invocation to add to conform template syntax (#1388 <https://github.com/ros2/message_filters/issues/1388>)
+    This change fixes issue #1383 <https://github.com/ros2/message_filters/issues/1383>
+  * fix sphinx warning (#1371 <https://github.com/ros2/message_filters/issues/1371>)
+  * Contributors: Dirk Thomas, Ethan Gao, Gary Liu, Jørgen Nordmoen, Michael Carroll, Tully Foote
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 22 Nov 2018 08:00:00 -0000
+
+ros-humble-message-filters (1.14.2-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 06 Jun 2018 07:00:00 -0000
+
+ros-humble-message-filters (1.14.1-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 21 May 2018 07:00:00 -0000
+
+ros-humble-message-filters (1.14.0-2jammy) jammy; urgency=high
+
+  * change invocation to add to conform template syntax (#1388 <https://github.com/ros/ros_comm/issues/1388>)
+  * fix sphinx warning (#1371 <https://github.com/ros/ros_comm/issues/1371>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 21 May 2018 07:00:00 -0000
+
+ros-humble-message-filters (1.13.6-2jammy) jammy; urgency=high
+
+  * use SteadyTimer in message_filters (#1247 <https://github.com/ros/ros_comm/issues/1247>)
+  * remove unnecessary xmlrpcpp dependency from message_filters (#1264 <https://github.com/ros/ros_comm/issues/1264>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 05 Feb 2018 08:00:00 -0000
+
+ros-humble-message-filters (1.13.5-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 09 Nov 2017 08:00:00 -0000
+
+ros-humble-message-filters (1.13.4-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 02 Nov 2017 07:00:00 -0000
+
+ros-humble-message-filters (1.13.3-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 25 Oct 2017 07:00:00 -0000
+
+ros-humble-message-filters (1.13.2-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 15 Aug 2017 07:00:00 -0000
+
+ros-humble-message-filters (1.13.1-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 27 Jul 2017 07:00:00 -0000
+
+ros-humble-message-filters (1.13.0-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 22 Feb 2017 08:00:00 -0000
+
+ros-humble-message-filters (1.12.7-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 17 Feb 2017 08:00:00 -0000
+
+ros-humble-message-filters (1.12.6-2jammy) jammy; urgency=high
+
+  * use boost::bind to bind the callback function (#906 <https://github.com/ros/ros_comm/pull/906>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 26 Oct 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.12.5-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 30 Sep 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.12.4-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 19 Sep 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.12.3-2jammy) jammy; urgency=high
+
+  * add fast approximate time synchronization in message_filters (in pure Python) (#802 <https://github.com/ros/ros_comm/issues/802>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sat, 17 Sep 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.12.2-2jammy) jammy; urgency=high
+
+  * allow saving timestamp-less messages to Cache, add getLast method (#806 <https://github.com/ros/ros_comm/pull/806>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 03 Jun 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.12.1-2jammy) jammy; urgency=high
+
+  * use directory specific compiler flags (#785 <https://github.com/ros/ros_comm/pull/785>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 18 Apr 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.12.0-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 18 Mar 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.11.18-2jammy) jammy; urgency=high
+
+  * fix compiler warnings
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 17 Mar 2016 07:00:00 -0000
+
+ros-humble-message-filters (1.11.17-2jammy) jammy; urgency=high
+
+  * use boost::make_shared instead of new for constructing boost::shared_ptr (#740 <https://github.com/ros/ros_comm/issues/740>)
+  * add __getattr__ to handle sub in message_filters as standard one (#700 <https://github.com/ros/ros_comm/pull/700>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 11 Mar 2016 08:00:00 -0000
+
+ros-humble-message-filters (1.11.16-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 09 Nov 2015 08:00:00 -0000
+
+ros-humble-message-filters (1.11.15-2jammy) jammy; urgency=high
+
+  * add unregister() method to message_filter.Subscriber (#683 <https://github.com/ros/ros_comm/pull/683>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 13 Oct 2015 07:00:00 -0000
+
+ros-humble-message-filters (1.11.14-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sat, 19 Sep 2015 07:00:00 -0000
+
+ros-humble-message-filters (1.11.13-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 28 Apr 2015 07:00:00 -0000
+
+ros-humble-message-filters (1.11.12-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 27 Apr 2015 07:00:00 -0000
+
+ros-humble-message-filters (1.11.11-2jammy) jammy; urgency=high
+
+  * implement message filter cache in Python (#599 <https://github.com/ros/ros_comm/pull/599>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 16 Apr 2015 07:00:00 -0000
+
+ros-humble-message-filters (1.11.10-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 22 Dec 2014 08:00:00 -0000
+
+ros-humble-message-filters (1.11.9-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 18 Aug 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.8-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 04 Aug 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.7-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 18 Jul 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.6-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 10 Jul 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.5-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 24 Jun 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.4-2jammy) jammy; urgency=high
+
+  * add approximate Python time synchronizer (used to be in camera_calibration) (#424 <https://github.com/ros/ros_comm/issues/424>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 16 Jun 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.3-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.2-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 08 May 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.1-2jammy) jammy; urgency=high
+
+  * update API to use boost::signals2 (#267 <https://github.com/ros/ros_comm/issues/267>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 07 May 2014 07:00:00 -0000
+
+ros-humble-message-filters (1.11.0-2jammy) jammy; urgency=high
+
+  * suppress boost::signals deprecation warning (#362 <https://github.com/ros/ros_comm/issues/362>)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 04 Mar 2014 08:00:00 -0000
+
+ros-humble-message-filters (1.10.0-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 11 Feb 2014 08:00:00 -0000
+
+ros-humble-message-filters (1.9.54-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 27 Jan 2014 08:00:00 -0000
+
+ros-humble-message-filters (1.9.53-2jammy) jammy; urgency=high
+
+  * add kwargs for message_filters.Subscriber
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 14 Jan 2014 08:00:00 -0000
+
+ros-humble-message-filters (1.9.52-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 08 Jan 2014 08:00:00 -0000
+
+ros-humble-message-filters (1.9.51-2jammy) jammy; urgency=high
+
+  * update code after refactoring into rosbag_storage and roscpp_core (#299 <https://github.com/ros/ros_comm/issues/299>)
+  * fix segmentation fault on OS X 10.9 (clang / libc++)
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 07 Jan 2014 08:00:00 -0000
+
+ros-humble-message-filters (1.9.50-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 04 Oct 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.49-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Mon, 16 Sep 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.48-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 21 Aug 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.47-2jammy) jammy; urgency=high
+
+  * check for CATKIN_ENABLE_TESTING to enable configure without tests
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 03 Jul 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.46-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Tue, 18 Jun 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.45-2jammy) jammy; urgency=high
+
+  * fix template syntax for signal_.template addCallback() to work with Intel compiler
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 06 Jun 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.44-2jammy) jammy; urgency=high
+
+  * fix install destination for dll's under Windows
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 21 Mar 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.43-2jammy) jammy; urgency=high
+
+  * fix exports of message filter symbols for Windows
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Wed, 13 Mar 2013 07:00:00 -0000
+
+ros-humble-message-filters (1.9.42-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Fri, 08 Mar 2013 08:00:00 -0000
+
+ros-humble-message-filters (1.9.41-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Thu, 24 Jan 2013 08:00:00 -0000
+
+ros-humble-message-filters (1.9.40-2jammy) jammy; urgency=high
+
+
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sun, 13 Jan 2013 08:00:00 -0000
+
+ros-humble-message-filters (1.9.39-2jammy) jammy; urgency=high
+
+  * first public release for Groovy
+
+ -- Ethan Gao <ethan.gao@linux.intel.com>  Sat, 29 Dec 2012 08:00:00 -0000
+
+
