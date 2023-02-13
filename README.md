@@ -1,3 +1,26 @@
+## message_filters (rolling) - 4.7.0-1
+
+The packages in the `message_filters` repository were released into the `rolling` distro by running `/usr/bin/bloom-release --track rolling --rosdistro rolling message_filters` on `Mon, 13 Feb 2023 21:47:47 -0000`
+
+The `message_filters` package was released.
+
+Version of package(s) in repository `message_filters`:
+
+- upstream repository: https://github.com/ros2/message_filters.git
+- release repository: https://github.com/ros2-gbp/ros2_message_filters-release.git
+- rosdistro version: `4.6.1-1`
+- old version: `4.6.1-1`
+- new version: `4.7.0-1`
+
+Versions of tools used:
+
+- bloom version: `0.11.2`
+- catkin_pkg version: `0.5.2`
+- rosdep version: `0.22.1`
+- rosdistro version: `0.9.0`
+- vcstools version: `0.1.42`
+
+
 ## message_filters (rolling) - 4.6.1-1
 
 The packages in the `message_filters` repository were released into the `rolling` distro by running `/usr/bin/bloom-release -t rolling -r rolling message_filters` on `Wed, 05 Oct 2022 13:01:01 -0000`
