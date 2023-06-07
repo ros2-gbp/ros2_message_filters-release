@@ -2,10 +2,74 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-3.2.7 (2023-06-06)
+4.9.0 (2023-06-07)
 ------------------
-* Use RCL_ROS_TIME for message_traits::TimeStamp  (`#72 <https://github.com/ros2/message_filters/issues/72>`_) (`#81 <https://github.com/ros2/message_filters/issues/81>`_)
-* Contributors: Paul Schalkwijk, Kenji Brameld, Sivert Havso
+* feat: add signal time functions to ExactTime policy (`#94 <https://github.com/ros2/message_filters/issues/94>`_)
+* Contributors: Russ
+
+4.8.0 (2023-04-27)
+------------------
+
+4.7.0 (2023-02-13)
+------------------
+* Update message_filters to C++17. (`#88 <https://github.com/ros2/message_filters/issues/88>`_)
+* Fix cache.h std::placeholder namespace (`#87 <https://github.com/ros2/message_filters/issues/87>`_)
+* [rolling] Update maintainers - 2022-11-07 (`#85 <https://github.com/ros2/message_filters/issues/85>`_)
+* Contributors: Audrow Nash, Chris Lalancette, Haoru Xue
+
+4.6.1 (2022-10-05)
+------------------
+* Add a simpler aproximate time sync policy: ApproximateEpsilonTime (`#84 <https://github.com/ros2/message_filters/issues/84>`_)
+* Contributors: Ivan Santiago Paunovic
+
+4.5.0 (2022-09-13)
+------------------
+* Add latest time zero-order-hold sync policy (`#73 <https://github.com/ros2/message_filters/issues/73>`_)
+* Fix python examples and add a new example in documentation (`#79 <https://github.com/ros2/message_filters/issues/79>`_)
+* Mirror rolling to master
+* Contributors: Audrow Nash, Carlos Andrés Álvarez Restrepo, andermi
+
+4.4.1 (2022-06-20)
+------------------
+* Adding fix to subscribe() call with raw node pointer and subscriber options (`#76 <https://github.com/ros2/message_filters/issues/76>`_)
+* Corrected function arguments in example description (`#35 <https://github.com/ros2/message_filters/issues/35>`_)
+* Contributors: Martin Ganeff, Steve Macenski
+
+4.4.0 (2022-04-29)
+------------------
+
+4.3.1 (2022-03-25)
+------------------
+* Use RCL_ROS_TIME for message_traits::TimeStamp  (`#72 <https://github.com/ros2/message_filters/issues/72>`_)
+* Contributors: Kenji Brameld
+
+4.3.0 (2022-03-01)
+------------------
+* Install includes to include/${PROJECT_NAME} (`#71 <https://github.com/ros2/message_filters/issues/71>`_)
+* Update maintainers (`#67 <https://github.com/ros2/message_filters/issues/67>`_)
+* Contributors: Audrow Nash, Shane Loretz
+
+4.2.0 (2021-10-18)
+------------------
+* Suppress rclcpp deprecation warnings in unit tests (`#62 <https://github.com/ros2/message_filters/issues/62>`_)
+* Contributors: Abrar Rahman Protyasha
+
+4.1.0 (2021-07-29)
+------------------
+* Add missing overrides to subscriber.h (`#60 <https://github.com/ros2/message_filters/issues/60>`_)
+* Add lifecycle node support (`#59 <https://github.com/ros2/message_filters/issues/59>`_)
+* Correct package.xml and CMakeLists.txt (`#58 <https://github.com/ros2/message_filters/issues/58>`_)
+* Contributors: Hunter L. Allen, Michel Hidalgo, Rebecca Butler
+
+4.0.0 (2021-05-26)
+------------------
+* Expose Subscription Options - V2 (`#56 <https://github.com/ros2/message_filters/issues/56>`_)
+* Contributors: Audrow Nash
+
+3.2.6 (2021-05-12)
+------------------
+* Find and export dependencies properly (`#54 <https://github.com/ros2/message_filters/issues/54>`_)
+* Contributors: Michel Hidalgo
 
 3.2.5 (2020-12-10)
 ------------------
@@ -78,9 +142,9 @@ Changelog for package message_filters
 * Add noncopyable base class
 * Deboostify and change from ros::Time to rclcpp::Time
 * Convert to ament_cmake
-* Changed invocation to `add` to conform template syntax (`#1388 <https://github.com/ros2/message_filters/issues/1388>`_)
+* Changed invocation to `add` to conform template syntax (`#1388 <https://github.com/ros2/message_filters/issues/1388>`__)
   This change fixes issue `#1383 <https://github.com/ros2/message_filters/issues/1383>`_
-* fix sphinx warning (`#1371 <https://github.com/ros2/message_filters/issues/1371>`_)
+* fix sphinx warning (`#1371 <https://github.com/ros2/message_filters/issues/1371>`__)
 * Contributors: Dirk Thomas, Ethan Gao, Gary Liu, Jørgen Nordmoen, Michael Carroll, Tully Foote
 
 
@@ -92,8 +156,8 @@ Changelog for package message_filters
 
 1.14.0 (2018-05-21)
 -------------------
-* change invocation to `add` to conform template syntax (`#1388 <https://github.com/ros/ros_comm/issues/1388>`_)
-* fix sphinx warning (`#1371 <https://github.com/ros/ros_comm/issues/1371>`_)
+* change invocation to `add` to conform template syntax (`#1388 <https://github.com/ros/ros_comm/issues/1388>`__)
+* fix sphinx warning (`#1371 <https://github.com/ros/ros_comm/issues/1371>`__)
 
 1.13.6 (2018-02-05)
 -------------------

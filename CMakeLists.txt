@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 project(message_filters)
 
-# Default to C++14
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -14,8 +15,7 @@ endif()
 find_package(ament_cmake_python REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(rcutils)
-find_package(builtin_interfaces REQUIRED)
+find_package(rcutils REQUIRED)
 
 add_library(${PROJECT_NAME} src/connection.cpp)
 if(WIN32)
@@ -24,13 +24,12 @@ if(WIN32)
 endif()
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-  "$<INSTALL_INTERFACE:include>")
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
 
 ament_target_dependencies(${PROJECT_NAME}
   "rclcpp"
   "rcutils"
-  "builtin_interfaces"
-  )
+)
 
 install(
   TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME}
@@ -41,25 +40,26 @@ install(
 
 install(
   DIRECTORY "include/"
-  DESTINATION include
+  DESTINATION include/${PROJECT_NAME}
 )
 
-find_package(python_cmake_module REQUIRED)
-_ament_cmake_python_register_environment_hook()
-install(
-  DIRECTORY "src/${PROJECT_NAME}/"
-  DESTINATION "${PYTHON_INSTALL_DIR}/${PROJECT_NAME}"
-  PATTERN "*.pyc" EXCLUDE
-  PATTERN "__pycache__" EXCLUDE
-)
+ament_python_install_package(${PROJECT_NAME}
+  PACKAGE_DIR src/${PROJECT_NAME})
 
-ament_export_include_directories(include)
+# Export old-style CMake variables
+ament_export_include_directories("include/${PROJECT_NAME}")
 ament_export_libraries(${PROJECT_NAME})
+
+# Export modern CMake targets
 ament_export_targets(${PROJECT_NAME})
+
+ament_export_dependencies(rclcpp rcutils)
 
 if(BUILD_TESTING)
   find_package(sensor_msgs REQUIRED)
   find_package(ament_lint_auto REQUIRED)
+  find_package(rclcpp_lifecycle REQUIRED)
+
   ament_lint_auto_find_test_dependencies()
 
   find_package(ament_cmake_gtest)
@@ -87,8 +87,7 @@ if(BUILD_TESTING)
   ament_add_gtest(${PROJECT_NAME}-test_subscriber test/test_subscriber.cpp)
   if(TARGET ${PROJECT_NAME}-test_subscriber)
     target_link_libraries(${PROJECT_NAME}-test_subscriber ${PROJECT_NAME})
-    target_include_directories(${PROJECT_NAME}-test_subscriber PUBLIC include)
-    ament_target_dependencies(${PROJECT_NAME}-test_subscriber "rclcpp" "sensor_msgs")
+    ament_target_dependencies(${PROJECT_NAME}-test_subscriber "rclcpp" "rclcpp_lifecycle" "sensor_msgs")
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-test_synchronizer test/test_synchronizer.cpp)
@@ -111,10 +110,19 @@ if(BUILD_TESTING)
     target_link_libraries(${PROJECT_NAME}-test_approximate_time_policy ${PROJECT_NAME})
   endif()
 
+  ament_add_gtest(${PROJECT_NAME}-test_approximate_epsilon_time_policy test/test_approximate_epsilon_time_policy.cpp)
+  if(TARGET ${PROJECT_NAME}-test_approximate_epsilon_time_policy)
+    target_link_libraries(${PROJECT_NAME}-test_approximate_epsilon_time_policy ${PROJECT_NAME})
+  endif()
+  
+  ament_add_gtest(${PROJECT_NAME}-test_latest_time_policy test/test_latest_time_policy.cpp)
+  if(TARGET ${PROJECT_NAME}-test_latest_time_policy)
+    target_link_libraries(${PROJECT_NAME}-test_latest_time_policy ${PROJECT_NAME})
+  endif()
+
   ament_add_gtest(${PROJECT_NAME}-test_fuzz test/test_fuzz.cpp SKIP_TEST)
   if(TARGET ${PROJECT_NAME}-test_fuzz)
     target_link_libraries(${PROJECT_NAME}-test_fuzz ${PROJECT_NAME})
-    target_include_directories(${PROJECT_NAME}-test_fuzz PUBLIC include)
     ament_target_dependencies(${PROJECT_NAME}-test_fuzz "rclcpp" "sensor_msgs")
   endif()
 
@@ -125,6 +133,7 @@ if(BUILD_TESTING)
   endif()
 
   # Provides PYTHON_EXECUTABLE_DEBUG
+  find_package(python_cmake_module REQUIRED)
   find_package(PythonExtra REQUIRED)
   set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
   if(WIN32)
