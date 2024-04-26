@@ -1,0 +1,12 @@
+Source: ros-rolling-message-filters
+Section: misc
+Priority: optional
+Maintainer: Geoffrey Biggs <geoff@openrobotics.org>
+Build-Depends: debhelper (>= 9.0.0), ament-cmake-googletest <!nocheck>, ament-cmake-pytest <!nocheck>, ament-cmake-python, ament-cmake-ros, ament-lint <!nocheck>, librcutils-dev, libsensor-msgs-dev <!nocheck>, libstd-msgs-dev, python3-rcutils, python3-sensor-msgs <!nocheck>, python3-std-msgs, ros-rolling-python-cmake-module, ros-rolling-rclcpp, ros-rolling-rclcpp-lifecycle <!nocheck>, ros-sensor-msgs <!nocheck>, ros-std-msgs, ros-rolling-ros-workspace
+Homepage: https://github.com/intel/ros2_message_filters
+Standards-Version: 3.9.2
+
+Package: ros-rolling-message-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, librcutils-dev, libstd-msgs-dev, python3-rcutils, python3-std-msgs, ros-rolling-builtin-interfaces, ros-rolling-rclcpp, ros-rolling-rclpy, ros-std-msgs, ros-rolling-ros-workspace
+Description: A set of ROS 2 message filters which take in messages and may output those messages at a later time, based on the conditions that filter needs met.
