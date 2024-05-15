@@ -32,19 +32,20 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#include <functional>
-#include <memory>
-
 #include <gtest/gtest.h>
 
 #include <rclcpp/rclcpp.hpp>
 #include "message_filters/synchronizer.h"
 #include "message_filters/sync_policies/exact_time.h"
 
+using namespace message_filters;
+using namespace message_filters::sync_policies;
+
 struct Header
 {
   rclcpp::Time stamp;
 };
+
 
 struct Msg
 {
@@ -91,10 +92,10 @@ public:
   int32_t drop_count_;
 };
 
-typedef message_filters::sync_policies::ExactTime<Msg, Msg> Policy2;
-typedef message_filters::sync_policies::ExactTime<Msg, Msg, Msg> Policy3;
-typedef message_filters::Synchronizer<Policy2> Sync2;
-typedef message_filters::Synchronizer<Policy3> Sync3;
+typedef ExactTime<Msg, Msg> Policy2;
+typedef ExactTime<Msg, Msg, Msg> Policy3;
+typedef Synchronizer<Policy2> Sync2;
+typedef Synchronizer<Policy3> Sync3;
 
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // From here on we assume that testing the 3-message version is sufficient, so as not to duplicate
@@ -166,14 +167,14 @@ TEST(ExactTime, dropCallback)
 
 struct EventHelper
 {
-  void callback(const message_filters::MessageEvent<Msg const> & e1, const message_filters::MessageEvent<Msg const> & e2)
+  void callback(const MessageEvent<Msg const>& e1, const MessageEvent<Msg const>& e2)
   {
     e1_ = e1;
     e2_ = e2;
   }
 
-  message_filters::MessageEvent<Msg const> e1_;
-  message_filters::MessageEvent<Msg const> e2_;
+  MessageEvent<Msg const> e1_;
+  MessageEvent<Msg const> e2_;
 };
 
 TEST(ExactTime, eventInEventOut)
@@ -181,7 +182,7 @@ TEST(ExactTime, eventInEventOut)
   Sync2 sync(2);
   EventHelper h;
   sync.registerCallback(&EventHelper::callback, &h);
-  message_filters::MessageEvent<Msg const> evt(std::make_shared<Msg>(), rclcpp::Time(4, 0));
+  MessageEvent<Msg const> evt(std::make_shared<Msg>(), rclcpp::Time(4, 0));
 
   sync.add<0>(evt);
   sync.add<1>(evt);
@@ -192,8 +193,7 @@ TEST(ExactTime, eventInEventOut)
   ASSERT_EQ(h.e2_.getReceiptTime(), evt.getReceiptTime());
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
   rclcpp::init(argc, argv);
   return RUN_ALL_TESTS();
