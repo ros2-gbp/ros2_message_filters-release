@@ -1,41 +1,37 @@
-/*********************************************************************
-* Software License Agreement (BSD License)
-*
-*  Copyright (c) 2009, Willow Garage, Inc.
-*  All rights reserved.
-*
-*  Redistribution and use in source and binary forms, with or without
-*  modification, are permitted provided that the following conditions
-*  are met:
-*
-*   * Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above
-*     copyright notice, this list of conditions and the following
-*     disclaimer in the documentation and/or other materials provided
-*     with the distribution.
-*   * Neither the name of the Willow Garage nor the names of its
-*     contributors may be used to endorse or promote products derived
-*     from this software without specific prior written permission.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*  POSSIBILITY OF SUCH DAMAGE.
-*********************************************************************/
+// Copyright 2009, Willow Garage, Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the Willow Garage nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MESSAGE_FILTERS__SYNC_EXACT_TIME_H_
-#define MESSAGE_FILTERS__SYNC_EXACT_TIME_H_
+#ifndef MESSAGE_FILTERS__SYNC_POLICIES__EXACT_TIME_H_
+#define MESSAGE_FILTERS__SYNC_POLICIES__EXACT_TIME_H_
 
+#include <cstdint>
 #include <deque>
+#include <map>
 #include <string>
 #include <tuple>
 
@@ -52,8 +48,9 @@ namespace message_filters
 namespace sync_policies
 {
 
-template<typename M0, typename M1, typename M2 = NullType, typename M3 = NullType, typename M4 = NullType,
-         typename M5 = NullType, typename M6 = NullType, typename M7 = NullType, typename M8 = NullType>
+template<typename M0, typename M1, typename M2 = NullType, typename M3 = NullType,
+  typename M4 = NullType, typename M5 = NullType, typename M6 = NullType,
+  typename M7 = NullType, typename M8 = NullType>
 struct ExactTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
 {
   typedef Synchronizer<ExactTime> Sync;
@@ -73,18 +70,18 @@ struct ExactTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
   typedef typename Super::M8Event M8Event;
   typedef Events Tuple;
 
-  ExactTime(uint32_t queue_size)
+  explicit ExactTime(uint32_t queue_size)
   : parent_(0)
-  , queue_size_(queue_size)
+    , queue_size_(queue_size)
   {
   }
 
-  ExactTime(const ExactTime& e)
+  ExactTime(const ExactTime & e)
   {
     *this = e;
   }
 
-  ExactTime& operator=(const ExactTime& rhs)
+  ExactTime & operator=(const ExactTime & rhs)
   {
     parent_ = rhs.parent_;
     queue_size_ = rhs.queue_size_;
@@ -94,13 +91,13 @@ struct ExactTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
     return *this;
   }
 
-  void initParent(Sync* parent)
+  void initParent(Sync * parent)
   {
     parent_ = parent;
   }
 
   template<int i>
-  void add(const typename std::tuple_element<i, Events>::type& evt)
+  void add(const typename std::tuple_element<i, Events>::type & evt)
   {
     RCUTILS_ASSERT(parent_);
 
@@ -108,40 +105,45 @@ struct ExactTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
 
     std::lock_guard<std::mutex> lock(mutex_);
 
-    Tuple& t = tuples_[mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(*evt.getMessage())];
+    Tuple & t = tuples_[mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(
+          *evt.getMessage())];
     std::get<i>(t) = evt;
 
     checkTuple(t);
   }
 
   template<class C>
-  Connection registerDropCallback(const C& callback)
+  Connection registerDropCallback(const C & callback)
   {
     return drop_signal_.addCallback(callback);
   }
 
   template<class C>
-  Connection registerDropCallback(C& callback)
+  Connection registerDropCallback(C & callback)
   {
     return drop_signal_.addCallback(callback);
   }
 
   template<class C, typename T>
-  Connection registerDropCallback(const C& callback, T* t)
+  Connection registerDropCallback(const C & callback, T * t)
   {
     return drop_signal_.addCallback(callback, t);
   }
 
   template<class C, typename T>
-  Connection registerDropCallback(C& callback, T* t)
+  Connection registerDropCallback(C & callback, T * t)
   {
     return drop_signal_.addCallback(callback, t);
   }
 
-private:
+  rclcpp::Time getLastSignalTime() const
+  {
+    return last_signal_time_;
+  }
 
+private:
   // assumes mutex_ is already locked
-  void checkTuple(Tuple& t)
+  void checkTuple(Tuple & t)
   {
     namespace mt = message_filters::message_traits;
 
@@ -156,11 +158,11 @@ private:
     full = full && (RealTypeCount::value > 7 ? (bool)std::get<7>(t).getMessage() : true);
     full = full && (RealTypeCount::value > 8 ? (bool)std::get<8>(t).getMessage() : true);
 
-    if (full)
-    {
-      parent_->signal(std::get<0>(t), std::get<1>(t), std::get<2>(t),
-                       std::get<3>(t), std::get<4>(t), std::get<5>(t),
-                       std::get<6>(t), std::get<7>(t), std::get<8>(t));
+    if (full) {
+      parent_->signal(
+        std::get<0>(t), std::get<1>(t), std::get<2>(t),
+        std::get<3>(t), std::get<4>(t), std::get<5>(t),
+        std::get<6>(t), std::get<7>(t), std::get<8>(t));
 
       last_signal_time_ = mt::TimeStamp<M0>::value(*std::get<0>(t).getMessage());
 
@@ -169,14 +171,13 @@ private:
       clearOldTuples();
     }
 
-    if (queue_size_ > 0)
-    {
-      while (tuples_.size() > queue_size_)
-      {
-        Tuple& t2 = tuples_.begin()->second;
-        drop_signal_.call(std::get<0>(t2), std::get<1>(t2), std::get<2>(t2),
-                          std::get<3>(t2), std::get<4>(t2), std::get<5>(t2),
-                          std::get<6>(t2), std::get<7>(t2), std::get<8>(t2));
+    if (queue_size_ > 0) {
+      while (tuples_.size() > queue_size_) {
+        Tuple & t2 = tuples_.begin()->second;
+        drop_signal_.call(
+          std::get<0>(t2), std::get<1>(t2), std::get<2>(t2),
+          std::get<3>(t2), std::get<4>(t2), std::get<5>(t2),
+          std::get<6>(t2), std::get<7>(t2), std::get<8>(t2));
         tuples_.erase(tuples_.begin());
       }
     }
@@ -187,21 +188,18 @@ private:
   {
     typename M_TimeToTuple::iterator it = tuples_.begin();
     typename M_TimeToTuple::iterator end = tuples_.end();
-    for (; it != end;)
-    {
-      if (it->first <= last_signal_time_)
-      {
+    for (; it != end; ) {
+      if (it->first <= last_signal_time_) {
         typename M_TimeToTuple::iterator old = it;
         ++it;
 
-        Tuple& t = old->second;
-        drop_signal_.call(std::get<0>(t), std::get<1>(t), std::get<2>(t),
-                          std::get<3>(t), std::get<4>(t), std::get<5>(t),
-                          std::get<6>(t), std::get<7>(t), std::get<8>(t));
+        Tuple & t = old->second;
+        drop_signal_.call(
+          std::get<0>(t), std::get<1>(t), std::get<2>(t),
+          std::get<3>(t), std::get<4>(t), std::get<5>(t),
+          std::get<6>(t), std::get<7>(t), std::get<8>(t));
         tuples_.erase(old);
-      }
-      else
-      {
+      } else {
         // the map is sorted by time, so we can ignore anything after this if this one's time is ok
         break;
       }
@@ -209,7 +207,7 @@ private:
   }
 
 private:
-  Sync* parent_;
+  Sync * parent_;
 
   uint32_t queue_size_;
   typedef std::map<rclcpp::Time, Tuple> M_TimeToTuple;
@@ -224,5 +222,4 @@ private:
 }  // namespace sync_policies
 }  // namespace message_filters
 
-#endif  // MESSAGE_FILTERS__SYNC_EXACT_TIME_H_
-
+#endif  // MESSAGE_FILTERS__SYNC_POLICIES__EXACT_TIME_H_
