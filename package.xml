@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format2.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="2">
   <name>message_filters</name>
-  <version>4.12.0</version>
+  <version>5.0.0</version>
   <description>
     A set of ROS 2 message filters which take in messages and may output those messages at a later time, based on the conditions that filter needs met.
   </description>
@@ -29,7 +29,10 @@
   <exec_depend>builtin_interfaces</exec_depend>
   <exec_depend>rclpy</exec_depend>
 
-  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_cmake_cpplint</test_depend>
+  <test_depend>ament_cmake_copyright</test_depend>
+  <test_depend>ament_cmake_uncrustify</test_depend>
+  <test_depend>ament_cmake_lint_cmake</test_depend>
   <test_depend>ament_cmake_gtest</test_depend>
   <test_depend>ament_cmake_pytest</test_depend>
   <test_depend>sensor_msgs</test_depend>
@@ -37,5 +40,6 @@
 
   <export>
     <build_type>ament_cmake</build_type>
+    <rosdoc2>rosdoc2.yaml</rosdoc2>
   </export>
 </package>
