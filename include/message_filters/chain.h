@@ -1,41 +1,36 @@
-/*********************************************************************
-* Software License Agreement (BSD License)
-*
-*  Copyright (c) 2010, Willow Garage, Inc.
-*  All rights reserved.
-*
-*  Redistribution and use in source and binary forms, with or without
-*  modification, are permitted provided that the following conditions
-*  are met:
-*
-*   * Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above
-*     copyright notice, this list of conditions and the following
-*     disclaimer in the documentation and/or other materials provided
-*     with the distribution.
-*   * Neither the name of the Willow Garage nor the names of its
-*     contributors may be used to endorse or promote products derived
-*     from this software without specific prior written permission.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*  POSSIBILITY OF SUCH DAMAGE.
-*********************************************************************/
+// Copyright 2010, Willow Garage, Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the Willow Garage nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MESSAGE_FILTERS__CHAIN_H
-#define MESSAGE_FILTERS__CHAIN_H
+#ifndef MESSAGE_FILTERS__CHAIN_H_
+#define MESSAGE_FILTERS__CHAIN_H_
 
 #include <vector>
+#include <memory>
 
 #include "message_filters/simple_filter.h"
 #include "message_filters/pass_through.h"
@@ -62,8 +57,7 @@ public:
   std::shared_ptr<F> getFilter(size_t index) const
   {
     std::shared_ptr<void> filter = getFilterForIndex(index);
-    if (filter)
-    {
+    if (filter) {
       return std::static_pointer_cast<F>(filter);
     }
 
@@ -86,7 +80,7 @@ typedef std::shared_ptr<ChainBase> ChainBasePtr;
  *
  * Example:
 \verbatim
-void myCallback(const MsgConstPtr& msg)
+void myCallback(const MsgConstPtr & msg)
 {
 }
 
@@ -101,7 +95,7 @@ c.registerCallback(myCallback);
 \verbatim
 Chain<Msg> c;
 PassThrough<Msg> p;
-c.addFilter(&p);
+c.addFilter( &p);
 c.registerCallback(myCallback);
 \endverbatim
  *
@@ -124,14 +118,14 @@ public:
    * \brief Constructor with filter.  Calls connectInput(f)
    */
   template<typename F>
-  Chain(F& f)
+  explicit Chain(F & f)
   {
     connectInput(f);
   }
 
   struct NullDeleter
   {
-    void operator()(void const*) const
+    void operator()(void const *) const
     {
     }
   };
@@ -140,7 +134,7 @@ public:
    * \brief Add a filter to this chain, by bare pointer.  Returns the index of that filter in the chain.
    */
   template<class F>
-  size_t addFilter(F* filter)
+  size_t addFilter(F * filter)
   {
     std::shared_ptr<F> ptr(filter, NullDeleter());
     return addFilter(ptr);
@@ -150,18 +144,20 @@ public:
    * \brief Add a filter to this chain, by shared_ptr.  Returns the index of that filter in the chain
    */
   template<class F>
-  size_t addFilter(const std::shared_ptr<F>& filter)
+  size_t addFilter(const std::shared_ptr<F> & filter)
   {
     FilterInfo info;
-    info.add_func = std::bind((void(F::*)(const EventType&))&F::add, filter.get(), std::placeholders::_1);
+    info.add_func = std::bind(
+      (void (F::*)(const EventType &)) & F::add, filter.get(), std::placeholders::_1);
     info.filter = filter;
-    info.passthrough = std::make_shared<PassThrough<M> >();
+    info.passthrough = std::make_shared<PassThrough<M>>();
 
     last_filter_connection_.disconnect();
     info.passthrough->connectInput(*filter);
-    last_filter_connection_ = info.passthrough->registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&Chain::lastFilterCB, this, std::placeholders::_1)));
-    if (!filters_.empty())
-    {
+    last_filter_connection_ = info.passthrough->registerCallback(
+      typename SimpleFilter<M>::EventCallback(
+        std::bind(&Chain::lastFilterCB, this, std::placeholders::_1)));
+    if (!filters_.empty()) {
       filter->connectInput(*filters_.back().passthrough);
     }
 
@@ -180,8 +176,7 @@ public:
   template<typename F>
   std::shared_ptr<F> getFilter(size_t index) const
   {
-    if (index >= filters_.size())
-    {
+    if (index >= filters_.size()) {
       return std::shared_ptr<F>();
     }
 
@@ -192,24 +187,25 @@ public:
    * \brief Connect this filter's input to another filter's output.
    */
   template<class F>
-  void connectInput(F& f)
+  void connectInput(F & f)
   {
     incoming_connection_.disconnect();
-    incoming_connection_ = f.registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&Chain::incomingCB, this, std::placeholders::_1)));
+    incoming_connection_ = f.registerCallback(
+      typename SimpleFilter<M>::EventCallback(
+        std::bind(&Chain::incomingCB, this, std::placeholders::_1)));
   }
 
   /**
    * \brief Add a message to the start of this chain
    */
-  void add(const MConstPtr& msg)
+  void add(const MConstPtr & msg)
   {
     add(EventType(msg));
   }
 
-  void add(const EventType& evt)
+  void add(const EventType & evt)
   {
-    if (!filters_.empty())
-    {
+    if (!filters_.empty()) {
       filters_[0].add_func(evt);
     }
   }
@@ -217,8 +213,7 @@ public:
 protected:
   virtual std::shared_ptr<void> getFilterForIndex(size_t index) const
   {
-    if (index >= filters_.size())
-    {
+    if (index >= filters_.size()) {
       return std::shared_ptr<void>();
     }
 
@@ -226,21 +221,21 @@ protected:
   }
 
 private:
-  void incomingCB(const EventType& evt)
+  void incomingCB(const EventType & evt)
   {
     add(evt);
   }
 
-  void lastFilterCB(const EventType& evt)
+  void lastFilterCB(const EventType & evt)
   {
     this->signalMessage(evt);
   }
 
   struct FilterInfo
   {
-    std::function<void(const EventType&)> add_func;
+    std::function<void(const EventType &)> add_func;
     std::shared_ptr<void> filter;
-    std::shared_ptr<PassThrough<M> > passthrough;
+    std::shared_ptr<PassThrough<M>> passthrough;
   };
   typedef std::vector<FilterInfo> V_FilterInfo;
 
