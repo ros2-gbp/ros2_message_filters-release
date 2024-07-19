@@ -28,7 +28,7 @@
 
 #include <gtest/gtest.h>
 
-#include "message_filters/message_traits.h"
+#include "message_filters/message_traits.hpp"
 #include "rclcpp/time.hpp"
 #include "std_msgs/msg/header.hpp"
 
