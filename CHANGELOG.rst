@@ -2,44 +2,12 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-6.0.3 (2024-07-31)
-------------------
-* Migrate to C++11 variadic templates (`#93 <https://github.com/ros2/message_filters/issues/93>`_)
-* [LatestTimeSync] Fix crash when Synchronizeris started before the messges are available. (`#137 <https://github.com/ros2/message_filters/issues/137>`_)
-* Contributors: Christopher Wecht, Dr. Denis
-
-6.0.2 (2024-07-29)
-------------------
-* Fix cppcheck warning on Windwos (`#138 <https://github.com/ros2/message_filters/issues/138>`_)
-* Adding ament_lint_common (`#120 <https://github.com/ros2/message_filters/issues/120>`_)
-* Contributors: Alejandro Hernández Cordero, Lucas Wendland
-
-6.0.1 (2024-07-19)
-------------------
-* Deprecating all C headers (`#135 <https://github.com/ros2/message_filters/issues/135>`_)
-* Cleanups (`#134 <https://github.com/ros2/message_filters/issues/134>`_)
-* fix link of index.rst in README.md (`#133 <https://github.com/ros2/message_filters/issues/133>`_)
-* Contributors: Alejandro Hernández Cordero, Iván López Broceño, Lucas Wendland
-
-6.0.0 (2024-06-26)
-------------------
-* Revert "Adding explicit constructors (`#129 <https://github.com/ros2/message_filters/issues/129>`_)" (`#132 <https://github.com/ros2/message_filters/issues/132>`_)
-* Contributors: Chris Lalancette
-
-5.0.0 (2024-06-17)
-------------------
-* fix: fallback Time used incorrect clock (`#118 <https://github.com/ros2/message_filters/issues/118>`_)
-* Adding explicit constructors (`#129 <https://github.com/ros2/message_filters/issues/129>`_)
-* Deprecated qos_profile in Subscriber (`#127 <https://github.com/ros2/message_filters/issues/127>`_)
-* Adding cpplint (`#125 <https://github.com/ros2/message_filters/issues/125>`_)
-* Move Docs From Wiki (`#119 <https://github.com/ros2/message_filters/issues/119>`_)
-* Adding lint_cmake (`#126 <https://github.com/ros2/message_filters/issues/126>`_)
-* Adding Uncrustify Changes (`#124 <https://github.com/ros2/message_filters/issues/124>`_)
-* Adding Copyright Linter (`#122 <https://github.com/ros2/message_filters/issues/122>`_)
-* Contributors: Lucas Wendland, Russ
-
-4.12.0 (2024-04-26)
+4.11.2 (2024-07-31)
 -------------------
+* [LatestTimeSync] Fix crash when Synchronizer is started before the messges are available. (`#136 <https://github.com/ros2/message_filters/issues/136>`_) (`#139 <https://github.com/ros2/message_filters/issues/139>`_)
+  (cherry picked from commit 5ce2b58a0383f83bfde6edd17dc310c19dbd789c)
+  Co-authored-by: Dr. Denis <denis@stoglrobotics.de>
+* Contributors: mergify[bot]
 
 4.11.1 (2024-04-16)
 -------------------
