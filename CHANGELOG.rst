@@ -2,49 +2,12 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.11.2 (2024-07-31)
--------------------
-* [LatestTimeSync] Fix crash when Synchronizer is started before the messges are available. (`#136 <https://github.com/ros2/message_filters/issues/136>`_) (`#139 <https://github.com/ros2/message_filters/issues/139>`_)
+4.7.1 (2024-07-31)
+------------------
+* [LatestTimeSync] Fix crash when Synchronizer is started before the messges are available. (`#136 <https://github.com/ros2/message_filters/issues/136>`_) (`#140 <https://github.com/ros2/message_filters/issues/140>`_)
   (cherry picked from commit 5ce2b58a0383f83bfde6edd17dc310c19dbd789c)
   Co-authored-by: Dr. Denis <denis@stoglrobotics.de>
 * Contributors: mergify[bot]
-
-4.11.1 (2024-04-16)
--------------------
-* Update TimeSynchronizer usage example. (`#115 <https://github.com/ros2/message_filters/issues/115>`_)
-* Contributors: rkeating-planted
-
-4.11.0 (2023-12-26)
--------------------
-* Remove 'using' keyword in message_filters (`#106 <https://github.com/ros2/message_filters/issues/106>`_)
-* Remove the use of ament_target_dependencies. (`#105 <https://github.com/ros2/message_filters/issues/105>`_)
-* Fixes pointed out by clang (`#104 <https://github.com/ros2/message_filters/issues/104>`_)
-* Contributors: Chris Lalancette
-
-4.10.1 (2023-11-06)
--------------------
-* Mark subscription cb parameter const (`#103 <https://github.com/ros2/message_filters/issues/103>`_)
-* Contributors: Patrick Roncagliolo
-
-4.10.0 (2023-08-21)
--------------------
-* Update the HasHeader check to be more specific. (`#101 <https://github.com/ros2/message_filters/issues/101>`_)
-* TypeAdapters support (`#95 <https://github.com/ros2/message_filters/issues/95>`_) (`#96 <https://github.com/ros2/message_filters/issues/96>`_)
-* Contributors: Chris Lalancette, Patrick Roncagliolo
-
-4.9.1 (2023-07-11)
-------------------
-* Cleanup a few minor things in the filters. (`#100 <https://github.com/ros2/message_filters/issues/100>`_)
-* Fix python examples (`#99 <https://github.com/ros2/message_filters/issues/99>`_)
-* Contributors: Chris Lalancette, Ricardo de Azambuja
-
-4.9.0 (2023-06-07)
-------------------
-* feat: add signal time functions to ExactTime policy (`#94 <https://github.com/ros2/message_filters/issues/94>`_)
-* Contributors: Russ
-
-4.8.0 (2023-04-27)
-------------------
 
 4.7.0 (2023-02-13)
 ------------------

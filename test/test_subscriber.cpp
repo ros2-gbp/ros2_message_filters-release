@@ -34,16 +34,17 @@
 
 #include <gtest/gtest.h>
 
-#include <functional>
-#include <memory>
-#include <utility>
-
+// see ros2/rclcpp#1619,1713
+// TODO: remove this comment, and the `NonConstHelper` tests
+// once the deprecated signatures have been discontinued.
+#define RCLCPP_AVOID_DEPRECATIONS_FOR_UNIT_TESTS 1
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
 #include "message_filters/subscriber.h"
 #include "message_filters/chain.h"
 #include "sensor_msgs/msg/imu.hpp"
 
+using namespace message_filters;
 typedef sensor_msgs::msg::Imu Msg;
 typedef std::shared_ptr<sensor_msgs::msg::Imu const> MsgConstPtr;
 typedef std::shared_ptr<sensor_msgs::msg::Imu> MsgPtr;
@@ -67,12 +68,13 @@ TEST(Subscriber, simple)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  message_filters::Subscriber<Msg> sub(node, "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node);
@@ -85,12 +87,13 @@ TEST(Subscriber, simple_raw)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  message_filters::Subscriber<Msg> sub(node.get(), "test_topic");
+  Subscriber<Msg> sub(node.get(), "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node);
@@ -103,7 +106,7 @@ TEST(Subscriber, subUnsubSub)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  message_filters::Subscriber<Msg> sub(node, "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
 
@@ -112,7 +115,8 @@ TEST(Subscriber, subUnsubSub)
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node);
@@ -125,7 +129,7 @@ TEST(Subscriber, subUnsubSub_raw)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  message_filters::Subscriber<Msg> sub(node.get(), "test_topic");
+  Subscriber<Msg> sub(node.get(), "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
 
@@ -134,7 +138,8 @@ TEST(Subscriber, subUnsubSub_raw)
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node);
@@ -147,7 +152,7 @@ TEST(Subscriber, switchRawAndShared)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  message_filters::Subscriber<Msg> sub(node, "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic2", 10);
 
@@ -156,7 +161,8 @@ TEST(Subscriber, switchRawAndShared)
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node);
@@ -169,14 +175,15 @@ TEST(Subscriber, subInChain)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  message_filters::Chain<Msg> c;
-  c.addFilter(std::make_shared<message_filters::Subscriber<Msg> >(node, "test_topic"));
+  Chain<Msg> c;
+  c.addFilter(std::make_shared<Subscriber<Msg> >(node, "test_topic"));
   c.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node);
@@ -209,7 +216,7 @@ TEST(Subscriber, singleNonConstCallback)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   NonConstHelper h;
-  message_filters::Subscriber<Msg> sub(node, "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   Msg msg;
@@ -226,7 +233,7 @@ TEST(Subscriber, multipleNonConstCallbacksFilterSubscriber)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   NonConstHelper h, h2;
-  message_filters::Subscriber<Msg> sub(node, "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
   sub.registerCallback(&NonConstHelper::cb, &h2);
   auto pub = node->create_publisher<Msg>("test_topic", 10);
@@ -247,7 +254,7 @@ TEST(Subscriber, multipleCallbacksSomeFilterSomeDirect)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   NonConstHelper h, h2;
-  message_filters::Subscriber<Msg> sub(node, "test_topic");
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
   auto sub2 = node->create_subscription<Msg>(
     "test_topic", 10, std::bind(&NonConstHelper::cb, &h2, std::placeholders::_1));
@@ -272,13 +279,14 @@ TEST(Subscriber, lifecycle)
 {
   auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test_node");
   Helper h;
-  message_filters::Subscriber<Msg, rclcpp_lifecycle::LifecycleNode> sub(node, "test_topic");
+  Subscriber<Msg, rclcpp_lifecycle::LifecycleNode> sub(node, "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   pub->on_activate();
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
     rclcpp::spin_some(node->get_node_base_interface());
@@ -288,8 +296,7 @@ TEST(Subscriber, lifecycle)
 }
 
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
 
   rclcpp::init(argc, argv);
