@@ -2,25 +2,116 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.3.5 (2024-07-31)
+6.0.4 (2024-08-19)
 ------------------
-* [LatestTimeSync] Fix crash when Synchronizer is started before the messges are available. (`#136 <https://github.com/ros2/message_filters/issues/136>`_)
-* Contributors: Dr. Denis
+* Apply some simplifications and deduplications to ExactTime sync policy (`#142 <https://github.com/ros2/message_filters/issues/142>`_)
+* Minor fixes for `#93 <https://github.com/ros2/message_filters/issues/93>`_ (`#143 <https://github.com/ros2/message_filters/issues/143>`_)
+* Bugfix/segfault when getting surrounding interval of empty cache (`#116 <https://github.com/ros2/message_filters/issues/116>`_)
+* Contributors: Christopher Wecht, Matthias Holoch
 
-4.3.4 (2024-05-15)
+6.0.3 (2024-07-31)
 ------------------
-* Fix cache.h std::placeholder namespace (`#87 <https://github.com/ros2/message_filters/issues/87>`_) (`#121 <https://github.com/ros2/message_filters/issues/121>`_)
-* Contributors: mergify[bot]
+* Migrate to C++11 variadic templates (`#93 <https://github.com/ros2/message_filters/issues/93>`_)
+* [LatestTimeSync] Fix crash when Synchronizeris started before the messges are available. (`#137 <https://github.com/ros2/message_filters/issues/137>`_)
+* Contributors: Christopher Wecht, Dr. Denis
 
-4.3.3 (2023-04-25)
+6.0.2 (2024-07-29)
 ------------------
-* Add latest time zero-order-hold sync policy (`#73 <https://github.com/ros2/message_filters/issues/73>`_) (`#89 <https://github.com/ros2/message_filters/issues/89>`_)
-* Contributors: mergify[bot]
+* Fix cppcheck warning on Windwos (`#138 <https://github.com/ros2/message_filters/issues/138>`_)
+* Adding ament_lint_common (`#120 <https://github.com/ros2/message_filters/issues/120>`_)
+* Contributors: Alejandro Hernández Cordero, Lucas Wendland
 
-4.3.2 (2022-06-20)
+6.0.1 (2024-07-19)
 ------------------
-* Adding fix to subscribe() call with raw node pointer and subscriber options (`#76 <https://github.com/ros2/message_filters/issues/76>`_) (`#77 <https://github.com/ros2/message_filters/issues/77>`_)
-* Contributors: Steve Macenski
+* Deprecating all C headers (`#135 <https://github.com/ros2/message_filters/issues/135>`_)
+* Cleanups (`#134 <https://github.com/ros2/message_filters/issues/134>`_)
+* fix link of index.rst in README.md (`#133 <https://github.com/ros2/message_filters/issues/133>`_)
+* Contributors: Alejandro Hernández Cordero, Iván López Broceño, Lucas Wendland
+
+6.0.0 (2024-06-26)
+------------------
+* Revert "Adding explicit constructors (`#129 <https://github.com/ros2/message_filters/issues/129>`_)" (`#132 <https://github.com/ros2/message_filters/issues/132>`_)
+* Contributors: Chris Lalancette
+
+5.0.0 (2024-06-17)
+------------------
+* fix: fallback Time used incorrect clock (`#118 <https://github.com/ros2/message_filters/issues/118>`_)
+* Adding explicit constructors (`#129 <https://github.com/ros2/message_filters/issues/129>`_)
+* Deprecated qos_profile in Subscriber (`#127 <https://github.com/ros2/message_filters/issues/127>`_)
+* Adding cpplint (`#125 <https://github.com/ros2/message_filters/issues/125>`_)
+* Move Docs From Wiki (`#119 <https://github.com/ros2/message_filters/issues/119>`_)
+* Adding lint_cmake (`#126 <https://github.com/ros2/message_filters/issues/126>`_)
+* Adding Uncrustify Changes (`#124 <https://github.com/ros2/message_filters/issues/124>`_)
+* Adding Copyright Linter (`#122 <https://github.com/ros2/message_filters/issues/122>`_)
+* Contributors: Lucas Wendland, Russ
+
+4.12.0 (2024-04-26)
+-------------------
+
+4.11.1 (2024-04-16)
+-------------------
+* Update TimeSynchronizer usage example. (`#115 <https://github.com/ros2/message_filters/issues/115>`_)
+* Contributors: rkeating-planted
+
+4.11.0 (2023-12-26)
+-------------------
+* Remove 'using' keyword in message_filters (`#106 <https://github.com/ros2/message_filters/issues/106>`_)
+* Remove the use of ament_target_dependencies. (`#105 <https://github.com/ros2/message_filters/issues/105>`_)
+* Fixes pointed out by clang (`#104 <https://github.com/ros2/message_filters/issues/104>`_)
+* Contributors: Chris Lalancette
+
+4.10.1 (2023-11-06)
+-------------------
+* Mark subscription cb parameter const (`#103 <https://github.com/ros2/message_filters/issues/103>`_)
+* Contributors: Patrick Roncagliolo
+
+4.10.0 (2023-08-21)
+-------------------
+* Update the HasHeader check to be more specific. (`#101 <https://github.com/ros2/message_filters/issues/101>`_)
+* TypeAdapters support (`#95 <https://github.com/ros2/message_filters/issues/95>`_) (`#96 <https://github.com/ros2/message_filters/issues/96>`_)
+* Contributors: Chris Lalancette, Patrick Roncagliolo
+
+4.9.1 (2023-07-11)
+------------------
+* Cleanup a few minor things in the filters. (`#100 <https://github.com/ros2/message_filters/issues/100>`_)
+* Fix python examples (`#99 <https://github.com/ros2/message_filters/issues/99>`_)
+* Contributors: Chris Lalancette, Ricardo de Azambuja
+
+4.9.0 (2023-06-07)
+------------------
+* feat: add signal time functions to ExactTime policy (`#94 <https://github.com/ros2/message_filters/issues/94>`_)
+* Contributors: Russ
+
+4.8.0 (2023-04-27)
+------------------
+
+4.7.0 (2023-02-13)
+------------------
+* Update message_filters to C++17. (`#88 <https://github.com/ros2/message_filters/issues/88>`_)
+* Fix cache.h std::placeholder namespace (`#87 <https://github.com/ros2/message_filters/issues/87>`_)
+* [rolling] Update maintainers - 2022-11-07 (`#85 <https://github.com/ros2/message_filters/issues/85>`_)
+* Contributors: Audrow Nash, Chris Lalancette, Haoru Xue
+
+4.6.1 (2022-10-05)
+------------------
+* Add a simpler aproximate time sync policy: ApproximateEpsilonTime (`#84 <https://github.com/ros2/message_filters/issues/84>`_)
+* Contributors: Ivan Santiago Paunovic
+
+4.5.0 (2022-09-13)
+------------------
+* Add latest time zero-order-hold sync policy (`#73 <https://github.com/ros2/message_filters/issues/73>`_)
+* Fix python examples and add a new example in documentation (`#79 <https://github.com/ros2/message_filters/issues/79>`_)
+* Mirror rolling to master
+* Contributors: Audrow Nash, Carlos Andrés Álvarez Restrepo, andermi
+
+4.4.1 (2022-06-20)
+------------------
+* Adding fix to subscribe() call with raw node pointer and subscriber options (`#76 <https://github.com/ros2/message_filters/issues/76>`_)
+* Corrected function arguments in example description (`#35 <https://github.com/ros2/message_filters/issues/35>`_)
+* Contributors: Martin Ganeff, Steve Macenski
+
+4.4.0 (2022-04-29)
+------------------
 
 4.3.1 (2022-03-25)
 ------------------
@@ -126,9 +217,9 @@ Changelog for package message_filters
 * Add noncopyable base class
 * Deboostify and change from ros::Time to rclcpp::Time
 * Convert to ament_cmake
-* Changed invocation to `add` to conform template syntax (`#1388 <https://github.com/ros2/message_filters/issues/1388>`_)
+* Changed invocation to `add` to conform template syntax (`#1388 <https://github.com/ros2/message_filters/issues/1388>`__)
   This change fixes issue `#1383 <https://github.com/ros2/message_filters/issues/1383>`_
-* fix sphinx warning (`#1371 <https://github.com/ros2/message_filters/issues/1371>`_)
+* fix sphinx warning (`#1371 <https://github.com/ros2/message_filters/issues/1371>`__)
 * Contributors: Dirk Thomas, Ethan Gao, Gary Liu, Jørgen Nordmoen, Michael Carroll, Tully Foote
 
 
@@ -140,8 +231,8 @@ Changelog for package message_filters
 
 1.14.0 (2018-05-21)
 -------------------
-* change invocation to `add` to conform template syntax (`#1388 <https://github.com/ros/ros_comm/issues/1388>`_)
-* fix sphinx warning (`#1371 <https://github.com/ros/ros_comm/issues/1371>`_)
+* change invocation to `add` to conform template syntax (`#1388 <https://github.com/ros/ros_comm/issues/1388>`__)
+* fix sphinx warning (`#1371 <https://github.com/ros/ros_comm/issues/1371>`__)
 
 1.13.6 (2018-02-05)
 -------------------
