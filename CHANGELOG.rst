@@ -2,6 +2,23 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.3 (2024-12-13)
+-------------------
+* Move from Wiki and Updated Python docs (backport `#150 <https://github.com/ros2/message_filters/issues/150>`_) (`#151 <https://github.com/ros2/message_filters/issues/151>`_)
+  Co-authored-by: Lucas Wendland <82680922+CursedRock17@users.noreply.github.com>
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Bugfix/segfault when getting surrounding interval of empty cache (backport `#116 <https://github.com/ros2/message_filters/issues/116>`_) (`#141 <https://github.com/ros2/message_filters/issues/141>`_)
+  * Bugfix/segfault when getting surrounding interval of empty cache (`#116 <https://github.com/ros2/message_filters/issues/116>`_)
+  (cherry picked from commit e60450dabf1daf56642efe52fb790f8ecaacd9d7)
+  Co-authored-by: Matthias Holoch <mholoch@gmail.com>
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Remove CODEOWNERS and mirror-rolling-to-master workflow. (`#158 <https://github.com/ros2/message_filters/issues/158>`_) (`#159 <https://github.com/ros2/message_filters/issues/159>`_)
+  They are both outdated and both no longer serving their
+  intended purpose.
+  (cherry picked from commit 693c227efdc094f8b8b5336fec49d03e773611c0)
+  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
+* Contributors: mergify[bot]
+
 4.11.2 (2024-07-31)
 -------------------
 * [LatestTimeSync] Fix crash when Synchronizer is started before the messges are available. (`#136 <https://github.com/ros2/message_filters/issues/136>`_) (`#139 <https://github.com/ros2/message_filters/issues/139>`_)
