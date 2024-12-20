@@ -1,36 +1,30 @@
-/*********************************************************************
-* Software License Agreement (BSD License)
-*
-*  Copyright (c) 2008, Willow Garage, Inc.
-*  All rights reserved.
-*
-*  Redistribution and use in source and binary forms, with or without
-*  modification, are permitted provided that the following conditions
-*  are met:
-*
-*   * Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above
-*     copyright notice, this list of conditions and the following
-*     disclaimer in the documentation and/or other materials provided
-*     with the distribution.
-*   * Neither the name of the Willow Garage nor the names of its
-*     contributors may be used to endorse or promote products derived
-*     from this software without specific prior written permission.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*  POSSIBILITY OF SUCH DAMAGE.
-*********************************************************************/
+// Copyright 2008, Willow Garage, Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the Willow Garage nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 // Initial file imported from
 // https://github.com/ros2/message_filters/blob/1866ddb86db5b5c7746556ea7544b6f34c00415b/test/time_sequencer_unittest.cpp
@@ -42,10 +36,10 @@
 #include <random>
 
 #include <rclcpp/rclcpp.hpp>
-#include "message_filters/subscriber.h"
-#include "message_filters/time_sequencer.h"
-#include "message_filters/time_synchronizer.h"
-#include "message_filters/chain.h"
+#include "message_filters/subscriber.hpp"
+#include "message_filters/time_sequencer.hpp"
+#include "message_filters/time_synchronizer.hpp"
+#include "message_filters/chain.hpp"
 #include "sensor_msgs/msg/imu.hpp"
 
 typedef sensor_msgs::msg::Imu Msg;
@@ -59,12 +53,12 @@ public:
   : count_(0)
   {}
 
-  void cb(const MsgConstPtr&)
+  void cb(const MsgConstPtr &)
   {
     ++count_;
   }
 
-  void cb2(const MsgConstPtr&, const MsgConstPtr&)
+  void cb2(const MsgConstPtr &, const MsgConstPtr &)
   {
     ++count_;
   }
@@ -84,7 +78,9 @@ static void fuzz_msg(MsgPtr msg)
 TEST(TimeSequencer, fuzz_sequencer)
 {
   rclcpp::Node::SharedPtr node = std::make_shared<rclcpp::Node>("test_node");
-  message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(0, 10000000), rclcpp::Duration(0, 1000000), 10, node);
+  message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(0, 10000000), rclcpp::Duration(
+      0, 1000000),
+    10, node);
   Helper h;
   seq.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   rclcpp::Clock ros_clock;
@@ -121,9 +117,9 @@ TEST(TimeSynchronizer, fuzz_synchronizer)
     msg1->header.stamp = rclcpp::Clock().now();
     fuzz_msg(msg2);
     msg2->header.stamp = msg1->header.stamp;
-    sync.add0(msg1);
+    sync.add<0>(msg1);
     ASSERT_EQ(h.count_, 0);
-    sync.add1(msg2);
+    sync.add<1>(msg2);
     ASSERT_EQ(h.count_, 1);
     rclcpp::Rate(50).sleep();
   }
@@ -133,7 +129,9 @@ TEST(Subscriber, fuzz_subscriber)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  message_filters::Subscriber<Msg> sub(node, "test_topic");
+  rclcpp::QoS default_qos =
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
+  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
@@ -151,7 +149,7 @@ TEST(Subscriber, fuzz_subscriber)
   rclcpp::spin_some(node);
 }
 
-int main(int argc, char **argv)
+int main(int argc, char ** argv)
 {
   testing::InitGoogleTest(&argc, argv);
 
