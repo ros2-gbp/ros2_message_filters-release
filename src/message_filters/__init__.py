@@ -40,6 +40,8 @@ from rclpy.duration import Duration
 from rclpy.logging import LoggingSeverity
 from rclpy.time import Time
 
+from typing_extensions import deprecated
+
 
 class SimpleFilter(object):
 
@@ -172,7 +174,16 @@ class Cache(SimpleFilter):
             return None
         return older[-1]
 
+    @deprecated('Deprecated in favour of :py:classmethod:Cache.getLatestTime:.')
     def getLastestTime(self):
+        """
+        Return the newest recorded timestamp.
+
+        Deprecated in favour of :py:classmethod:Cache.getLatestTime:.
+        """
+        return self.getLatestTime()
+
+    def getLatestTime(self):
         """Return the newest recorded timestamp."""
         if not self.cache_times:
             return None
@@ -185,9 +196,9 @@ class Cache(SimpleFilter):
         return self.cache_times[0]
 
     def getLast(self):
-        if self.getLastestTime() is None:
+        if self.getLatestTime() is None:
             return None
-        return self.getElemAfterTime(self.getLastestTime())
+        return self.getElemAfterTime(self.getLatestTime())
 
 
 class TimeSynchronizer(SimpleFilter):
