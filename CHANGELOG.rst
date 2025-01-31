@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.1 (2025-01-31)
+------------------
+* fix typo: Cache.getLastestTime -> Cache.getLatestTime (`#165 <https://github.com/ros2/message_filters//issues/165>`_)
+* Contributors: Michal Staniaszek
+
 7.0.0 (2024-12-20)
 ------------------
 * Add temporal offset between topics between ApproximateTimeSynchronizer (`#154 <https://github.com/ros2/message_filters/issues/154>`_)
