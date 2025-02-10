@@ -216,7 +216,7 @@ tracks:
     - git-bloom-generate -y rosrpm --prefix release/:{ros_distro} :{ros_distro} -i
       :{release_inc} --os-name rhel
     devel_branch: jazzy
-    last_version: 4.11.3
+    last_version: 4.11.4
     name: message_filters
     patches: null
     release_inc: '1'
