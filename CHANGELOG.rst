@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.4 (2025-02-10)
+-------------------
+* fix: fallback Time used incorrect clock (`#118 <https://github.com/ros2/message_filters/issues/118>`_) (`#164 <https://github.com/ros2/message_filters/issues/164>`_)
+  (cherry picked from commit 5d99c9ca87e037efb581c038973748c1a1ab378e)
+  Co-authored-by: Russ <russ.webber@greenroomrobotics.com>
+* Contributors: mergify[bot]
+
 4.11.3 (2024-12-13)
 -------------------
 * Move from Wiki and Updated Python docs (backport `#150 <https://github.com/ros2/message_filters/issues/150>`_) (`#151 <https://github.com/ros2/message_filters/issues/151>`_)
