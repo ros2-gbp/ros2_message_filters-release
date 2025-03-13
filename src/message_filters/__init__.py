@@ -29,15 +29,18 @@
 
 """Message Filter Objects."""
 
+from bisect import insort_right
 from functools import reduce
 import itertools
 import threading
-# import builtin_interfaces
+from typing import Union
 
+from builtin_interfaces.msg import Time as TimeMsg
 import rclpy
 from rclpy.clock import ROSClock
 from rclpy.duration import Duration
 from rclpy.logging import LoggingSeverity
+from rclpy.node import Node
 from rclpy.time import Time
 
 from typing_extensions import deprecated
@@ -263,17 +266,25 @@ class ApproximateTimeSynchronizer(TimeSynchronizer):
     The ``allow_headerless`` option specifies whether to allow storing
     headerless messages with current ROS time instead of timestamp. You should
     avoid this as much as you can, since the delays are unpredictable.
+    The ```sync_arrival_time``` option enables synchronizing incoming messages
+    with the arrival ROS time instead of the message timestamp. You should
+    avoid this as much as you can, since the delays are unpredictable.
     """
 
-    def __init__(self, fs, queue_size, slop, queue_offset=False, allow_headerless=False):
+    def __init__(self, fs, queue_size, slop,
+                 queue_offset=False,
+                 allow_headerless=False,
+                 sync_arrival_time=False):
         TimeSynchronizer.__init__(self, fs, queue_size)
         self.slop = Duration(seconds=slop)
         self.allow_headerless = allow_headerless
         self.queue_offset = queue_offset
+        self.sync_arrival_time = sync_arrival_time
 
     def add(self, msg, my_queue, my_queue_index=None):
-        if not hasattr(msg, 'header') or not hasattr(msg.header, 'stamp'):
-            if not self.allow_headerless:
+        if not hasattr(msg, 'header') or not hasattr(msg.header, 'stamp') or \
+                self.sync_arrival_time:
+            if not self.allow_headerless and not self.sync_arrival_time:
                 msg_filters_logger = rclpy.logging.get_logger('message_filters_approx')
                 msg_filters_logger.set_level(LoggingSeverity.INFO)
                 msg_filters_logger.warn('can not use message filters messages '
@@ -333,3 +344,128 @@ class ApproximateTimeSynchronizer(TimeSynchronizer):
                     del q[t.nanoseconds]
                 break  # fast finish after the synchronization
         self.lock.release()
+
+
+class TimeSequencer(SimpleFilter):
+    """
+    Sequences messages based on the timestamp of their header.
+
+    At construction, the TimeSequencer takes a duration 'delay' which specifies
+    how long to queue up messages to provide a time sequencing over them.
+    As messages arrive, they are sorted according to their timestamps.
+    A callback for a message is never invoked until the messages' timestamp is
+    out of date by at least the delay. However, for all messages which are out of
+    date by at least delay, their callbacks are invoked in temporal order.
+    If a message arrives from a time prior to a message which has already had its
+    callback invoked, it is thrown away.
+    """
+
+    def __init__(
+        self,
+        input_filter: SimpleFilter,
+        delay: Union[Duration, float],
+        update_rate: Union[Duration, float],
+        queue_size: int,
+        node: Node,
+        msg_stamp_attr: str = 'header.stamp',
+    ):
+        """
+        Construct a TimeSequencer filter for a subscriber.
+
+        Args:
+        ----
+        input_filter (SimpleFilter): The input filter to connect to.
+            Typically a Subscriber.
+        delay (Duration | float): The delay (in seconds) to wait for
+            messages to arrive before dispatching them.
+        update_rate (Duration | float): The rate at which to check for
+            messages that are ready to be dispatched.
+        queue_size (int): The maximum number of messages to store. Set 0
+            for no limit.
+        node (Node): The node to create the timer on.
+        msg_stamp_attr (str, optional): The attribute to use for retrieving
+            the timestamp from the message. Should point to a
+            builtin_interfaces.msg.Time field. Defaults to "header.stamp".
+
+        """
+        super().__init__()
+        if not isinstance(delay, Duration):
+            delay = Duration(seconds=delay)
+        if not isinstance(update_rate, Duration):
+            update_rate = Duration(seconds=update_rate)
+        self.delay: float = delay
+        self.update_rate: float = update_rate
+        self.queue_size: int = queue_size
+        self.lock = threading.Lock()
+        self.messages = []
+        self.last_time: Time = Time()
+        self.node: Node = node
+        self.msg_stamp_attrs = msg_stamp_attr.split('.')
+        self.update_timer = self.node.create_timer(
+            self.update_rate.nanoseconds / 1e9, self._dispatch
+        )
+        self.incoming_connection = None
+        if input_filter is not None:
+            self.connectInput(input_filter)
+
+    def _getMsgStampAttr(self, msg):
+        obj = msg
+        for attr in self.msg_stamp_attrs:
+            if not hasattr(obj, attr):
+                return None
+            obj = getattr(obj, attr)
+        return obj
+
+    def connectInput(self, input_filter: SimpleFilter):
+        if self.incoming_connection is not None:
+            raise RuntimeError('Already connected to an input filter.')
+        self.incoming_connection = input_filter.registerCallback(self._add)
+
+    def _add(self, msg):
+        with self.lock:
+            stamp = self._getStamp(msg)
+            if stamp is None:
+                return
+            if stamp.nanoseconds < self.last_time.nanoseconds:
+                return
+            # Insert msg into messages in sorted order
+            insort_right(self.messages, (stamp, msg))
+            # If queue_size is exceeded, remove the earliest message
+            if self.queue_size != 0 and len(self.messages) > self.queue_size:
+                del self.messages[0]
+
+    def _getStamp(self, msg):
+        stamp = self._getMsgStampAttr(msg)
+        if stamp is not None:
+            if not isinstance(stamp, TimeMsg):
+                raise TypeError(
+                    f'Expected {TimeMsg}, got {type(stamp)} in msg attribute '
+                    f"{'.'.join(self.msg_stamp_attrs)}"
+                )
+            stamp = Time.from_msg(stamp)
+            return stamp
+        else:
+            self.node.get_logger().warn(
+                'Cannot use message without timestamp; discarding message.'
+            )
+            return None
+
+    def _dispatch(self):
+        to_call = []
+        with self.lock:
+            while self.messages:
+                stamp, msg = self.messages[0]
+                if stamp + self.delay <= self.node.get_clock().now():
+                    self.last_time = stamp
+                    # Remove message from messages
+                    self.messages.pop(0)
+                    to_call.append(msg)
+                else:
+                    break
+        for msg in to_call:
+            self.signalMessage(msg)
+
+    def shutdown(self):
+        """Clean up the TimeSequencer."""
+        self.update_timer.cancel()
+        self.node.destroy_timer(self.update_timer)
