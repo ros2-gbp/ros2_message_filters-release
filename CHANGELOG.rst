@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.0.2 (2025-03-13)
+------------------
+* Feature/time sequencer python (`#156 <https://github.com/ros2/message_filters/issues/156>`_)
+* Add sync_arrival_time flag to ApproximateTimeSynchronizer (`#166 <https://github.com/ros2/message_filters/issues/166>`_)
+* fix: add `rclcpp::shutdown` (`#167 <https://github.com/ros2/message_filters/issues/167>`_)
+* Contributors: Kalvik, Saif Sidhik, Yuyuan Yuan
+
 7.0.1 (2025-01-31)
 ------------------
 * fix typo: Cache.getLastestTime -> Cache.getLatestTime (`#165 <https://github.com/ros2/message_filters//issues/165>`_)
