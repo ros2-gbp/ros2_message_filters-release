@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.3.6 (2025-03-25)
+------------------
+* Move from Wiki and Updated Python docs (backport `#150 <https://github.com/ros2/message_filters/issues/150>`_) (`#152 <https://github.com/ros2/message_filters/issues/152>`_)
+* Contributors: mergify[bot]
+
 4.3.5 (2024-07-31)
 ------------------
 * [LatestTimeSync] Fix crash when Synchronizer is started before the messges are available. (`#136 <https://github.com/ros2/message_filters/issues/136>`_)
