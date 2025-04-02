@@ -2,9 +2,10 @@ cmake_minimum_required(VERSION 3.5)
 
 project(message_filters)
 
-# Default to C++14
+# Default to C++17
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -15,6 +16,7 @@ find_package(ament_cmake_python REQUIRED)
 find_package(ament_cmake_ros REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rcutils REQUIRED)
+find_package(std_msgs REQUIRED)
 
 add_library(${PROJECT_NAME} src/connection.cpp)
 if(WIN32)
@@ -24,10 +26,10 @@ endif()
 target_include_directories(${PROJECT_NAME} PUBLIC
   "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
   "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>")
-
-ament_target_dependencies(${PROJECT_NAME}
-  "rclcpp"
-  "rcutils"
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  rclcpp::rclcpp
+  rcutils::rcutils
+  ${std_msgs_TARGETS}
 )
 
 install(
@@ -52,12 +54,12 @@ ament_export_libraries(${PROJECT_NAME})
 # Export modern CMake targets
 ament_export_targets(${PROJECT_NAME})
 
-ament_export_dependencies(rclcpp rcutils)
+ament_export_dependencies(rclcpp rcutils std_msgs)
 
 if(BUILD_TESTING)
-  find_package(sensor_msgs REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(rclcpp_lifecycle REQUIRED)
+  find_package(sensor_msgs REQUIRED)
 
   ament_lint_auto_find_test_dependencies()
 
@@ -85,8 +87,7 @@ if(BUILD_TESTING)
 
   ament_add_gtest(${PROJECT_NAME}-test_subscriber test/test_subscriber.cpp)
   if(TARGET ${PROJECT_NAME}-test_subscriber)
-    target_link_libraries(${PROJECT_NAME}-test_subscriber ${PROJECT_NAME})
-    ament_target_dependencies(${PROJECT_NAME}-test_subscriber "rclcpp" "rclcpp_lifecycle" "sensor_msgs")
+    target_link_libraries(${PROJECT_NAME}-test_subscriber ${PROJECT_NAME} rclcpp::rclcpp rclcpp_lifecycle::rclcpp_lifecycle ${sensor_msgs_TARGETS})
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-test_synchronizer test/test_synchronizer.cpp)
@@ -109,6 +110,11 @@ if(BUILD_TESTING)
     target_link_libraries(${PROJECT_NAME}-test_approximate_time_policy ${PROJECT_NAME})
   endif()
 
+  ament_add_gtest(${PROJECT_NAME}-test_approximate_epsilon_time_policy test/test_approximate_epsilon_time_policy.cpp)
+  if(TARGET ${PROJECT_NAME}-test_approximate_epsilon_time_policy)
+    target_link_libraries(${PROJECT_NAME}-test_approximate_epsilon_time_policy ${PROJECT_NAME})
+  endif()
+
   ament_add_gtest(${PROJECT_NAME}-test_latest_time_policy test/test_latest_time_policy.cpp)
   if(TARGET ${PROJECT_NAME}-test_latest_time_policy)
     target_link_libraries(${PROJECT_NAME}-test_latest_time_policy ${PROJECT_NAME})
@@ -116,14 +122,12 @@ if(BUILD_TESTING)
 
   ament_add_gtest(${PROJECT_NAME}-test_fuzz test/test_fuzz.cpp SKIP_TEST)
   if(TARGET ${PROJECT_NAME}-test_fuzz)
-    target_link_libraries(${PROJECT_NAME}-test_fuzz ${PROJECT_NAME})
-    ament_target_dependencies(${PROJECT_NAME}-test_fuzz "rclcpp" "sensor_msgs")
+    target_link_libraries(${PROJECT_NAME}-test_fuzz ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-test_message_traits test/test_message_traits.cpp)
   if(TARGET ${PROJECT_NAME}-test_message_traits)
-    target_link_libraries(${PROJECT_NAME}-test_message_traits ${PROJECT_NAME})
-    ament_target_dependencies(${PROJECT_NAME}-test_message_traits "rclcpp" "std_msgs")
+    target_link_libraries(${PROJECT_NAME}-test_message_traits ${PROJECT_NAME} rclcpp::rclcpp ${std_msgs_TARGETS})
   endif()
 
   # Provides PYTHON_EXECUTABLE_DEBUG
