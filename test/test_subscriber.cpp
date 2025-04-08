@@ -34,9 +34,21 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 #include "message_filters/subscriber.hpp"
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
 #include "message_filters/chain.hpp"
 #include "sensor_msgs/msg/imu.hpp"
+
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 
 typedef sensor_msgs::msg::Imu Msg;
 typedef std::shared_ptr<sensor_msgs::msg::Imu const> MsgConstPtr;
@@ -156,7 +168,7 @@ TEST(Subscriber, switchRawAndShared)
   auto pub = node->create_publisher<Msg>("test_topic2", 10);
 
   sub.unsubscribe();
-  sub.subscribe(node.get(), "test_topic2", default_qos);
+  sub.subscribe(*node.get(), "test_topic2", default_qos);
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
@@ -286,7 +298,7 @@ TEST(Subscriber, lifecycle)
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg, rclcpp_lifecycle::LifecycleNode> sub(node, "test_topic",
+  message_filters::Subscriber<Msg> sub(node, "test_topic",
     default_qos);
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
@@ -302,6 +314,34 @@ TEST(Subscriber, lifecycle)
   ASSERT_GT(h.count_, 0);
 }
 
+TEST(Subscriber, node_interfaces)
+{
+  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test_node");
+  Helper h;
+
+  // disassemble node into relevant interfaces
+  using NodeParametersInterface = rclcpp::node_interfaces::NodeParametersInterface;
+  using NodeTopicsInterface = rclcpp::node_interfaces::NodeTopicsInterface;
+  using RequiredInterfaces = rclcpp::node_interfaces::NodeInterfaces<NodeParametersInterface,
+      NodeTopicsInterface>;
+
+  rclcpp::QoS default_qos =
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
+  message_filters::Subscriber<Msg> sub(RequiredInterfaces(*node), "test_topic",
+    default_qos);
+  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
+  auto pub = node->create_publisher<Msg>("test_topic", 10);
+  pub->on_activate();
+  rclcpp::Clock ros_clock;
+  auto start = ros_clock.now();
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+    pub->publish(Msg());
+    rclcpp::Rate(50).sleep();
+    rclcpp::spin_some(node->get_node_base_interface());
+  }
+
+  ASSERT_GT(h.count_, 0);
+}
 
 int main(int argc, char ** argv)
 {
@@ -313,3 +353,7 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return ret;
 }
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
