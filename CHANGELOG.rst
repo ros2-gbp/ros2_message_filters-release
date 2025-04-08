@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.3.7 (2025-04-08)
+------------------
+* Future port hpp files (`#170 <https://github.com/ros2/message_filters/issues/170>`_) (`#172 <https://github.com/ros2/message_filters/issues/172>`_)
+* Contributors: mergify[bot]
+
 4.3.6 (2025-03-25)
 ------------------
 * Move from Wiki and Updated Python docs (backport `#150 <https://github.com/ros2/message_filters/issues/150>`_) (`#152 <https://github.com/ros2/message_filters/issues/152>`_)
