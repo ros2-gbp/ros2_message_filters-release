@@ -1,52 +1,54 @@
-/*********************************************************************
-* Software License Agreement (BSD License)
-*
-*  Copyright (c) 2008, Willow Garage, Inc.
-*  All rights reserved.
-*
-*  Redistribution and use in source and binary forms, with or without
-*  modification, are permitted provided that the following conditions
-*  are met:
-*
-*   * Redistributions of source code must retain the above copyright
-*     notice, this list of conditions and the following disclaimer.
-*   * Redistributions in binary form must reproduce the above
-*     copyright notice, this list of conditions and the following
-*     disclaimer in the documentation and/or other materials provided
-*     with the distribution.
-*   * Neither the name of the Willow Garage nor the names of its
-*     contributors may be used to endorse or promote products derived
-*     from this software without specific prior written permission.
-*
-*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
-*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
-*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
-*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
-*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
-*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
-*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-*  POSSIBILITY OF SUCH DAMAGE.
-*********************************************************************/
+// Copyright 2008, Willow Garage, Inc. All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright
+//      notice, this list of conditions and the following disclaimer.
+//
+//    * Redistributions in binary form must reproduce the above copyright
+//      notice, this list of conditions and the following disclaimer in the
+//      documentation and/or other materials provided with the distribution.
+//
+//    * Neither the name of the Willow Garage nor the names of its
+//      contributors may be used to endorse or promote products derived from
+//      this software without specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+// POSSIBILITY OF SUCH DAMAGE.
 
 // Initial file imported from
 // https://github.com/ros2/message_filters/blob/1866ddb86db5b5c7746556ea7544b6f34c00415b/test/time_sequencer_unittest.cpp
 
 #include <gtest/gtest.h>
+
+#include <functional>
+#include <memory>
 #include <random>
 
 #include <rclcpp/rclcpp.hpp>
-#include "message_filters/subscriber.h"
-#include "message_filters/time_sequencer.h"
-#include "message_filters/time_synchronizer.h"
-#include "message_filters/chain.h"
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
+#include "message_filters/subscriber.hpp"
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+#include "message_filters/time_sequencer.hpp"
+#include "message_filters/time_synchronizer.hpp"
+#include "message_filters/chain.hpp"
 #include "sensor_msgs/msg/imu.hpp"
 
-using namespace std::placeholders;
-using namespace message_filters;
 typedef sensor_msgs::msg::Imu Msg;
 typedef std::shared_ptr<sensor_msgs::msg::Imu const> MsgConstPtr;
 typedef std::shared_ptr<sensor_msgs::msg::Imu> MsgPtr;
@@ -58,33 +60,36 @@ public:
   : count_(0)
   {}
 
-  void cb(const MsgConstPtr&)
+  void cb(const MsgConstPtr &)
   {
     ++count_;
   }
 
-  void cb2(const MsgConstPtr&, const MsgConstPtr&)
+  void cb2(const MsgConstPtr &, const MsgConstPtr &)
   {
     ++count_;
   }
   int32_t count_;
 };
 
-static void fuzz_msg(MsgPtr msg) {
-    static std::random_device seeder;
-    std::mt19937 gen(seeder());
-    std::uniform_real_distribution<float> distr(1.0, 3.0);
-    msg->linear_acceleration.x = distr(gen);
-    msg->linear_acceleration.y = distr(gen);
-    msg->linear_acceleration.z = distr(gen);
+static void fuzz_msg(MsgPtr msg)
+{
+  static std::random_device seeder;
+  std::mt19937 gen(seeder());
+  std::uniform_real_distribution<float> distr(1.0, 3.0);
+  msg->linear_acceleration.x = distr(gen);
+  msg->linear_acceleration.y = distr(gen);
+  msg->linear_acceleration.z = distr(gen);
 }
 
 TEST(TimeSequencer, fuzz_sequencer)
 {
   rclcpp::Node::SharedPtr node = std::make_shared<rclcpp::Node>("test_node");
-  TimeSequencer<Msg> seq(rclcpp::Duration(0, 10000000), rclcpp::Duration(0, 1000000), 10, node);
+  message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(0, 10000000), rclcpp::Duration(
+      0, 1000000),
+    10, node);
   Helper h;
-  seq.registerCallback(std::bind(&Helper::cb, &h, _1));
+  seq.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
   auto msg = std::make_shared<Msg>();
@@ -105,24 +110,23 @@ TEST(TimeSequencer, fuzz_sequencer)
 
 TEST(TimeSynchronizer, fuzz_synchronizer)
 {
-  TimeSynchronizer<Msg, Msg> sync(1);
+  message_filters::TimeSynchronizer<Msg, Msg> sync(1);
   Helper h;
-  sync.registerCallback(std::bind(&Helper::cb2, &h, _1, _2));
+  sync.registerCallback(std::bind(&Helper::cb2, &h, std::placeholders::_1, std::placeholders::_2));
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
   auto msg1 = std::make_shared<Msg>();
   auto msg2 = std::make_shared<Msg>();
-  while ((ros_clock.now() - start) < rclcpp::Duration(5, 0))
-  {
+  while ((ros_clock.now() - start) < rclcpp::Duration(5, 0)) {
     h.count_ = 0;
     fuzz_msg(msg1);
     msg1->header.stamp = rclcpp::Clock().now();
     fuzz_msg(msg2);
     msg2->header.stamp = msg1->header.stamp;
-    sync.add0(msg1);
+    sync.add<0>(msg1);
     ASSERT_EQ(h.count_, 0);
-    sync.add1(msg2);
+    sync.add<1>(msg2);
     ASSERT_EQ(h.count_, 1);
     rclcpp::Rate(50).sleep();
   }
@@ -132,14 +136,22 @@ TEST(Subscriber, fuzz_subscriber)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
   Helper h;
-  Subscriber<Msg> sub(node, "test_topic");
-  sub.registerCallback(std::bind(&Helper::cb, &h, _1));
+  rclcpp::QoS default_qos =
+    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
+  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
+  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
   auto msg = std::make_shared<Msg>();
-  while ((ros_clock.now() - start) < rclcpp::Duration(5, 0))
-  {
+  while ((ros_clock.now() - start) < rclcpp::Duration(5, 0)) {
     h.count_ = 0;
     fuzz_msg(msg);
     msg->header.stamp = ros_clock.now();
@@ -151,10 +163,13 @@ TEST(Subscriber, fuzz_subscriber)
   rclcpp::spin_some(node);
 }
 
-int main(int argc, char **argv){
+int main(int argc, char ** argv)
+{
   testing::InitGoogleTest(&argc, argv);
 
   rclcpp::init(argc, argv);
 
-  return RUN_ALL_TESTS();
+  auto ret = RUN_ALL_TESTS();
+  rclcpp::shutdown();
+  return ret;
 }

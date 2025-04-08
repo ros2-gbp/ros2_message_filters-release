@@ -5,7 +5,7 @@ Prerequisites
 ~~~~~~~~~~~~~
 This tutorial assumes you have a working knowledge of ROS 2
 
-If you have not done so already `create a workspace <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
+If you have not done so already `create a workspace <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
 
 1. Create a Basic Node with Includes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -18,9 +18,9 @@ If you have not done so already `create a workspace <https://docs.ros.org/en/hum
   #include <functional>
   #include <memory>
 
-  #include "message_filters/subscriber.h"
-  #include "message_filters/synchronizer.h"
-  #include "message_filters/sync_policies/approximate_time.h"
+  #include "message_filters/subscriber.hpp"
+  #include "message_filters/synchronizer.hpp"
+  #include "message_filters/sync_policies/approximate_time.hpp"
 
   #include "sensor_msgs/msg/temperature.hpp"
   #include "sensor_msgs/msg/fluid_pressure.hpp"
@@ -47,7 +47,7 @@ If you have not done so already `create a workspace <https://docs.ros.org/en/hum
 
 
 For this example we will be using the ``temperature`` and ``fluid_pressure`` messages found in
-`sensor_msgs <https://github.com/ros2/common_interfaces/tree/humble/sensor_msgs/msg>`_.
+`sensor_msgs <https://github.com/ros2/common_interfaces/tree/rolling/sensor_msgs/msg>`_.
 To simulate a working ``Synchronizer`` using the ``ApproximateTime`` Policy. We will be publishing and subscribing to topics of those respective types, to showcase how real sensors would be working.
 
 .. code-block:: C++
@@ -70,8 +70,8 @@ Next, we can initialize these private elements within a basic ``Node`` construct
       temp_pub = this->create_publisher<sensor_msgs::msg::Temperature>("temp", qos);
       fluid_pub = this->create_publisher<sensor_msgs::msg::FluidPressure>("fluid", qos);
 
-      temp_sub.subscribe(this, "temp", qos.get_rmw_qos_profile());
-      fluid_sub.subscribe(this, "fluid", qos.get_rmw_qos_profile());
+      temp_sub.subscribe(this, "temp", qos);
+      fluid_sub.subscribe(this, "fluid", qos);
 
       timer = this->create_wall_timer(500ms, std::bind(&TimeSyncNode::TimerCallback, this));
       second_timer = this->create_wall_timer(550ms, std::bind(&TimeSyncNode::SecondTimerCallback, this));

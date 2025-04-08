@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef MESSAGE_FILTERS__CHAIN_H_
-#define MESSAGE_FILTERS__CHAIN_H_
+#ifndef MESSAGE_FILTERS__SYNC_POLICIES__APPROXIMATE_EPSILON_TIME_H_
+#define MESSAGE_FILTERS__SYNC_POLICIES__APPROXIMATE_EPSILON_TIME_H_
 
-#warning This header is obsolete, please include message_filters/chain.hpp instead
+#warning This header is obsolete, please include message_filters/approximate_epsilon_time.hpp \
+  header
 
-#include <message_filters/chain.hpp>
+#include <message_filters/sync_policies/approximate_epsilon_time.hpp>
 
-#endif  // MESSAGE_FILTERS__CHAIN_H_
+#endif  // MESSAGE_FILTERS__SYNC_POLICIES__APPROXIMATE_EPSILON_TIME_H_
