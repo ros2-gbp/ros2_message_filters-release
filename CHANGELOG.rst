@@ -2,6 +2,12 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.1.0 (2025-04-08)
+------------------
+* Removed windows warnings (`#171 <https://github.com/ros2/message_filters/issues/171>`_)
+* More generic subscriber implementation using NodeInterfaces from rclcpp (`#113 <https://github.com/ros2/message_filters/issues/113>`_)
+* Contributors: Alejandro Hernández Cordero, Dominik
+
 7.0.2 (2025-03-13)
 ------------------
 * Feature/time sequencer python (`#156 <https://github.com/ros2/message_filters/issues/156>`_)
