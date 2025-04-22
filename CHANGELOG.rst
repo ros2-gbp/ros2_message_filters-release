@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.6 (2025-04-22)
+-------------------
+* Fix doc link in README (`#173 <https://github.com/ros2/message_filters/issues/173>`_)
+  This is already fixed in Rolling, but broken in Jazzy
+* Future port hpp files (`#170 <https://github.com/ros2/message_filters/issues/170>`_)
+* Contributors: Patrick Roncagliolo, Tim Clephas
+
 4.11.5 (2025-04-02)
 -------------------
 * fix: add `rclcpp::shutdown` (`#167 <https://github.com/ros2/message_filters/issues/167>`_) (`#168 <https://github.com/ros2/message_filters/issues/168>`_)
