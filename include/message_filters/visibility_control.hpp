@@ -15,42 +15,6 @@
 #ifndef MESSAGE_FILTERS__VISIBILITY_CONTROL_HPP_
 #define MESSAGE_FILTERS__VISIBILITY_CONTROL_HPP_
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-
-// This logic was borrowed (then namespaced) from the examples on the gcc wiki:
-//     https://gcc.gnu.org/wiki/Visibility
-
-#if defined _WIN32 || defined __CYGWIN__
-  #ifdef __GNUC__
-    #define MESSAGE_FILTERS_EXPORT __attribute__ ((dllexport))
-    #define MESSAGE_FILTERS_IMPORT __attribute__ ((dllimport))
-  #else
-    #define MESSAGE_FILTERS_EXPORT __declspec(dllexport)
-    #define MESSAGE_FILTERS_IMPORT __declspec(dllimport)
-  #endif
-  #ifdef MESSAGE_FILTERS_BUILDING_DLL
-    #define MESSAGE_FILTERS_PUBLIC MESSAGE_FILTERS_EXPORT
-  #else
-    #define MESSAGE_FILTERS_PUBLIC MESSAGE_FILTERS_IMPORT
-  #endif
-  #define MESSAGE_FILTERS_LOCAL
-#else
-  #define MESSAGE_FILTERS_EXPORT __attribute__ ((visibility("default")))
-  #define MESSAGE_FILTERS_IMPORT
-  #if __GNUC__ >= 4
-    #define MESSAGE_FILTERS_PUBLIC __attribute__ ((visibility("default")))
-    #define MESSAGE_FILTERS_LOCAL  __attribute__ ((visibility("hidden")))
-  #else
-    #define MESSAGE_FILTERS_PUBLIC
-    #define MESSAGE_FILTERS_LOCAL
-  #endif
-#endif
-
-#ifdef __cplusplus
-}
-#endif
+#include "visibility_control.h"
 
 #endif  // MESSAGE_FILTERS__VISIBILITY_CONTROL_HPP_
