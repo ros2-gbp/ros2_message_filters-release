@@ -5,7 +5,7 @@ Prerequisites
 ~~~~~~~~~~~~~
 This tutorial assumes you have a working knowledge of ROS 2
 
-If you have not done so already `create a workspace <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
+If you have not done so already `create a workspace <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
 
 
 1. Create a Basic Node with Includes
@@ -19,8 +19,8 @@ If you have not done so already `create a workspace <https://docs.ros.org/en/jaz
     #include <functional>
     #include <memory>
 
-    #include "message_filters/subscriber.h"
-    #include "message_filters/time_synchronizer.h"
+    #include "message_filters/subscriber.hpp"
+    #include "message_filters/time_synchronizer.hpp"
 
     #include "sensor_msgs/msg/temperature.hpp"
     #include "sensor_msgs/msg/fluid_pressure.hpp"
@@ -47,7 +47,7 @@ If you have not done so already `create a workspace <https://docs.ros.org/en/jaz
 
 
 For this example we will be using the ``temperature`` and ``fluid_pressure`` messages found in
-`sensor_msgs <https://github.com/ros2/common_interfaces/tree/jazzy/sensor_msgs/msg>`_.
+`sensor_msgs <https://github.com/ros2/common_interfaces/tree/rolling/sensor_msgs/msg>`_.
 To simulate a working ``TimeSynchronizer`` we will be publishing and subscribing to topics of those respective types, to showcase how real sensors would be working.
 
 .. code-block:: C++
@@ -71,8 +71,8 @@ Next, we can initialize these private elements within a basic ``Node`` construct
       temp_pub = this->create_publisher<sensor_msgs::msg::Temperature>("temp", qos);
       fluid_pub = this->create_publisher<sensor_msgs::msg::FluidPressure>("fluid", qos);
 
-      temp_sub.subscribe(this, "temp", qos.get_rmw_qos_profile());
-      fluid_sub.subscribe(this, "fluid", qos.get_rmw_qos_profile());
+      temp_sub.subscribe(this, "temp", qos);
+      fluid_sub.subscribe(this, "fluid", qos);
 
       timer = this->create_wall_timer(1000ms, std::bind(&TimeSyncNode::TimerCallback, this));
 
@@ -152,7 +152,7 @@ Now open the ``CMakeLists.txt`` add the executable and name it ``time_sync``, wh
    find_package(message_filters REQUIRED)
 
    add_executable(time_sync src/time_synchronizer.cpp)
-   ament_target_dependencies(time_sync rclcpp sensor_msgs message_filters)
+   target_link_libraries(time_sync PUBLIC rclcpp::rclcpp ${sensor_msgs_TARGETS} message_filters::message_filters)
 
 Finally, add the ``install(TARGETS…)`` section so ``ros2 run`` can find your executable:
 
