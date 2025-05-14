@@ -1,0 +1,696 @@
+ros-rolling-message-filters (7.2.1-1noble) noble; urgency=high
+
+  * fix cmake deprecation (#182 <https://github.com/ros2/message_filters/issues/182>)
+  * update documentation (#180 <https://github.com/ros2/message_filters/issues/180>)
+  * Removed missing pragma (#179 <https://github.com/ros2/message_filters/issues/179>)
+  * Removed Subscriber deprecation (#177 <https://github.com/ros2/message_filters/issues/177>)
+  * Removed deprecated headers (#176 <https://github.com/ros2/message_filters/issues/176>)
+  * Use warning instead of warn (#178 <https://github.com/ros2/message_filters/issues/178>)
+  * Contributors: Alejandro Hernández Cordero, mosfet80
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 13 May 2025 22:00:00 -0000
+
+ros-rolling-message-filters (7.2.0-1noble) noble; urgency=high
+
+  * Docs - Remove C++ implementation limit of 9 channels (#174 <https://github.com/ros2/message_filters/issues/174>)
+  * Contributors: Patrick Roncagliolo
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 24 Apr 2025 22:00:00 -0000
+
+ros-rolling-message-filters (7.1.0-1noble) noble; urgency=high
+
+  * Removed windows warnings (#171 <https://github.com/ros2/message_filters/issues/171>)
+  * More generic subscriber implementation using NodeInterfaces from rclcpp (#113 <https://github.com/ros2/message_filters/issues/113>)
+  * Contributors: Alejandro Hernández Cordero, Dominik
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 07 Apr 2025 22:00:00 -0000
+
+ros-rolling-message-filters (7.0.2-1noble) noble; urgency=high
+
+  * Feature/time sequencer python (#156 <https://github.com/ros2/message_filters/issues/156>)
+  * Add sync_arrival_time flag to ApproximateTimeSynchronizer (#166 <https://github.com/ros2/message_filters/issues/166>)
+  * fix: add rclcpp::shutdown (#167 <https://github.com/ros2/message_filters/issues/167>)
+  * Contributors: Kalvik, Saif Sidhik, Yuyuan Yuan
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 12 Mar 2025 23:00:00 -0000
+
+ros-rolling-message-filters (7.0.1-1noble) noble; urgency=high
+
+  * fix typo: Cache.getLastestTime -> Cache.getLatestTime (#165 <https://github.com/ros2/message_filters//issues/165>)
+  * Contributors: Michal Staniaszek
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 30 Jan 2025 23:00:00 -0000
+
+ros-rolling-message-filters (7.0.0-1noble) noble; urgency=high
+
+  * Add temporal offset between topics between ApproximateTimeSynchronizer (#154 <https://github.com/ros2/message_filters/issues/154>)
+  * Remove CODEOWNERS and mirror-rolling-to-master workflow. (#158 <https://github.com/ros2/message_filters/issues/158>)
+  * Contributors: Chris Lalancette, Clément Chupin
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 19 Dec 2024 23:00:00 -0000
+
+ros-rolling-message-filters (6.0.7-1noble) noble; urgency=high
+
+  * Updated Python docs (#150 <https://github.com/ros2/message_filters/issues/150>)
+  * Contributors: Alejandro Hernández Cordero
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 19 Nov 2024 23:00:00 -0000
+
+ros-rolling-message-filters (6.0.6-1noble) noble; urgency=high
+
+  * Adds an input aligner filter (#148 <https://github.com/ros2/message_filters/issues/148>)
+  * Stop using python_cmake_module. (#114 <https://github.com/ros2/message_filters/issues/114>)
+  * Contributors: Chris Lalancette, Sascha Arnold, Alejandro Hernández Cordero
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 15 Oct 2024 22:00:00 -0000
+
+ros-rolling-message-filters (6.0.5-1noble) noble; urgency=high
+
+  * Fix the wording in the deprecation messages. (#144 <https://github.com/ros2/message_filters/issues/144>)
+  * Contributors: Chris Lalancette
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 02 Oct 2024 22:00:00 -0000
+
+ros-rolling-message-filters (6.0.4-1noble) noble; urgency=high
+
+  * Apply some simplifications and deduplications to ExactTime sync policy (#142 <https://github.com/ros2/message_filters/issues/142>)
+  * Minor fixes for #93 <https://github.com/ros2/message_filters/issues/93> (#143 <https://github.com/ros2/message_filters/issues/143>)
+  * Bugfix/segfault when getting surrounding interval of empty cache (#116 <https://github.com/ros2/message_filters/issues/116>)
+  * Contributors: Christopher Wecht, Matthias Holoch
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 18 Aug 2024 22:00:00 -0000
+
+ros-rolling-message-filters (6.0.3-1noble) noble; urgency=high
+
+  * Migrate to C++11 variadic templates (#93 <https://github.com/ros2/message_filters/issues/93>)
+  * [LatestTimeSync] Fix crash when Synchronizeris started before the messges are available. (#137 <https://github.com/ros2/message_filters/issues/137>)
+  * Contributors: Christopher Wecht, Dr. Denis
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 30 Jul 2024 22:00:00 -0000
+
+ros-rolling-message-filters (6.0.2-1noble) noble; urgency=high
+
+  * Fix cppcheck warning on Windwos (#138 <https://github.com/ros2/message_filters/issues/138>)
+  * Adding ament_lint_common (#120 <https://github.com/ros2/message_filters/issues/120>)
+  * Contributors: Alejandro Hernández Cordero, Lucas Wendland
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 28 Jul 2024 22:00:00 -0000
+
+ros-rolling-message-filters (6.0.1-1noble) noble; urgency=high
+
+  * Deprecating all C headers (#135 <https://github.com/ros2/message_filters/issues/135>)
+  * Cleanups (#134 <https://github.com/ros2/message_filters/issues/134>)
+  * fix link of index.rst in README.md (#133 <https://github.com/ros2/message_filters/issues/133>)
+  * Contributors: Alejandro Hernández Cordero, Iván López Broceño, Lucas Wendland
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 18 Jul 2024 22:00:00 -0000
+
+ros-rolling-message-filters (6.0.0-1noble) noble; urgency=high
+
+  * Revert "Adding explicit constructors (#129 <https://github.com/ros2/message_filters/issues/129>)" (#132 <https://github.com/ros2/message_filters/issues/132>)
+  * Contributors: Chris Lalancette
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 25 Jun 2024 22:00:00 -0000
+
+ros-rolling-message-filters (5.0.0-1noble) noble; urgency=high
+
+  * fix: fallback Time used incorrect clock (#118 <https://github.com/ros2/message_filters/issues/118>)
+  * Adding explicit constructors (#129 <https://github.com/ros2/message_filters/issues/129>)
+  * Deprecated qos_profile in Subscriber (#127 <https://github.com/ros2/message_filters/issues/127>)
+  * Adding cpplint (#125 <https://github.com/ros2/message_filters/issues/125>)
+  * Move Docs From Wiki (#119 <https://github.com/ros2/message_filters/issues/119>)
+  * Adding lint_cmake (#126 <https://github.com/ros2/message_filters/issues/126>)
+  * Adding Uncrustify Changes (#124 <https://github.com/ros2/message_filters/issues/124>)
+  * Adding Copyright Linter (#122 <https://github.com/ros2/message_filters/issues/122>)
+  * Contributors: Lucas Wendland, Russ
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 16 Jun 2024 22:00:00 -0000
+
+ros-rolling-message-filters (4.12.0-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 25 Apr 2024 22:00:00 -0000
+
+ros-rolling-message-filters (4.11.1-1noble) noble; urgency=high
+
+  * Update TimeSynchronizer usage example. (#115 <https://github.com/ros2/message_filters/issues/115>)
+  * Contributors: rkeating-planted
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 15 Apr 2024 22:00:00 -0000
+
+ros-rolling-message-filters (4.11.0-1noble) noble; urgency=high
+
+  * Remove 'using' keyword in message_filters (#106 <https://github.com/ros2/message_filters/issues/106>)
+  * Remove the use of ament_target_dependencies. (#105 <https://github.com/ros2/message_filters/issues/105>)
+  * Fixes pointed out by clang (#104 <https://github.com/ros2/message_filters/issues/104>)
+  * Contributors: Chris Lalancette
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 25 Dec 2023 23:00:00 -0000
+
+ros-rolling-message-filters (4.10.1-1noble) noble; urgency=high
+
+  * Mark subscription cb parameter const (#103 <https://github.com/ros2/message_filters/issues/103>)
+  * Contributors: Patrick Roncagliolo
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 05 Nov 2023 23:00:00 -0000
+
+ros-rolling-message-filters (4.10.0-1noble) noble; urgency=high
+
+  * Update the HasHeader check to be more specific. (#101 <https://github.com/ros2/message_filters/issues/101>)
+  * TypeAdapters support (#95 <https://github.com/ros2/message_filters/issues/95>) (#96 <https://github.com/ros2/message_filters/issues/96>)
+  * Contributors: Chris Lalancette, Patrick Roncagliolo
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 20 Aug 2023 22:00:00 -0000
+
+ros-rolling-message-filters (4.9.1-1noble) noble; urgency=high
+
+  * Cleanup a few minor things in the filters. (#100 <https://github.com/ros2/message_filters/issues/100>)
+  * Fix python examples (#99 <https://github.com/ros2/message_filters/issues/99>)
+  * Contributors: Chris Lalancette, Ricardo de Azambuja
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 10 Jul 2023 22:00:00 -0000
+
+ros-rolling-message-filters (4.9.0-1noble) noble; urgency=high
+
+  * feat: add signal time functions to ExactTime policy (#94 <https://github.com/ros2/message_filters/issues/94>)
+  * Contributors: Russ
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 06 Jun 2023 22:00:00 -0000
+
+ros-rolling-message-filters (4.8.0-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 26 Apr 2023 22:00:00 -0000
+
+ros-rolling-message-filters (4.7.0-1noble) noble; urgency=high
+
+  * Update message_filters to C++17. (#88 <https://github.com/ros2/message_filters/issues/88>)
+  * Fix cache.h std::placeholder namespace (#87 <https://github.com/ros2/message_filters/issues/87>)
+  * [rolling] Update maintainers - 2022-11-07 (#85 <https://github.com/ros2/message_filters/issues/85>)
+  * Contributors: Audrow Nash, Chris Lalancette, Haoru Xue
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 12 Feb 2023 23:00:00 -0000
+
+ros-rolling-message-filters (4.6.1-1noble) noble; urgency=high
+
+  * Add a simpler aproximate time sync policy: ApproximateEpsilonTime (#84 <https://github.com/ros2/message_filters/issues/84>)
+  * Contributors: Ivan Santiago Paunovic
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 04 Oct 2022 22:00:00 -0000
+
+ros-rolling-message-filters (4.5.0-1noble) noble; urgency=high
+
+  * Add latest time zero-order-hold sync policy (#73 <https://github.com/ros2/message_filters/issues/73>)
+  * Fix python examples and add a new example in documentation (#79 <https://github.com/ros2/message_filters/issues/79>)
+  * Mirror rolling to master
+  * Contributors: Audrow Nash, Carlos Andrés Álvarez Restrepo, andermi
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 12 Sep 2022 22:00:00 -0000
+
+ros-rolling-message-filters (4.4.1-1noble) noble; urgency=high
+
+  * Adding fix to subscribe() call with raw node pointer and subscriber options (#76 <https://github.com/ros2/message_filters/issues/76>)
+  * Corrected function arguments in example description (#35 <https://github.com/ros2/message_filters/issues/35>)
+  * Contributors: Martin Ganeff, Steve Macenski
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 19 Jun 2022 22:00:00 -0000
+
+ros-rolling-message-filters (4.4.0-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 28 Apr 2022 22:00:00 -0000
+
+ros-rolling-message-filters (4.3.1-1noble) noble; urgency=high
+
+  * Use RCL_ROS_TIME for message_traits::TimeStamp  (#72 <https://github.com/ros2/message_filters/issues/72>)
+  * Contributors: Kenji Brameld
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 24 Mar 2022 23:00:00 -0000
+
+ros-rolling-message-filters (4.3.0-1noble) noble; urgency=high
+
+  * Install includes to include/${PROJECT_NAME} (#71 <https://github.com/ros2/message_filters/issues/71>)
+  * Update maintainers (#67 <https://github.com/ros2/message_filters/issues/67>)
+  * Contributors: Audrow Nash, Shane Loretz
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 28 Feb 2022 23:00:00 -0000
+
+ros-rolling-message-filters (4.2.0-1noble) noble; urgency=high
+
+  * Suppress rclcpp deprecation warnings in unit tests (#62 <https://github.com/ros2/message_filters/issues/62>)
+  * Contributors: Abrar Rahman Protyasha
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 17 Oct 2021 22:00:00 -0000
+
+ros-rolling-message-filters (4.1.0-1noble) noble; urgency=high
+
+  * Add missing overrides to subscriber.h (#60 <https://github.com/ros2/message_filters/issues/60>)
+  * Add lifecycle node support (#59 <https://github.com/ros2/message_filters/issues/59>)
+  * Correct package.xml and CMakeLists.txt (#58 <https://github.com/ros2/message_filters/issues/58>)
+  * Contributors: Hunter L. Allen, Michel Hidalgo, Rebecca Butler
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 28 Jul 2021 22:00:00 -0000
+
+ros-rolling-message-filters (4.0.0-1noble) noble; urgency=high
+
+  * Expose Subscription Options - V2 (#56 <https://github.com/ros2/message_filters/issues/56>)
+  * Contributors: Audrow Nash
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 25 May 2021 22:00:00 -0000
+
+ros-rolling-message-filters (3.2.6-1noble) noble; urgency=high
+
+  * Find and export dependencies properly (#54 <https://github.com/ros2/message_filters/issues/54>)
+  * Contributors: Michel Hidalgo
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 11 May 2021 22:00:00 -0000
+
+ros-rolling-message-filters (3.2.5-1noble) noble; urgency=high
+
+  * Add pytest.ini so local tests don't display warning (#47 <https://github.com/ros2/message_filters/issues/47>)
+  * Contributors: Chris Lalancette
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 09 Dec 2020 23:00:00 -0000
+
+ros-rolling-message-filters (3.2.4-1noble) noble; urgency=high
+
+  * export targets in a addition to include directories / libraries (#46 <https://github.com/ros2/message_filters/issues/46>)
+  * Contributors: Dirk Thomas
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 02 Jun 2020 22:00:00 -0000
+
+ros-rolling-message-filters (3.2.3-1noble) noble; urgency=high
+
+  * allow custom qos for message filters
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 17 Nov 2019 23:00:00 -0000
+
+ros-rolling-message-filters (3.2.2-1noble) noble; urgency=high
+
+  * Fix  unhashable type 'Time' error (#33 <https://github.com/ros2/message_filters/issues/33>)
+  * Contributors: Jamie Diprose
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 07 Nov 2019 23:00:00 -0000
+
+ros-rolling-message-filters (3.2.1-1noble) noble; urgency=high
+
+  * Resolve ambiguity with boost/bind.hpp (#40 <https://github.com/ros2/message_filters/issues/40>)
+  * Contributors: Shane Loretz
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 22 Oct 2019 22:00:00 -0000
+
+ros-rolling-message-filters (3.2.0-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 25 Sep 2019 22:00:00 -0000
+
+ros-rolling-message-filters (3.1.2-1noble) noble; urgency=high
+
+  * Add .gitignore
+  * Fix deprecation warning
+  * Contributors: Jacob Perron
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 19 May 2019 22:00:00 -0000
+
+ros-rolling-message-filters (3.1.1-1noble) noble; urgency=high
+
+  * changes to avoid deprecated API's (#26 <https://github.com/ros2/message_filters/issues/26>)
+  * Merge pull request #25 <https://github.com/ros2/message_filters/issues/25> from ros2/ivanpauno/deprecate-shared-ptr-publish
+  * adding code import references in comments (#6 <https://github.com/ros2/message_filters/issues/6>)
+  * Make format string agree with argument type. (#24 <https://github.com/ros2/message_filters/issues/24>)
+  * Contributors: Steven! Ragnarök, Tully Foote, William Woodall, ivanpauno
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 07 May 2019 22:00:00 -0000
+
+ros-rolling-message-filters (3.1.0-1noble) noble; urgency=high
+
+  * Added direct dependency on python_cmake_module. (#19 <https://github.com/ros2/message_filters/issues/19>)
+  * Updated to use Python debug interpreter on Windows. (#18 <https://github.com/ros2/message_filters/issues/18>)
+  * Contributors: Dirk Thomas, Steven! Ragnarök
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sat, 13 Apr 2019 22:00:00 -0000
+
+ros-rolling-message-filters (3.0.0-1noble) noble; urgency=high
+
+  * Move sensor_msgs to be a test dependency. (#17 <https://github.com/ros2/message_filters/issues/17>)
+  * Fix Duration signature for Windows CI. (#16 <https://github.com/ros2/message_filters/issues/16>)
+  * Add the ability to use raw pointers in Subscriber (#14 <https://github.com/ros2/message_filters/issues/14>)
+  * fixed using wrong type of stamp (#12 <https://github.com/ros2/message_filters/issues/12>)
+  * Add message trait support to frame id of message (#13 <https://github.com/ros2/message_filters/issues/13>)
+  * Merge pull request #10 <https://github.com/ros2/message_filters/issues/10> from ros2/fix_windows
+  * Change argument name to better reflect behavior.
+  * Fix signedness of some comparisons.
+  * Correctly export and depend on ament_cmake_ros.
+  * Cleanup windows warnings.
+  * Fix visibility control.
+  * Fix include guards and include order.
+  * enable message_filters support of python interfaces and tests (#7 <https://github.com/ros2/message_filters/issues/7>)
+  * Remove references in pointer API calls.
+  * Remove ROS1 specific connection header info from API.
+  * demote std_msgs to test dependency
+  * Update docs to remove nodehandle reference.
+  * Use Node::SharedPtr instead of Node*
+  * Make node required as an internal one is required to spin.
+  * Add noncopyable base class
+  * Deboostify and change from ros::Time to rclcpp::Time
+  * Convert to ament_cmake
+  * Changed invocation to add to conform template syntax (#1388 <https://github.com/ros2/message_filters/issues/1388>)
+    This change fixes issue #1383 <https://github.com/ros2/message_filters/issues/1383>
+  * fix sphinx warning (#1371 <https://github.com/ros2/message_filters/issues/1371>)
+  * Contributors: Dirk Thomas, Ethan Gao, Gary Liu, Jørgen Nordmoen, Michael Carroll, Tully Foote
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 21 Nov 2018 23:00:00 -0000
+
+ros-rolling-message-filters (1.14.2-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 05 Jun 2018 22:00:00 -0000
+
+ros-rolling-message-filters (1.14.1-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 20 May 2018 22:00:00 -0000
+
+ros-rolling-message-filters (1.14.0-1noble) noble; urgency=high
+
+  * change invocation to add to conform template syntax (#1388 <https://github.com/ros/ros_comm/issues/1388>)
+  * fix sphinx warning (#1371 <https://github.com/ros/ros_comm/issues/1371>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 20 May 2018 22:00:00 -0000
+
+ros-rolling-message-filters (1.13.6-1noble) noble; urgency=high
+
+  * use SteadyTimer in message_filters (#1247 <https://github.com/ros/ros_comm/issues/1247>)
+  * remove unnecessary xmlrpcpp dependency from message_filters (#1264 <https://github.com/ros/ros_comm/issues/1264>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 04 Feb 2018 23:00:00 -0000
+
+ros-rolling-message-filters (1.13.5-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 08 Nov 2017 23:00:00 -0000
+
+ros-rolling-message-filters (1.13.4-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 01 Nov 2017 23:00:00 -0000
+
+ros-rolling-message-filters (1.13.3-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 24 Oct 2017 22:00:00 -0000
+
+ros-rolling-message-filters (1.13.2-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 14 Aug 2017 22:00:00 -0000
+
+ros-rolling-message-filters (1.13.1-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 26 Jul 2017 22:00:00 -0000
+
+ros-rolling-message-filters (1.13.0-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 21 Feb 2017 23:00:00 -0000
+
+ros-rolling-message-filters (1.12.7-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 16 Feb 2017 23:00:00 -0000
+
+ros-rolling-message-filters (1.12.6-1noble) noble; urgency=high
+
+  * use boost::bind to bind the callback function (#906 <https://github.com/ros/ros_comm/pull/906>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 25 Oct 2016 22:00:00 -0000
+
+ros-rolling-message-filters (1.12.5-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 29 Sep 2016 22:00:00 -0000
+
+ros-rolling-message-filters (1.12.4-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 18 Sep 2016 22:00:00 -0000
+
+ros-rolling-message-filters (1.12.3-1noble) noble; urgency=high
+
+  * add fast approximate time synchronization in message_filters (in pure Python) (#802 <https://github.com/ros/ros_comm/issues/802>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Fri, 16 Sep 2016 22:00:00 -0000
+
+ros-rolling-message-filters (1.12.2-1noble) noble; urgency=high
+
+  * allow saving timestamp-less messages to Cache, add getLast method (#806 <https://github.com/ros/ros_comm/pull/806>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 02 Jun 2016 22:00:00 -0000
+
+ros-rolling-message-filters (1.12.1-1noble) noble; urgency=high
+
+  * use directory specific compiler flags (#785 <https://github.com/ros/ros_comm/pull/785>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 17 Apr 2016 22:00:00 -0000
+
+ros-rolling-message-filters (1.12.0-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 17 Mar 2016 23:00:00 -0000
+
+ros-rolling-message-filters (1.11.18-1noble) noble; urgency=high
+
+  * fix compiler warnings
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 16 Mar 2016 23:00:00 -0000
+
+ros-rolling-message-filters (1.11.17-1noble) noble; urgency=high
+
+  * use boost::make_shared instead of new for constructing boost::shared_ptr (#740 <https://github.com/ros/ros_comm/issues/740>)
+  * add __getattr__ to handle sub in message_filters as standard one (#700 <https://github.com/ros/ros_comm/pull/700>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 10 Mar 2016 23:00:00 -0000
+
+ros-rolling-message-filters (1.11.16-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 08 Nov 2015 23:00:00 -0000
+
+ros-rolling-message-filters (1.11.15-1noble) noble; urgency=high
+
+  * add unregister() method to message_filter.Subscriber (#683 <https://github.com/ros/ros_comm/pull/683>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 12 Oct 2015 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.14-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Fri, 18 Sep 2015 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.13-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 27 Apr 2015 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.12-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 26 Apr 2015 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.11-1noble) noble; urgency=high
+
+  * implement message filter cache in Python (#599 <https://github.com/ros/ros_comm/pull/599>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 15 Apr 2015 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.10-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 21 Dec 2014 23:00:00 -0000
+
+ros-rolling-message-filters (1.11.9-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 17 Aug 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.8-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 03 Aug 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.7-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 17 Jul 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.6-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 09 Jul 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.5-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 23 Jun 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.4-1noble) noble; urgency=high
+
+  * add approximate Python time synchronizer (used to be in camera_calibration) (#424 <https://github.com/ros/ros_comm/issues/424>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 15 Jun 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.3-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 20 May 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.2-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 07 May 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.1-1noble) noble; urgency=high
+
+  * update API to use boost::signals2 (#267 <https://github.com/ros/ros_comm/issues/267>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 06 May 2014 22:00:00 -0000
+
+ros-rolling-message-filters (1.11.0-1noble) noble; urgency=high
+
+  * suppress boost::signals deprecation warning (#362 <https://github.com/ros/ros_comm/issues/362>)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 03 Mar 2014 23:00:00 -0000
+
+ros-rolling-message-filters (1.10.0-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 10 Feb 2014 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.54-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 26 Jan 2014 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.53-1noble) noble; urgency=high
+
+  * add kwargs for message_filters.Subscriber
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 13 Jan 2014 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.52-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 07 Jan 2014 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.51-1noble) noble; urgency=high
+
+  * update code after refactoring into rosbag_storage and roscpp_core (#299 <https://github.com/ros/ros_comm/issues/299>)
+  * fix segmentation fault on OS X 10.9 (clang / libc++)
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 06 Jan 2014 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.50-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 03 Oct 2013 22:00:00 -0000
+
+ros-rolling-message-filters (1.9.49-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sun, 15 Sep 2013 22:00:00 -0000
+
+ros-rolling-message-filters (1.9.48-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 20 Aug 2013 22:00:00 -0000
+
+ros-rolling-message-filters (1.9.47-1noble) noble; urgency=high
+
+  * check for CATKIN_ENABLE_TESTING to enable configure without tests
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 02 Jul 2013 22:00:00 -0000
+
+ros-rolling-message-filters (1.9.46-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Mon, 17 Jun 2013 22:00:00 -0000
+
+ros-rolling-message-filters (1.9.45-1noble) noble; urgency=high
+
+  * fix template syntax for signal_.template addCallback() to work with Intel compiler
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 05 Jun 2013 22:00:00 -0000
+
+ros-rolling-message-filters (1.9.44-1noble) noble; urgency=high
+
+  * fix install destination for dll's under Windows
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 20 Mar 2013 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.43-1noble) noble; urgency=high
+
+  * fix exports of message filter symbols for Windows
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Tue, 12 Mar 2013 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.42-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Thu, 07 Mar 2013 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.41-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Wed, 23 Jan 2013 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.40-1noble) noble; urgency=high
+
+
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Sat, 12 Jan 2013 23:00:00 -0000
+
+ros-rolling-message-filters (1.9.39-1noble) noble; urgency=high
+
+  * first public release for Groovy
+
+ -- Geoffrey Biggs <geoff@openrobotics.org>  Fri, 28 Dec 2012 23:00:00 -0000
+
+
