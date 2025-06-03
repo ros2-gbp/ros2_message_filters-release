@@ -34,9 +34,21 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 #include "message_filters/subscriber.hpp"
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
 #include "message_filters/chain.hpp"
 #include "sensor_msgs/msg/imu.hpp"
+
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 
 typedef sensor_msgs::msg::Imu Msg;
 typedef std::shared_ptr<sensor_msgs::msg::Imu const> MsgConstPtr;
@@ -341,3 +353,7 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return ret;
 }
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
