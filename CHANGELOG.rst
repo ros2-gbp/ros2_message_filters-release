@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.1.1 (2025-06-03)
+------------------
+* fix cmake deprecation (`#182 <https://github.com/ros2/message_filters/issues/182>`_) (`#183 <https://github.com/ros2/message_filters/issues/183>`_)
+* update documentation (`#180 <https://github.com/ros2/message_filters/issues/180>`_) (`#181 <https://github.com/ros2/message_filters/issues/181>`_)
+* Docs - Remove C++ implementation limit of 9 channels (`#174 <https://github.com/ros2/message_filters/issues/174>`_)
+* Contributors: Patrick Roncagliolo, mergify[bot]
+
 7.1.0 (2025-04-08)
 ------------------
 * Removed windows warnings (`#171 <https://github.com/ros2/message_filters/issues/171>`_)
