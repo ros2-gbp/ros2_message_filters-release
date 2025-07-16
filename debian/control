@@ -1,0 +1,12 @@
+Source: ros-humble-message-filters
+Section: misc
+Priority: optional
+Maintainer: Ethan Gao <ethan.gao@linux.intel.com>
+Build-Depends: debhelper (>= 9.0.0), ros-humble-ament-cmake-gtest <!nocheck>, ros-humble-ament-cmake-pytest <!nocheck>, ros-humble-ament-cmake-python, ros-humble-ament-cmake-ros, ros-humble-ament-lint-auto <!nocheck>, ros-humble-python-cmake-module, ros-humble-rclcpp, ros-humble-rclcpp-lifecycle <!nocheck>, ros-humble-rcutils, ros-humble-sensor-msgs <!nocheck>, ros-humble-std-msgs <!nocheck>, ros-humble-ros-workspace
+Homepage: https://github.com/intel/ros2_message_filters
+Standards-Version: 3.9.2
+
+Package: ros-humble-message-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-humble-builtin-interfaces, ros-humble-rclcpp, ros-humble-rclpy, ros-humble-rcutils, ros-humble-ros-workspace
+Description: A set of ROS2 message filters which take in messages and may output those messages at a later time, based on the conditions that filter needs met.
