@@ -2,6 +2,12 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.3.8 (2025-07-16)
+------------------
+* Fix cache tutorial: added tab extension (backport `#190 <https://github.com/ros2/message_filters/issues/190>`_) (`#193 <https://github.com/ros2/message_filters/issues/193>`_)
+* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_) (`#189 <https://github.com/ros2/message_filters/issues/189>`_)
+* Contributors: mergify[bot]
+
 4.3.7 (2025-04-08)
 ------------------
 * Future port hpp files (`#170 <https://github.com/ros2/message_filters/issues/170>`_) (`#172 <https://github.com/ros2/message_filters/issues/172>`_)
