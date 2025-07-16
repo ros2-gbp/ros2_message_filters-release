@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2022, Kenji Brameld
+*  Copyright (c) 2010, Willow Garage, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,23 +32,61 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#include <gtest/gtest.h>
-#include "message_filters/message_traits.h"
-#include "std_msgs/msg/header.hpp"
+#ifndef MESSAGE_FILTERS__PASS_THROUGH_H_
+#define MESSAGE_FILTERS__PASS_THROUGH_H_
 
-struct Msg
+#include <vector>
+
+#include "message_filters/simple_filter.h"
+
+namespace message_filters
 {
-  std_msgs::msg::Header header;
+/**
+ * \brief Simple passthrough filter.  What comes in goes out immediately.
+ */
+template<typename M>
+class PassThrough : public SimpleFilter<M>
+{
+public:
+  typedef std::shared_ptr<M const> MConstPtr;
+  typedef MessageEvent<M const> EventType;
+
+  PassThrough()
+  {
+  }
+
+  template<typename F>
+  PassThrough(F& f)
+  {
+    connectInput(f);
+  }
+
+  template<class F>
+  void connectInput(F& f)
+  {
+    incoming_connection_.disconnect();
+    incoming_connection_ = f.registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&PassThrough::cb, this, std::placeholders::_1)));
+  }
+
+  void add(const MConstPtr& msg)
+  {
+    add(EventType(msg));
+  }
+
+  void add(const EventType& evt)
+  {
+    this->signalMessage(evt);
+  }
+
+private:
+  void cb(const EventType& evt)
+  {
+    add(evt);
+  }
+
+  Connection incoming_connection_;
 };
 
-// Test that message_filters::message_traits::TimeStamp<Msg>::value returns RCL_ROS_TIME.
-TEST(MessageTraits, timeSource)
-{
-  Msg msg;
-  rclcpp::Time time = message_filters::message_traits::TimeStamp<Msg>::value(msg);
+}  // namespace message_filters
 
-  EXPECT_EQ(time.get_clock_type(), RCL_ROS_TIME);
-
-  // Ensure an exception isn't thrown when compared with a RCL_ROS_TIME time.
-  EXPECT_NO_THROW((time == rclcpp::Time{msg.header.stamp, RCL_ROS_TIME}));
-}
+#endif  // MESSAGE_FILTERS__PASS_THROUGH_H_

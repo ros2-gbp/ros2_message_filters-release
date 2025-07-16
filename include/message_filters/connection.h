@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2022, Kenji Brameld
+*  Copyright (c) 2009, Willow Garage, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,23 +32,47 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#include <gtest/gtest.h>
-#include "message_filters/message_traits.h"
-#include "std_msgs/msg/header.hpp"
+#ifndef MESSAGE_FILTERS__CONNECTION_H_
+#define MESSAGE_FILTERS__CONNECTION_H_
 
-struct Msg
+#include <functional>
+#include <memory>
+
+#include "message_filters/visibility_control.h"
+
+namespace message_filters
 {
-  std_msgs::msg::Header header;
+
+class noncopyable
+{
+protected:
+  noncopyable() {}
+  ~noncopyable() {}
+  noncopyable( const noncopyable& ) = delete;
+  noncopyable& operator=( const noncopyable& ) = delete;
 };
 
-// Test that message_filters::message_traits::TimeStamp<Msg>::value returns RCL_ROS_TIME.
-TEST(MessageTraits, timeSource)
+/**
+ * \brief Encapsulates a connection from one filter to another (or to a user-specified callback)
+ */
+class Connection
 {
-  Msg msg;
-  rclcpp::Time time = message_filters::message_traits::TimeStamp<Msg>::value(msg);
+public:
+  using VoidDisconnectFunction = std::function<void(void)>;
+  using WithConnectionDisconnectFunction = std::function<void(const Connection&)>;
+  MESSAGE_FILTERS_PUBLIC Connection() {}
+  MESSAGE_FILTERS_PUBLIC Connection(const VoidDisconnectFunction& func);
 
-  EXPECT_EQ(time.get_clock_type(), RCL_ROS_TIME);
+  /**
+   * \brief disconnects this connection
+   */
+  MESSAGE_FILTERS_PUBLIC void disconnect();
 
-  // Ensure an exception isn't thrown when compared with a RCL_ROS_TIME time.
-  EXPECT_NO_THROW((time == rclcpp::Time{msg.header.stamp, RCL_ROS_TIME}));
-}
+private:
+  VoidDisconnectFunction void_disconnect_;
+  WithConnectionDisconnectFunction connection_disconnect_;
+};
+
+}  // namespace message_filters
+
+#endif  // MESSAGE_FILTERS__CONNECTION_H_
