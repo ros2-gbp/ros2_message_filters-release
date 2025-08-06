@@ -2,6 +2,20 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.7 (2025-08-06)
+-------------------
+* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_) (`#198 <https://github.com/ros2/message_filters/issues/198>`_)
+  (cherry picked from commit c7821ef2dcfdd6161983b0fe52829b9067a5e076)
+  Co-authored-by: Pavel Esipov <38457822+EsipovPA@users.noreply.github.com>
+* Fix cache tutorial: added tab extension (backport `#190 <https://github.com/ros2/message_filters/issues/190>`_) (`#192 <https://github.com/ros2/message_filters/issues/192>`_)
+  * Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_)
+  (cherry picked from commit 4f4e42f3e991a595473461b9341870a170eb858b)
+* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_) (`#188 <https://github.com/ros2/message_filters/issues/188>`_)
+  (cherry picked from commit 001129da0d37338eb4f11ce4e48560377cfb3faa)
+  Co-authored-by: Pavel Esipov <38457822+EsipovPA@users.noreply.github.com>
+  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
+* Contributors: mergify[bot]
+
 4.11.6 (2025-04-22)
 -------------------
 * Fix doc link in README (`#173 <https://github.com/ros2/message_filters/issues/173>`_)
