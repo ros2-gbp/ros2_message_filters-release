@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2009, Willow Garage, Inc.
+*  Copyright (c) 2010, Willow Garage, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,26 +32,51 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
+#ifndef MESSAGE_FILTERS__NULL_TYPES_H_
+#define MESSAGE_FILTERS__NULL_TYPES_H_
+
+#include <memory>
+
+#include <rclcpp/rclcpp.hpp>
+
 #include "message_filters/connection.h"
+#include "message_filters/message_traits.h"
 
 namespace message_filters
 {
 
-Connection::Connection(const VoidDisconnectFunction& func)
-: void_disconnect_(func)
+struct NullType
 {
-}
+};
+typedef std::shared_ptr<NullType const> NullTypeConstPtr;
 
-void Connection::disconnect()
+template<class M>
+struct NullFilter
 {
-  if (void_disconnect_)
+  template<typename C>
+  Connection registerCallback(const C&)
   {
-    void_disconnect_();
+    return Connection();
   }
-  else if (connection_disconnect_)
-  {
-    connection_disconnect_(*this);
-  }
-}
 
+  template<typename P>
+  Connection registerCallback(const std::function<void(P)>&)
+  {
+    return Connection();
+  }
+};
+
+namespace message_traits
+{
+template<>
+struct TimeStamp<message_filters::NullType>
+{
+  static rclcpp::Time value(const message_filters::NullType&)
+  {
+    return rclcpp::Time();
+  }
+};
+}  // namespace message_traits
 }  // namespace message_filters
+
+#endif  // MESSAGE_FILTERS__NULL_TYPES_H_

@@ -1,7 +1,7 @@
 /*********************************************************************
 * Software License Agreement (BSD License)
 *
-*  Copyright (c) 2009, Willow Garage, Inc.
+*  Copyright (c) 2010, Willow Garage, Inc.
 *  All rights reserved.
 *
 *  Redistribution and use in source and binary forms, with or without
@@ -32,26 +32,61 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#include "message_filters/connection.h"
+#ifndef MESSAGE_FILTERS__PASS_THROUGH_H_
+#define MESSAGE_FILTERS__PASS_THROUGH_H_
+
+#include <vector>
+
+#include "message_filters/simple_filter.h"
 
 namespace message_filters
 {
-
-Connection::Connection(const VoidDisconnectFunction& func)
-: void_disconnect_(func)
+/**
+ * \brief Simple passthrough filter.  What comes in goes out immediately.
+ */
+template<typename M>
+class PassThrough : public SimpleFilter<M>
 {
-}
+public:
+  typedef std::shared_ptr<M const> MConstPtr;
+  typedef MessageEvent<M const> EventType;
 
-void Connection::disconnect()
-{
-  if (void_disconnect_)
+  PassThrough()
   {
-    void_disconnect_();
   }
-  else if (connection_disconnect_)
+
+  template<typename F>
+  PassThrough(F& f)
   {
-    connection_disconnect_(*this);
+    connectInput(f);
   }
-}
+
+  template<class F>
+  void connectInput(F& f)
+  {
+    incoming_connection_.disconnect();
+    incoming_connection_ = f.registerCallback(typename SimpleFilter<M>::EventCallback(std::bind(&PassThrough::cb, this, std::placeholders::_1)));
+  }
+
+  void add(const MConstPtr& msg)
+  {
+    add(EventType(msg));
+  }
+
+  void add(const EventType& evt)
+  {
+    this->signalMessage(evt);
+  }
+
+private:
+  void cb(const EventType& evt)
+  {
+    add(evt);
+  }
+
+  Connection incoming_connection_;
+};
 
 }  // namespace message_filters
+
+#endif  // MESSAGE_FILTERS__PASS_THROUGH_H_

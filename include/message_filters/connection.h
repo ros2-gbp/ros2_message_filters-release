@@ -32,26 +32,47 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#include "message_filters/connection.h"
+#ifndef MESSAGE_FILTERS__CONNECTION_H_
+#define MESSAGE_FILTERS__CONNECTION_H_
+
+#include <functional>
+#include <memory>
+
+#include "message_filters/visibility_control.h"
 
 namespace message_filters
 {
 
-Connection::Connection(const VoidDisconnectFunction& func)
-: void_disconnect_(func)
+class noncopyable
 {
-}
+protected:
+  noncopyable() {}
+  ~noncopyable() {}
+  noncopyable( const noncopyable& ) = delete;
+  noncopyable& operator=( const noncopyable& ) = delete;
+};
 
-void Connection::disconnect()
+/**
+ * \brief Encapsulates a connection from one filter to another (or to a user-specified callback)
+ */
+class Connection
 {
-  if (void_disconnect_)
-  {
-    void_disconnect_();
-  }
-  else if (connection_disconnect_)
-  {
-    connection_disconnect_(*this);
-  }
-}
+public:
+  using VoidDisconnectFunction = std::function<void(void)>;
+  using WithConnectionDisconnectFunction = std::function<void(const Connection&)>;
+  MESSAGE_FILTERS_PUBLIC Connection() {}
+  MESSAGE_FILTERS_PUBLIC Connection(const VoidDisconnectFunction& func);
+
+  /**
+   * \brief disconnects this connection
+   */
+  MESSAGE_FILTERS_PUBLIC void disconnect();
+
+private:
+  VoidDisconnectFunction void_disconnect_;
+  WithConnectionDisconnectFunction connection_disconnect_;
+};
 
 }  // namespace message_filters
+
+#endif  // MESSAGE_FILTERS__CONNECTION_H_
