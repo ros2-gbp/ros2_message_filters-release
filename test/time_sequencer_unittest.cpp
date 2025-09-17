@@ -79,8 +79,6 @@ public:
 TEST(TimeSequencer, simple)
 {
   rclcpp::Node::SharedPtr node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(0, 250000000),
     rclcpp::Duration(0, 10000000), 10, node);
   Helper h;
@@ -90,12 +88,12 @@ TEST(TimeSequencer, simple)
   seq.add(msg);
 
   rclcpp::Rate(10).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
   ASSERT_EQ(h.count_, 0);
 
   // Must be longer than the first duration above
   rclcpp::Rate(3).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_EQ(h.count_, 1);
 }
@@ -125,8 +123,6 @@ public:
 TEST(TimeSequencer, eventInEventOut)
 {
   rclcpp::Node::SharedPtr nh = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(nh);
   message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(1, 0), rclcpp::Duration(0, 10000000), 10,
     nh);
   message_filters::TimeSequencer<Msg> seq2(seq, rclcpp::Duration(1, 0), rclcpp::Duration(
@@ -142,7 +138,7 @@ TEST(TimeSequencer, eventInEventOut)
 
   while (!h.event_.getMessage()) {
     rclcpp::Rate(100).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(nh);
   }
 
   EXPECT_EQ(h.event_.getReceiptTime(), evt.getReceiptTime());

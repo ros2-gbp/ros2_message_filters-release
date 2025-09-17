@@ -2,38 +2,19 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-7.3.1 (2025-09-17)
+7.1.2 (2025-09-17)
 ------------------
-* get rid of deprecated rclcpp::spin_some(). (`#201 <https://github.com/ros2/message_filters/issues/201>`_)
-* Contributors: Tomoya Fujita
+* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_) (`#197 <https://github.com/ros2/message_filters/issues/197>`_)
+* Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_) (`#191 <https://github.com/ros2/message_filters/issues/191>`_)
+* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_) (`#187 <https://github.com/ros2/message_filters/issues/187>`_)
+* Contributors: mergify[bot]
 
-7.3.0 (2025-07-29)
+7.1.1 (2025-06-03)
 ------------------
-* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_)
-* cache.hpp: Add allow_headerless (`#195 <https://github.com/ros2/message_filters/issues/195>`_)
-* Simplify method call (`#194 <https://github.com/ros2/message_filters/issues/194>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
-
-7.2.2 (2025-07-01)
-------------------
-* Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_)
-* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
-
-7.2.1 (2025-05-14)
-------------------
-* fix cmake deprecation (`#182 <https://github.com/ros2/message_filters/issues/182>`_)
-* update documentation (`#180 <https://github.com/ros2/message_filters/issues/180>`_)
-* Removed missing pragma (`#179 <https://github.com/ros2/message_filters/issues/179>`_)
-* Removed Subscriber deprecation (`#177 <https://github.com/ros2/message_filters/issues/177>`_)
-* Removed deprecated headers (`#176 <https://github.com/ros2/message_filters/issues/176>`_)
-* Use warning instead of warn (`#178 <https://github.com/ros2/message_filters/issues/178>`_)
-* Contributors: Alejandro Hernández Cordero, mosfet80
-
-7.2.0 (2025-04-25)
-------------------
+* fix cmake deprecation (`#182 <https://github.com/ros2/message_filters/issues/182>`_) (`#183 <https://github.com/ros2/message_filters/issues/183>`_)
+* update documentation (`#180 <https://github.com/ros2/message_filters/issues/180>`_) (`#181 <https://github.com/ros2/message_filters/issues/181>`_)
 * Docs - Remove C++ implementation limit of 9 channels (`#174 <https://github.com/ros2/message_filters/issues/174>`_)
-* Contributors: Patrick Roncagliolo
+* Contributors: Patrick Roncagliolo, mergify[bot]
 
 7.1.0 (2025-04-08)
 ------------------

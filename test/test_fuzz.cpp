@@ -36,7 +36,14 @@
 #include <random>
 
 #include <rclcpp/rclcpp.hpp>
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 #include "message_filters/subscriber.hpp"
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
 #include "message_filters/time_sequencer.hpp"
 #include "message_filters/time_synchronizer.hpp"
 #include "message_filters/chain.hpp"
@@ -78,8 +85,6 @@ static void fuzz_msg(MsgPtr msg)
 TEST(TimeSequencer, fuzz_sequencer)
 {
   rclcpp::Node::SharedPtr node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(0, 10000000), rclcpp::Duration(
       0, 1000000),
     10, node);
@@ -96,9 +101,9 @@ TEST(TimeSequencer, fuzz_sequencer)
 
     rclcpp::Rate(20).sleep();
     ASSERT_EQ(h.count_, 0);
-    executor.spin_some();
+    rclcpp::spin_some(node);
     rclcpp::Rate(100).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
     ASSERT_EQ(h.count_, 1);
   }
 }
@@ -130,12 +135,17 @@ TEST(TimeSynchronizer, fuzz_synchronizer)
 TEST(Subscriber, fuzz_subscriber)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
   message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
@@ -147,10 +157,10 @@ TEST(Subscriber, fuzz_subscriber)
     msg->header.stamp = ros_clock.now();
     pub->publish(*msg);
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
     ASSERT_EQ(h.count_, 1);
   }
-  executor.spin_some();
+  rclcpp::spin_some(node);
 }
 
 int main(int argc, char ** argv)
