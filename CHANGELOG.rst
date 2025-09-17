@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.3.9 (2025-09-17)
+------------------
+* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_) (`#199 <https://github.com/ros2/message_filters/issues/199>`_)
+* Contributors: mergify[bot]
+
 4.3.8 (2025-07-16)
 ------------------
 * Fix cache tutorial: added tab extension (backport `#190 <https://github.com/ros2/message_filters/issues/190>`_) (`#193 <https://github.com/ros2/message_filters/issues/193>`_)
