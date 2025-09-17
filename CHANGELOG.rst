@@ -2,64 +2,124 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-4.11.7 (2025-08-06)
--------------------
-* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_) (`#198 <https://github.com/ros2/message_filters/issues/198>`_)
-  (cherry picked from commit c7821ef2dcfdd6161983b0fe52829b9067a5e076)
-  Co-authored-by: Pavel Esipov <38457822+EsipovPA@users.noreply.github.com>
-* Fix cache tutorial: added tab extension (backport `#190 <https://github.com/ros2/message_filters/issues/190>`_) (`#192 <https://github.com/ros2/message_filters/issues/192>`_)
-  * Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_)
-  (cherry picked from commit 4f4e42f3e991a595473461b9341870a170eb858b)
-* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_) (`#188 <https://github.com/ros2/message_filters/issues/188>`_)
-  (cherry picked from commit 001129da0d37338eb4f11ce4e48560377cfb3faa)
-  Co-authored-by: Pavel Esipov <38457822+EsipovPA@users.noreply.github.com>
-  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
-* Contributors: mergify[bot]
+7.3.1 (2025-09-17)
+------------------
+* get rid of deprecated rclcpp::spin_some(). (`#201 <https://github.com/ros2/message_filters/issues/201>`_)
+* Contributors: Tomoya Fujita
 
-4.11.6 (2025-04-22)
--------------------
-* Fix doc link in README (`#173 <https://github.com/ros2/message_filters/issues/173>`_)
-  This is already fixed in Rolling, but broken in Jazzy
-* Future port hpp files (`#170 <https://github.com/ros2/message_filters/issues/170>`_)
-* Contributors: Patrick Roncagliolo, Tim Clephas
+7.3.0 (2025-07-29)
+------------------
+* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_)
+* cache.hpp: Add allow_headerless (`#195 <https://github.com/ros2/message_filters/issues/195>`_)
+* Simplify method call (`#194 <https://github.com/ros2/message_filters/issues/194>`_)
+* Contributors: Alejandro Hernández Cordero, Pavel Esipov
 
-4.11.5 (2025-04-02)
--------------------
-* fix: add `rclcpp::shutdown` (`#167 <https://github.com/ros2/message_filters/issues/167>`_) (`#168 <https://github.com/ros2/message_filters/issues/168>`_)
-  (cherry picked from commit dfe5dde18465bac2fdf9e485c1df84bbf2f46332)
-  Co-authored-by: Yuyuan Yuan <az6980522@gmail.com>
-* Contributors: mergify[bot]
+7.2.2 (2025-07-01)
+------------------
+* Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_)
+* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_)
+* Contributors: Alejandro Hernández Cordero, Pavel Esipov
 
-4.11.4 (2025-02-10)
--------------------
-* fix: fallback Time used incorrect clock (`#118 <https://github.com/ros2/message_filters/issues/118>`_) (`#164 <https://github.com/ros2/message_filters/issues/164>`_)
-  (cherry picked from commit 5d99c9ca87e037efb581c038973748c1a1ab378e)
-  Co-authored-by: Russ <russ.webber@greenroomrobotics.com>
-* Contributors: mergify[bot]
+7.2.1 (2025-05-14)
+------------------
+* fix cmake deprecation (`#182 <https://github.com/ros2/message_filters/issues/182>`_)
+* update documentation (`#180 <https://github.com/ros2/message_filters/issues/180>`_)
+* Removed missing pragma (`#179 <https://github.com/ros2/message_filters/issues/179>`_)
+* Removed Subscriber deprecation (`#177 <https://github.com/ros2/message_filters/issues/177>`_)
+* Removed deprecated headers (`#176 <https://github.com/ros2/message_filters/issues/176>`_)
+* Use warning instead of warn (`#178 <https://github.com/ros2/message_filters/issues/178>`_)
+* Contributors: Alejandro Hernández Cordero, mosfet80
 
-4.11.3 (2024-12-13)
--------------------
-* Move from Wiki and Updated Python docs (backport `#150 <https://github.com/ros2/message_filters/issues/150>`_) (`#151 <https://github.com/ros2/message_filters/issues/151>`_)
-  Co-authored-by: Lucas Wendland <82680922+CursedRock17@users.noreply.github.com>
-  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
-* Bugfix/segfault when getting surrounding interval of empty cache (backport `#116 <https://github.com/ros2/message_filters/issues/116>`_) (`#141 <https://github.com/ros2/message_filters/issues/141>`_)
-  * Bugfix/segfault when getting surrounding interval of empty cache (`#116 <https://github.com/ros2/message_filters/issues/116>`_)
-  (cherry picked from commit e60450dabf1daf56642efe52fb790f8ecaacd9d7)
-  Co-authored-by: Matthias Holoch <mholoch@gmail.com>
-  Co-authored-by: Alejandro Hernández Cordero <ahcorde@gmail.com>
-* Remove CODEOWNERS and mirror-rolling-to-master workflow. (`#158 <https://github.com/ros2/message_filters/issues/158>`_) (`#159 <https://github.com/ros2/message_filters/issues/159>`_)
-  They are both outdated and both no longer serving their
-  intended purpose.
-  (cherry picked from commit 693c227efdc094f8b8b5336fec49d03e773611c0)
-  Co-authored-by: Chris Lalancette <clalancette@gmail.com>
-* Contributors: mergify[bot]
+7.2.0 (2025-04-25)
+------------------
+* Docs - Remove C++ implementation limit of 9 channels (`#174 <https://github.com/ros2/message_filters/issues/174>`_)
+* Contributors: Patrick Roncagliolo
 
-4.11.2 (2024-07-31)
+7.1.0 (2025-04-08)
+------------------
+* Removed windows warnings (`#171 <https://github.com/ros2/message_filters/issues/171>`_)
+* More generic subscriber implementation using NodeInterfaces from rclcpp (`#113 <https://github.com/ros2/message_filters/issues/113>`_)
+* Contributors: Alejandro Hernández Cordero, Dominik
+
+7.0.2 (2025-03-13)
+------------------
+* Feature/time sequencer python (`#156 <https://github.com/ros2/message_filters/issues/156>`_)
+* Add sync_arrival_time flag to ApproximateTimeSynchronizer (`#166 <https://github.com/ros2/message_filters/issues/166>`_)
+* fix: add `rclcpp::shutdown` (`#167 <https://github.com/ros2/message_filters/issues/167>`_)
+* Contributors: Kalvik, Saif Sidhik, Yuyuan Yuan
+
+7.0.1 (2025-01-31)
+------------------
+* fix typo: Cache.getLastestTime -> Cache.getLatestTime (`#165 <https://github.com/ros2/message_filters//issues/165>`_)
+* Contributors: Michal Staniaszek
+
+7.0.0 (2024-12-20)
+------------------
+* Add temporal offset between topics between ApproximateTimeSynchronizer (`#154 <https://github.com/ros2/message_filters/issues/154>`_)
+* Remove CODEOWNERS and mirror-rolling-to-master workflow. (`#158 <https://github.com/ros2/message_filters/issues/158>`_)
+* Contributors: Chris Lalancette, Clément Chupin
+
+6.0.7 (2024-11-20)
+------------------
+* Updated Python docs (`#150 <https://github.com/ros2/message_filters/issues/150>`_)
+* Contributors: Alejandro Hernández Cordero
+
+6.0.6 (2024-10-16)
+------------------
+* Adds an input aligner filter (`#148 <https://github.com/ros2/message_filters/issues/148>`_)
+* Stop using python_cmake_module. (`#114 <https://github.com/ros2/message_filters/issues/114>`_)
+* Contributors: Chris Lalancette, Sascha Arnold, Alejandro Hernández Cordero
+
+6.0.5 (2024-10-03)
+------------------
+* Fix the wording in the deprecation messages. (`#144 <https://github.com/ros2/message_filters/issues/144>`_)
+* Contributors: Chris Lalancette
+
+6.0.4 (2024-08-19)
+------------------
+* Apply some simplifications and deduplications to ExactTime sync policy (`#142 <https://github.com/ros2/message_filters/issues/142>`_)
+* Minor fixes for `#93 <https://github.com/ros2/message_filters/issues/93>`_ (`#143 <https://github.com/ros2/message_filters/issues/143>`_)
+* Bugfix/segfault when getting surrounding interval of empty cache (`#116 <https://github.com/ros2/message_filters/issues/116>`_)
+* Contributors: Christopher Wecht, Matthias Holoch
+
+6.0.3 (2024-07-31)
+------------------
+* Migrate to C++11 variadic templates (`#93 <https://github.com/ros2/message_filters/issues/93>`_)
+* [LatestTimeSync] Fix crash when Synchronizeris started before the messges are available. (`#137 <https://github.com/ros2/message_filters/issues/137>`_)
+* Contributors: Christopher Wecht, Dr. Denis
+
+6.0.2 (2024-07-29)
+------------------
+* Fix cppcheck warning on Windwos (`#138 <https://github.com/ros2/message_filters/issues/138>`_)
+* Adding ament_lint_common (`#120 <https://github.com/ros2/message_filters/issues/120>`_)
+* Contributors: Alejandro Hernández Cordero, Lucas Wendland
+
+6.0.1 (2024-07-19)
+------------------
+* Deprecating all C headers (`#135 <https://github.com/ros2/message_filters/issues/135>`_)
+* Cleanups (`#134 <https://github.com/ros2/message_filters/issues/134>`_)
+* fix link of index.rst in README.md (`#133 <https://github.com/ros2/message_filters/issues/133>`_)
+* Contributors: Alejandro Hernández Cordero, Iván López Broceño, Lucas Wendland
+
+6.0.0 (2024-06-26)
+------------------
+* Revert "Adding explicit constructors (`#129 <https://github.com/ros2/message_filters/issues/129>`_)" (`#132 <https://github.com/ros2/message_filters/issues/132>`_)
+* Contributors: Chris Lalancette
+
+5.0.0 (2024-06-17)
+------------------
+* fix: fallback Time used incorrect clock (`#118 <https://github.com/ros2/message_filters/issues/118>`_)
+* Adding explicit constructors (`#129 <https://github.com/ros2/message_filters/issues/129>`_)
+* Deprecated qos_profile in Subscriber (`#127 <https://github.com/ros2/message_filters/issues/127>`_)
+* Adding cpplint (`#125 <https://github.com/ros2/message_filters/issues/125>`_)
+* Move Docs From Wiki (`#119 <https://github.com/ros2/message_filters/issues/119>`_)
+* Adding lint_cmake (`#126 <https://github.com/ros2/message_filters/issues/126>`_)
+* Adding Uncrustify Changes (`#124 <https://github.com/ros2/message_filters/issues/124>`_)
+* Adding Copyright Linter (`#122 <https://github.com/ros2/message_filters/issues/122>`_)
+* Contributors: Lucas Wendland, Russ
+
+4.12.0 (2024-04-26)
 -------------------
-* [LatestTimeSync] Fix crash when Synchronizer is started before the messges are available. (`#136 <https://github.com/ros2/message_filters/issues/136>`_) (`#139 <https://github.com/ros2/message_filters/issues/139>`_)
-  (cherry picked from commit 5ce2b58a0383f83bfde6edd17dc310c19dbd789c)
-  Co-authored-by: Dr. Denis <denis@stoglrobotics.de>
-* Contributors: mergify[bot]
 
 4.11.1 (2024-04-16)
 -------------------
