@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.1 (2025-09-17)
+------------------
+* get rid of deprecated rclcpp::spin_some(). (`#201 <https://github.com/ros2/message_filters/issues/201>`_)
+* Contributors: Tomoya Fujita
+
 7.3.0 (2025-07-29)
 ------------------
 * Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_)
