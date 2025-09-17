@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.1.2 (2025-09-17)
+------------------
+* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_) (`#197 <https://github.com/ros2/message_filters/issues/197>`_)
+* Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_) (`#191 <https://github.com/ros2/message_filters/issues/191>`_)
+* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_) (`#187 <https://github.com/ros2/message_filters/issues/187>`_)
+* Contributors: mergify[bot]
+
 7.1.1 (2025-06-03)
 ------------------
 * fix cmake deprecation (`#182 <https://github.com/ros2/message_filters/issues/182>`_) (`#183 <https://github.com/ros2/message_filters/issues/183>`_)
