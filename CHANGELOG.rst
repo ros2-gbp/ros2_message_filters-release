@@ -2,6 +2,16 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.8 (2025-10-03)
+-------------------
+* Some fixes to documentation (backport `#208 <https://github.com/ros2/message_filters/issues/208>`_) (`#211 <https://github.com/ros2/message_filters/issues/211>`_)
+  * Some fixes to documentation (`#208 <https://github.com/ros2/message_filters/issues/208>`_)
+  (cherry picked from commit e849a8e3d15276c0b174a37e57f5fe3572193ae5)
+* Create a Chain class tutorial for C++ (`#203 <https://github.com/ros2/message_filters/issues/203>`_) (`#206 <https://github.com/ros2/message_filters/issues/206>`_)
+  (cherry picked from commit b6496c309f6cf05ebaccb351446186ba2309f01f)
+  Co-authored-by: Pavel Esipov <38457822+EsipovPA@users.noreply.github.com>
+* Contributors: mergify[bot]
+
 4.11.7 (2025-08-06)
 -------------------
 * Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_) (`#198 <https://github.com/ros2/message_filters/issues/198>`_)
