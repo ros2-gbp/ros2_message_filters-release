@@ -34,9 +34,21 @@
 
 #include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 #include "message_filters/subscriber.hpp"
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
 #include "message_filters/chain.hpp"
 #include "sensor_msgs/msg/imu.hpp"
+
+#ifdef _WIN32
+# pragma warning(push)
+# pragma warning(disable : 4996)
+#endif
 
 typedef sensor_msgs::msg::Imu Msg;
 typedef std::shared_ptr<sensor_msgs::msg::Imu const> MsgConstPtr;
@@ -60,8 +72,6 @@ public:
 TEST(Subscriber, simple)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
@@ -73,7 +83,7 @@ TEST(Subscriber, simple)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -82,8 +92,6 @@ TEST(Subscriber, simple)
 TEST(Subscriber, simple_raw)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
@@ -95,7 +103,7 @@ TEST(Subscriber, simple_raw)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -104,8 +112,6 @@ TEST(Subscriber, simple_raw)
 TEST(Subscriber, subUnsubSub)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
@@ -121,7 +127,7 @@ TEST(Subscriber, subUnsubSub)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -130,8 +136,6 @@ TEST(Subscriber, subUnsubSub)
 TEST(Subscriber, subUnsubSub_raw)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
@@ -147,7 +151,7 @@ TEST(Subscriber, subUnsubSub_raw)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -156,8 +160,6 @@ TEST(Subscriber, subUnsubSub_raw)
 TEST(Subscriber, switchRawAndShared)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
@@ -173,7 +175,7 @@ TEST(Subscriber, switchRawAndShared)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -182,8 +184,6 @@ TEST(Subscriber, switchRawAndShared)
 TEST(Subscriber, subInChain)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
   message_filters::Chain<Msg> c;
   rclcpp::QoS default_qos =
@@ -197,7 +197,7 @@ TEST(Subscriber, subInChain)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -226,20 +226,17 @@ struct NonConstHelper
 TEST(Subscriber, singleNonConstCallback)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
   NonConstHelper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
   message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
   sub.registerCallback(&NonConstHelper::cb, &h);
-  // Add the node here so that waitsets include the subscriber callbacks
-  executor.add_node(node);
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   Msg msg;
   pub->publish(Msg());
 
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
   ASSERT_EQ(msg, *h.msg_.get());
@@ -248,21 +245,18 @@ TEST(Subscriber, singleNonConstCallback)
 TEST(Subscriber, multipleNonConstCallbacksFilterSubscriber)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
   NonConstHelper h, h2;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
   message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
   sub.registerCallback(&NonConstHelper::cb, &h);
   sub.registerCallback(&NonConstHelper::cb, &h2);
-  // Add the node here so that waitsets include the subscriber callbacks
-  executor.add_node(node);
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   auto msg = std::make_unique<Msg>();
   pub->publish(std::move(msg));
 
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
   ASSERT_TRUE(h2.msg_);
@@ -274,8 +268,6 @@ TEST(Subscriber, multipleNonConstCallbacksFilterSubscriber)
 TEST(Subscriber, multipleCallbacksSomeFilterSomeDirect)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   NonConstHelper h, h2;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
@@ -289,9 +281,9 @@ TEST(Subscriber, multipleCallbacksSomeFilterSomeDirect)
   pub->publish(std::move(msg));
 
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
   ASSERT_TRUE(h2.msg_);
@@ -303,8 +295,6 @@ TEST(Subscriber, multipleCallbacksSomeFilterSomeDirect)
 TEST(Subscriber, lifecycle)
 {
   auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node->get_node_base_interface());
   Helper h;
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
@@ -318,7 +308,7 @@ TEST(Subscriber, lifecycle)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node->get_node_base_interface());
   }
 
   ASSERT_GT(h.count_, 0);
@@ -327,13 +317,17 @@ TEST(Subscriber, lifecycle)
 TEST(Subscriber, node_interfaces)
 {
   auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node->get_node_base_interface());
   Helper h;
+
+  // disassemble node into relevant interfaces
+  using NodeParametersInterface = rclcpp::node_interfaces::NodeParametersInterface;
+  using NodeTopicsInterface = rclcpp::node_interfaces::NodeTopicsInterface;
+  using RequiredInterfaces = rclcpp::node_interfaces::NodeInterfaces<NodeParametersInterface,
+      NodeTopicsInterface>;
 
   rclcpp::QoS default_qos =
     rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(*node, "test_topic",
+  message_filters::Subscriber<Msg> sub(RequiredInterfaces(*node), "test_topic",
     default_qos);
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
@@ -343,7 +337,7 @@ TEST(Subscriber, node_interfaces)
   while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node->get_node_base_interface());
   }
 
   ASSERT_GT(h.count_, 0);
@@ -359,3 +353,7 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return ret;
 }
+
+#ifdef _WIN32
+# pragma warning(pop)
+#endif
