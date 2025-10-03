@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.2 (2025-10-03)
+------------------
+* Fix comparison of different time sources in C++ TimeSequencer (`#202 <https://github.com/ros2/message_filters/issues/202>`_)
+* Some fixes to documentation (`#208 <https://github.com/ros2/message_filters/issues/208>`_)
+* Create a Chain class tutorial for C++ (`#203 <https://github.com/ros2/message_filters/issues/203>`_)
+* Contributors: Alejandro Hernández Cordero, Johannes Böhm, Pavel Esipov
+
 7.3.1 (2025-09-17)
 ------------------
 * get rid of deprecated rclcpp::spin_some(). (`#201 <https://github.com/ros2/message_filters/issues/201>`_)
