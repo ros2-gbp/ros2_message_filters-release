@@ -5,25 +5,24 @@ Prerequisites
 ~~~~~~~~~~~~~
 This tutorial assumes you have a working knowledge of ROS 2
 
-If you have not done so already `create a workspace <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
-
+If you have not done so already `create a workspace <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
 
 1. Create a Basic Node with Includes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: C++
 
-    #include "rclcpp/rclcpp.hpp"
+    #include <rclcpp/rclcpp.hpp>
 
     #include <chrono>
     #include <functional>
     #include <memory>
 
-    #include "message_filters/subscriber.h"
-    #include "message_filters/time_synchronizer.h"
+    #include "message_filters/subscriber.hpp"
+    #include "message_filters/time_synchronizer.hpp"
 
-    #include "sensor_msgs/msg/temperature.hpp"
-    #include "sensor_msgs/msg/fluid_pressure.hpp"
+    #include <sensor_msgs/msg/temperature.hpp>
+    #include <sensor_msgs/msg/fluid_pressure.hpp>
 
     using namespace std::chrono_literals;
 
@@ -35,19 +34,18 @@ If you have not done so already `create a workspace <https://docs.ros.org/en/hum
     public:
 
     private:
-
-    rclcpp::Publisher<sensor_msgs::msg::Temperature>::SharedPtr temp_pub;
-    rclcpp::Publisher<sensor_msgs::msg::FluidPressure>::SharedPtr fluid_pub;
-    message_filters::Subscriber<sensor_msgs::msg::Temperature> temp_sub;
-    message_filters::Subscriber<sensor_msgs::msg::FluidPressure> fluid_sub;
-    std::shared_ptr<message_filters::TimeSynchronizer<sensor_msgs::msg::Temperature,
-      sensor_msgs::msg::FluidPressure>> sync;
-    rclcpp::TimerBase::SharedPtr timer;
+      rclcpp::Publisher<sensor_msgs::msg::Temperature>::SharedPtr temp_pub;
+      rclcpp::Publisher<sensor_msgs::msg::FluidPressure>::SharedPtr fluid_pub;
+      message_filters::Subscriber<sensor_msgs::msg::Temperature> temp_sub;
+      message_filters::Subscriber<sensor_msgs::msg::FluidPressure> fluid_sub;
+      std::shared_ptr<message_filters::TimeSynchronizer<sensor_msgs::msg::Temperature,
+        sensor_msgs::msg::FluidPressure>> sync;
+      rclcpp::TimerBase::SharedPtr timer;
     };
 
 
 For this example we will be using the ``temperature`` and ``fluid_pressure`` messages found in
-`sensor_msgs <https://github.com/ros2/common_interfaces/tree/humble/sensor_msgs/msg>`_.
+`sensor_msgs <https://github.com/ros2/common_interfaces/tree/rolling/sensor_msgs/msg>`_.
 To simulate a working ``TimeSynchronizer`` we will be publishing and subscribing to topics of those respective types, to showcase how real sensors would be working.
 
 .. code-block:: C++
@@ -71,8 +69,8 @@ Next, we can initialize these private elements within a basic ``Node`` construct
       temp_pub = this->create_publisher<sensor_msgs::msg::Temperature>("temp", qos);
       fluid_pub = this->create_publisher<sensor_msgs::msg::FluidPressure>("fluid", qos);
 
-      temp_sub.subscribe(this, "temp", qos.get_rmw_qos_profile());
-      fluid_sub.subscribe(this, "fluid", qos.get_rmw_qos_profile());
+      temp_sub.subscribe(this, "temp", qos);
+      fluid_sub.subscribe(this, "fluid", qos);
 
       timer = this->create_wall_timer(1000ms, std::bind(&TimeSyncNode::TimerCallback, this));
 
@@ -124,7 +122,10 @@ So, we must create some private callbacks.
       fluid_pub->publish(fluid);
     }
 
-``SyncCallback`` takes ``const shared_ptr references`` relating to both topics becasue they will be taken at the exact time, from here you can compare these topics, set values, etc. This callback is the final goal of synching multiple topics and the reason why the qos and header stamps must be the same. This will be seen with the logging statement as both of the times will be the same. For the ``TimerCallback`` just initialize both the ``Temperature`` and ``FluidPressure`` in whatever way necessary, but make sure the header stamp of both have the same exact time, otherwise the ``TimeSynchronizer`` will be misaligned and won't do anything. This is becasue the ``TimeSynchronizer`` has an ``ExactTime`` sync policy.
+``SyncCallback`` takes ``const shared_ptr references`` relating to both topics because they will be taken at the exact time, from here you can compare these topics, set values, etc.
+This callback is the final goal of synching multiple topics and the reason why the qos and header stamps must be the same. This will be seen with the logging statement as both of the times will be the same.
+For the ``TimerCallback`` just initialize both the ``Temperature`` and ``FluidPressure`` in whatever way necessary, but make sure the header stamp of both have the same exact time, otherwise the ``TimeSynchronizer`` will be misaligned and won't do anything.
+This is because the ``TimeSynchronizer`` has an ``ExactTime`` sync policy.
 
 Finally, create a main function and spin the node
 
@@ -152,7 +153,7 @@ Now open the ``CMakeLists.txt`` add the executable and name it ``time_sync``, wh
    find_package(message_filters REQUIRED)
 
    add_executable(time_sync src/time_synchronizer.cpp)
-   ament_target_dependencies(time_sync rclcpp sensor_msgs message_filters)
+   target_link_libraries(time_sync PUBLIC rclcpp::rclcpp ${sensor_msgs_TARGETS} message_filters::message_filters)
 
 Finally, add the ``install(TARGETS…)`` section so ``ros2 run`` can find your executable:
 
@@ -162,14 +163,30 @@ Finally, add the ``install(TARGETS…)`` section so ``ros2 run`` can find your e
         time_sync
         DESTINATION lib/${PROJECT_NAME})
 
-
 3. Build
 ~~~~~~~~
 From the root of your package, build and source.
 
-.. code-block:: bash
+.. tabs::
 
-    colcon build && . install/setup.zsh
+    .. group-tab:: Linux
+
+        .. code-block:: console
+
+            $ colcon build && . install/setup.bash
+
+    .. group-tab:: macOS
+
+        .. code-block:: console
+
+            $ colcon build && . install/setup.bash
+
+    .. group-tab:: Windows
+
+        .. code-block:: console
+
+            $ colcon build
+            $ call C:\dev\ros2\local_setup.bat
 
 4. Run
 ~~~~~~
