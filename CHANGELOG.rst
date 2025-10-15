@@ -2,6 +2,12 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.9 (2025-10-15)
+-------------------
+* Add Python implementation for a Chain filter (backport `#213 <https://github.com/ros2/message_filters/issues/213>`_) (`#215 <https://github.com/ros2/message_filters/issues/215>`_)
+* Update repository URL in package.xml (`#217 <https://github.com/ros2/message_filters/issues/217>`_)
+* Contributors: Martin Pecka, mergify[bot]
+
 4.11.8 (2025-10-03)
 -------------------
 * Some fixes to documentation (backport `#208 <https://github.com/ros2/message_filters/issues/208>`_) (`#211 <https://github.com/ros2/message_filters/issues/211>`_)
