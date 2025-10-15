@@ -1,3 +1,26 @@
+## message_filters (humble) - 4.3.11-1
+
+The packages in the `message_filters` repository were released into the `humble` distro by running `/usr/bin/bloom-release --rosdistro humble --track humble message_filters` on `Wed, 15 Oct 2025 16:11:39 -0000`
+
+The `message_filters` package was released.
+
+Version of package(s) in repository `message_filters`:
+
+- upstream repository: https://github.com/ros2/message_filters.git
+- release repository: https://github.com/ros2-gbp/ros2_message_filters-release.git
+- rosdistro version: `4.3.10-1`
+- old version: `4.3.10-1`
+- new version: `4.3.11-1`
+
+Versions of tools used:
+
+- bloom version: `0.13.0`
+- catkin_pkg version: `1.1.0`
+- rosdep version: `0.26.0`
+- rosdistro version: `1.0.1`
+- vcstools version: `0.1.42`
+
+
 ## message_filters (jazzy) - 4.11.9-1
 
 The packages in the `message_filters` repository were released into the `jazzy` distro by running `/usr/bin/bloom-release --rosdistro jazzy --track jazzy message_filters` on `Wed, 15 Oct 2025 15:40:37 -0000`
