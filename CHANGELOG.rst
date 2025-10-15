@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.3 (2025-10-15)
+------------------
+* Add Python implementation for a Chain filter (`#213 <https://github.com/ros2/message_filters/issues/213>`_)
+* Contributors: Pavel Esipov
+
 7.3.2 (2025-10-03)
 ------------------
 * Fix comparison of different time sources in C++ TimeSequencer (`#202 <https://github.com/ros2/message_filters/issues/202>`_)
