@@ -9,7 +9,7 @@ The tutorials will provide a swell of knowledge from Basic Understanding to adva
 Workspace setup
 ---------------
 
-If you have not yet created a workspace in which to complete the tutorials, `follow this tutorial <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ .
+If you have not yet created a workspace in which to complete the tutorials, `follow this tutorial <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ .
 
 Basic Tutorials
 ---------------
@@ -24,3 +24,4 @@ Basic Tutorials
    Tutorials/Cache-Python
    Tutorials/Cache-Cpp
    Tutorials/Chain-Cpp
+   Tutorials/Chain-Python
