@@ -34,7 +34,7 @@ from dataclasses import dataclass
 from functools import reduce
 import itertools
 import threading
-from typing import Union
+from typing import Type, Union
 
 from builtin_interfaces.msg import Time as TimeMsg
 import rclpy
@@ -42,7 +42,9 @@ from rclpy.clock import ROSClock
 from rclpy.duration import Duration
 from rclpy.logging import LoggingSeverity
 from rclpy.node import Node
+from rclpy.qos import QoSProfile
 from rclpy.time import Time
+from rclpy.type_support import MsgT
 
 
 class SimpleFilter(object):
@@ -76,12 +78,31 @@ class Subscriber(SimpleFilter):
     to it.
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(
+        self,
+        node: Node,
+        msg_type: Type[MsgT],
+        topic: str,
+        qos_profile: Union[QoSProfile, int] = 10,
+        **kwargs,
+    ) -> None:
+        """
+        Construct a Subscriber.
+
+        :param node: The node to create a subscriber for.
+        :param msg_type: The type of ROS messages the subscription will subscribe to.
+        :param topic: The name of the topic the subscription will subscribe to.
+        :param qos_profile: A QoSProfile or a history depth to apply to the
+            subscription. In the case that a history depth is provided, the QoS history is
+            set to KEEP_LAST, the QoS history depth is set to the value of the parameter,
+            and all other QoS settings are set to their default values.
+        """
         SimpleFilter.__init__(self)
-        self.node = args[0]
-        self.topic = args[2]
-        kwargs.setdefault('qos_profile', 10)
-        self.sub = self.node.create_subscription(*args[1:], self.callback, **kwargs)
+        self.node = node
+        self.topic = topic
+        self.sub = self.node.create_subscription(
+            msg_type, topic, self.callback, qos_profile, **kwargs
+        )
 
     def callback(self, msg):
         self.signalMessage(msg)
@@ -217,10 +238,11 @@ class Chain(SimpleFilter):
 
     def __init__(self, message_filter=None):
         SimpleFilter.__init__(self)
-        if message_filter is not None:
-            self.connectInput(message_filter)
 
         self.incoming_connection = None
+
+        if message_filter is not None:
+            self.connectInput(message_filter)
 
         self._message_filters: dict[int, Chain.FilterInfo] = {}
 
