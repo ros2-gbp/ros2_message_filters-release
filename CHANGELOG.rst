@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.4 (2025-11-12)
+------------------
+* Update subscription callback signatures (`#222 <https://github.com/ros2/message_filters/issues/222>`_)
+* Add chain tutorial python (`#219 <https://github.com/ros2/message_filters/issues/219>`_)
+* Change function signature for Python Subscriber class (`#220 <https://github.com/ros2/message_filters/issues/220>`_)
+* Contributors: Pavel Esipov, Samuel Foo Enze, mini-1235
+
 7.3.3 (2025-10-15)
 ------------------
 * Add Python implementation for a Chain filter (`#213 <https://github.com/ros2/message_filters/issues/213>`_)
