@@ -2,6 +2,14 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.5 (2026-01-15)
+------------------
+* Get topic name from base class to propagate remaps (`#68 <https://github.com/ros2/message_filters/issues/68>`_)
+* `#130 <https://github.com/ros2/message_filters/issues/130>`_ add simple filter tutorial for cpp (`#239 <https://github.com/ros2/message_filters/issues/239>`_)
+* `#200 <https://github.com/ros2/message_filters/issues/200>`_ fix inconsistensy between cpp and python exact time synchronizer impl (`#238 <https://github.com/ros2/message_filters/issues/238>`_)
+* Add simple filter tutorials (`#226 <https://github.com/ros2/message_filters/issues/226>`_)
+* Contributors: Erwin L., Pavel Esipov
+
 7.3.4 (2025-11-12)
 ------------------
 * Update subscription callback signatures (`#222 <https://github.com/ros2/message_filters/issues/222>`_)
