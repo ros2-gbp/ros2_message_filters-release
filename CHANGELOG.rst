@@ -2,6 +2,14 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.10 (2026-01-15)
+--------------------
+* `#200 <https://github.com/ros2/message_filters/issues/200>`_ fix inconsistensy between cpp and python exact time synchronizer impl (backport `#238 <https://github.com/ros2/message_filters/issues/238>`_) (`#244 <https://github.com/ros2/message_filters/issues/244>`_)
+* `#130 <https://github.com/ros2/message_filters/issues/130>`_ add simple filter tutorial for cpp (backport `#239 <https://github.com/ros2/message_filters/issues/239>`_) (`#241 <https://github.com/ros2/message_filters/issues/241>`_)
+* Add simple filter tutorials (backport `#226 <https://github.com/ros2/message_filters/issues/226>`_) (`#229 <https://github.com/ros2/message_filters/issues/229>`_)
+* Add chain tutorial python (`#219 <https://github.com/ros2/message_filters/issues/219>`_) (`#224 <https://github.com/ros2/message_filters/issues/224>`_)
+* Contributors: mergify[bot]
+
 4.11.9 (2025-10-15)
 -------------------
 * Add Python implementation for a Chain filter (backport `#213 <https://github.com/ros2/message_filters/issues/213>`_) (`#215 <https://github.com/ros2/message_filters/issues/215>`_)
