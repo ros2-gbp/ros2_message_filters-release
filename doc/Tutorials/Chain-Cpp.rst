@@ -429,8 +429,8 @@ Navigate to your package root and add the following dependencies in ``package.xm
 
 .. code-block:: xml
 
-    <depend>rclcpp</depend>
     <depend>message_filters</depend>
+    <depend>rclcpp</depend>
     <depend>std_msgs</depend>
 
 3. Add the Node to a CMakeLists.txt
@@ -445,7 +445,7 @@ Now open the ``CMakeLists.txt`` add the executable and name it ``chain_tutorial`
 
 	ament_auto_add_executable(chain_tutorial src/chain_tutorial.cpp)
 
-Finally, add the install(TARGETS…) section so ros2 run can find your executable:
+Finally, add the ``install(TARGETS…)`` section so ros2 run can find your executable:
 
 .. code-block:: CMake
 

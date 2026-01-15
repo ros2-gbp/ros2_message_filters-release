@@ -25,3 +25,5 @@ Basic Tutorials
    Tutorials/Cache-Cpp
    Tutorials/Chain-Cpp
    Tutorials/Chain-Python
+   Tutorials/SimpleFilter-Python
+   Tutorials/SimpleFilter-Cpp
