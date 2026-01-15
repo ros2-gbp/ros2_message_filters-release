@@ -83,8 +83,7 @@ class Subscriber(SimpleFilter):
         node: Node,
         msg_type: Type[MsgT],
         topic: str,
-        qos_profile: Union[QoSProfile, int] = 10,
-        **kwargs,
+        qos_profile: Union[QoSProfile, int] = QoSProfile(depth=10),
     ) -> None:
         """
         Construct a Subscriber.
@@ -101,7 +100,10 @@ class Subscriber(SimpleFilter):
         self.node = node
         self.topic = topic
         self.sub = self.node.create_subscription(
-            msg_type, topic, self.callback, qos_profile, **kwargs
+            msg_type=msg_type,
+            topic=self.topic,
+            callback=self.callback,
+            qos_profile=qos_profile,
         )
 
     def callback(self, msg):
@@ -318,12 +320,25 @@ class TimeSynchronizer(SimpleFilter):
             del my_queue[min(my_queue)]
         # common is the set of timestamps that occur in all queues
         common = reduce(set.intersection, [set(q) for q in self.queues])
+        signaled_time = None
         for t in sorted(common):
             # msgs is list of msgs (one from each queue) with stamp t
             msgs = [q[t] for q in self.queues]
             self.signalMessage(*msgs)
             for q in self.queues:
                 del q[t]
+            signaled_time = t
+            break
+
+        # for consistency with the C++ implementation:
+        #     Delete all stored messages with a timestamp
+        #     older than the time of the latest signaled time
+        if signaled_time is not None:
+            for queue in self.queues:
+                for stamp in list(queue.keys()):
+                    if stamp < signaled_time:
+                        del queue[stamp]
+
         self.lock.release()
 
 
