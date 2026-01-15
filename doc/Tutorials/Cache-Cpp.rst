@@ -19,7 +19,7 @@ If you have not done so already `create a workspace <https://docs.ros.org/en/rol
 1. Create a Basic Node with Includes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Let's assume, you've already created an empty ROS package for C++.
+Let's assume, you've already created an empty ROS 2 package for C++.
 The next step is to create a new C++ file inside your package, e.g., ``cache_tutorial.cpp``, and create an example node:
 
 .. code-block:: C++
@@ -277,8 +277,8 @@ Navigate to your package root and add the following dependencies in ``package.xm
 
 .. code-block:: xml
 
-    <depend>rclcpp</depend>
     <depend>message_filters</depend>
+    <depend>rclcpp</depend>
     <depend>std_msgs</depend>
 
 3. Add the Node to a CMakeLists.txt
@@ -293,7 +293,7 @@ Now open the ``CMakeLists.txt`` add the executable and name it ``cache_tutorial`
 
 	ament_auto_add_executable(cache_tutorial src/cache_tutorial.cpp)
 
-Finally, add the install(TARGETS…) section so ros2 run can find your executable:
+Finally, add the ``install(TARGETS…)`` section so ros2 run can find your executable:
 
 .. code-block:: CMake
 
