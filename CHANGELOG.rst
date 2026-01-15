@@ -2,65 +2,38 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-7.3.5 (2026-01-15)
+7.1.5 (2026-01-15)
 ------------------
-* Get topic name from base class to propagate remaps (`#68 <https://github.com/ros2/message_filters/issues/68>`_)
-* `#130 <https://github.com/ros2/message_filters/issues/130>`_ add simple filter tutorial for cpp (`#239 <https://github.com/ros2/message_filters/issues/239>`_)
-* `#200 <https://github.com/ros2/message_filters/issues/200>`_ fix inconsistensy between cpp and python exact time synchronizer impl (`#238 <https://github.com/ros2/message_filters/issues/238>`_)
-* Add simple filter tutorials (`#226 <https://github.com/ros2/message_filters/issues/226>`_)
-* Contributors: Erwin L., Pavel Esipov
+* `#200 <https://github.com/ros2/message_filters/issues/200>`_ fix inconsistensy between cpp and python exact time synchronizer impl (`#238 <https://github.com/ros2/message_filters/issues/238>`_) (`#243 <https://github.com/ros2/message_filters/issues/243>`_)
+* `#130 <https://github.com/ros2/message_filters/issues/130>`_ add simple filter tutorial for cpp (backport `#239 <https://github.com/ros2/message_filters/issues/239>`_) (`#240 <https://github.com/ros2/message_filters/issues/240>`_)
+* Add simple filter tutorials (backport `#226 <https://github.com/ros2/message_filters/issues/226>`_) (`#228 <https://github.com/ros2/message_filters/issues/228>`_)
+* Add chain tutorial python (`#219 <https://github.com/ros2/message_filters/issues/219>`_) (`#223 <https://github.com/ros2/message_filters/issues/223>`_)
+* Contributors: mergify[bot]
 
-7.3.4 (2025-11-12)
+7.1.4 (2025-10-15)
 ------------------
-* Update subscription callback signatures (`#222 <https://github.com/ros2/message_filters/issues/222>`_)
-* Add chain tutorial python (`#219 <https://github.com/ros2/message_filters/issues/219>`_)
-* Change function signature for Python Subscriber class (`#220 <https://github.com/ros2/message_filters/issues/220>`_)
-* Contributors: Pavel Esipov, Samuel Foo Enze, mini-1235
+* Add Python implementation for a Chain filter (`#213 <https://github.com/ros2/message_filters/issues/213>`_) (`#214 <https://github.com/ros2/message_filters/issues/214>`_)
+* Contributors: mergify[bot]
 
-7.3.3 (2025-10-15)
+7.1.3 (2025-10-03)
 ------------------
-* Add Python implementation for a Chain filter (`#213 <https://github.com/ros2/message_filters/issues/213>`_)
-* Contributors: Pavel Esipov
+* Some fixes to documentation (`#208 <https://github.com/ros2/message_filters/issues/208>`_) (`#210 <https://github.com/ros2/message_filters/issues/210>`_)
+* Create a Chain class tutorial for C++ (`#203 <https://github.com/ros2/message_filters/issues/203>`_) (`#205 <https://github.com/ros2/message_filters/issues/205>`_)
+* Contributors: mergify[bot]
 
-7.3.2 (2025-10-03)
+7.1.2 (2025-09-17)
 ------------------
-* Fix comparison of different time sources in C++ TimeSequencer (`#202 <https://github.com/ros2/message_filters/issues/202>`_)
-* Some fixes to documentation (`#208 <https://github.com/ros2/message_filters/issues/208>`_)
-* Create a Chain class tutorial for C++ (`#203 <https://github.com/ros2/message_filters/issues/203>`_)
-* Contributors: Alejandro Hernández Cordero, Johannes Böhm, Pavel Esipov
+* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_) (`#197 <https://github.com/ros2/message_filters/issues/197>`_)
+* Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_) (`#191 <https://github.com/ros2/message_filters/issues/191>`_)
+* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_) (`#187 <https://github.com/ros2/message_filters/issues/187>`_)
+* Contributors: mergify[bot]
 
-7.3.1 (2025-09-17)
+7.1.1 (2025-06-03)
 ------------------
-* get rid of deprecated rclcpp::spin_some(). (`#201 <https://github.com/ros2/message_filters/issues/201>`_)
-* Contributors: Tomoya Fujita
-
-7.3.0 (2025-07-29)
-------------------
-* Add 'Cache (C++)' tutorial (`#196 <https://github.com/ros2/message_filters/issues/196>`_)
-* cache.hpp: Add allow_headerless (`#195 <https://github.com/ros2/message_filters/issues/195>`_)
-* Simplify method call (`#194 <https://github.com/ros2/message_filters/issues/194>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
-
-7.2.2 (2025-07-01)
-------------------
-* Fix cache tutorial: added tab extension (`#190 <https://github.com/ros2/message_filters/issues/190>`_)
-* Add tutorial for Cache filter for Python (`#185 <https://github.com/ros2/message_filters/issues/185>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
-
-7.2.1 (2025-05-14)
-------------------
-* fix cmake deprecation (`#182 <https://github.com/ros2/message_filters/issues/182>`_)
-* update documentation (`#180 <https://github.com/ros2/message_filters/issues/180>`_)
-* Removed missing pragma (`#179 <https://github.com/ros2/message_filters/issues/179>`_)
-* Removed Subscriber deprecation (`#177 <https://github.com/ros2/message_filters/issues/177>`_)
-* Removed deprecated headers (`#176 <https://github.com/ros2/message_filters/issues/176>`_)
-* Use warning instead of warn (`#178 <https://github.com/ros2/message_filters/issues/178>`_)
-* Contributors: Alejandro Hernández Cordero, mosfet80
-
-7.2.0 (2025-04-25)
-------------------
+* fix cmake deprecation (`#182 <https://github.com/ros2/message_filters/issues/182>`_) (`#183 <https://github.com/ros2/message_filters/issues/183>`_)
+* update documentation (`#180 <https://github.com/ros2/message_filters/issues/180>`_) (`#181 <https://github.com/ros2/message_filters/issues/181>`_)
 * Docs - Remove C++ implementation limit of 9 channels (`#174 <https://github.com/ros2/message_filters/issues/174>`_)
-* Contributors: Patrick Roncagliolo
+* Contributors: Patrick Roncagliolo, mergify[bot]
 
 7.1.0 (2025-04-08)
 ------------------
