@@ -1,23 +1,22 @@
-# Copyright 2009, Willow Garage, Inc. All rights reserved.
+# Copyright (c) 2009, Willow Garage, Inc.
+# All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
 #
-#    * Redistributions of source code must retain the above copyright
-#      notice, this list of conditions and the following disclaimer.
-#
-#    * Redistributions in binary form must reproduce the above copyright
-#      notice, this list of conditions and the following disclaimer in the
-#      documentation and/or other materials provided with the distribution.
-#
-#    * Neither the name of the Willow Garage nor the names of its
-#      contributors may be used to endorse or promote products derived from
-#      this software without specific prior written permission.
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * Neither the name of the Willow Garage, Inc. nor the names of its
+#       contributors may be used to endorse or promote products derived from
+#       this software without specific prior written permission.
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
 # AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
 # IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
 # LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
 # CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
 # SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
@@ -26,6 +25,10 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+"""
+Message Filter Objects
+======================
+"""
 
 """Message Filter Objects."""
 
@@ -34,20 +37,16 @@ from dataclasses import dataclass
 from functools import reduce
 import itertools
 import threading
+import rclpy
+
 from typing import Type, Union
 
-from builtin_interfaces.msg import Time as TimeMsg
-
-import rclpy
 from rclpy.clock import ROSClock
 from rclpy.duration import Duration
 from rclpy.logging import LoggingSeverity
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
 from rclpy.time import Time
-from rclpy.type_support import MsgT
-
-from typing_extensions import deprecated
 
 
 class SimpleFilter(object):
@@ -57,12 +56,12 @@ class SimpleFilter(object):
 
     def registerCallback(self, cb, *args):
         """
-        Register a callback `cb` to be called when this filter has output.
-
-        The filter calls the function ``cb`` with a filter-dependent.
-
-        list of arguments,followed by the call-supplied arguments ``args.``.
+        Register a callback function `cb` to be called when this filter
+        has output.
+        The filter calls the function ``cb`` with a filter-dependent
+        list of arguments,followed by the call-supplied arguments ``args``.
         """
+
         conn = len(self.callbacks)
         self.callbacks[conn] = (cb, args)
         return conn
@@ -71,8 +70,8 @@ class SimpleFilter(object):
         for (cb, args) in self.callbacks.values():
             cb(*(msg + args))
 
-
 class Subscriber(SimpleFilter):
+
     """
     ROS 2 subscription filter, takes identical arguments as :class:`rclpy.Subscriber`.
 
@@ -84,7 +83,7 @@ class Subscriber(SimpleFilter):
     def __init__(
         self,
         node: Node,
-        msg_type: Type[MsgT],
+        msg_type: Type,
         topic: str,
         qos_profile: Union[QoSProfile, int] = QoSProfile(depth=10),
     ) -> None:
@@ -116,11 +115,11 @@ class Subscriber(SimpleFilter):
         return self.topic
 
     def __getattr__(self, key):
-        """Serve same API as rospy.Subscriber."""
+        """Serve same API as rospy.Subscriber"""
         return self.sub.__getattribute__(key)
 
-
 class Cache(SimpleFilter):
+
     """
     Stores a time history of messages.
 
@@ -153,12 +152,12 @@ class Cache(SimpleFilter):
             if not self.allow_headerless:
                 msg_filters_logger = rclpy.logging.get_logger('message_filters_cache')
                 msg_filters_logger.set_level(LoggingSeverity.INFO)
-                msg_filters_logger.warn('can not use message filters messages '
-                                        'without timestamp infomation when '
-                                        '"allow_headerless" is disabled. '
-                                        'auto assign ROSTIME to headerless '
-                                        'messages once enabling constructor '
-                                        'option of "allow_headerless".')
+                msg_filters_logger.warn("can not use message filters messages "
+                                        "without timestamp infomation when "
+                                        "'allow_headerless' is disabled. "
+                                        "auto assign ROSTIME to headerless "
+                                        "messages once enabling constructor "
+                                        "option of 'allow_headerless'.")
 
                 return
 
@@ -202,16 +201,7 @@ class Cache(SimpleFilter):
             return None
         return older[-1]
 
-    @deprecated('Deprecated in favour of :py:classmethod:Cache.getLatestTime:.')
     def getLastestTime(self):
-        """
-        Return the newest recorded timestamp.
-
-        Deprecated in favour of :py:classmethod:Cache.getLatestTime:.
-        """
-        return self.getLatestTime()
-
-    def getLatestTime(self):
         """Return the newest recorded timestamp."""
         if not self.cache_times:
             return None
@@ -224,9 +214,9 @@ class Cache(SimpleFilter):
         return self.cache_times[0]
 
     def getLast(self):
-        if self.getLatestTime() is None:
+        if self.getLastestTime() is None:
             return None
-        return self.getElemAfterTime(self.getLatestTime())
+        return self.getElemAfterTime(self.getLastestTime())
 
 
 class Chain(SimpleFilter):
@@ -293,6 +283,7 @@ class Chain(SimpleFilter):
 
 
 class TimeSynchronizer(SimpleFilter):
+
     """
     Synchronizes messages by their timestamps.
 
@@ -353,8 +344,8 @@ class TimeSynchronizer(SimpleFilter):
 
         self.lock.release()
 
-
 class ApproximateTimeSynchronizer(TimeSynchronizer):
+
     """
     Approximately synchronizes messages by their timestamps.
 
@@ -362,38 +353,26 @@ class ApproximateTimeSynchronizer(TimeSynchronizer):
     by the timestamps contained in their messages' headers. The API is the same
     as TimeSynchronizer except for an extra `slop` parameter in the constructor
     that defines the delay (in seconds) with which messages can be synchronized.
-    The ``queue_offset`` option allow to have temporal offset between subscribers
-    , define as a list of offset int in nanoseconds.
     The ``allow_headerless`` option specifies whether to allow storing
     headerless messages with current ROS time instead of timestamp. You should
     avoid this as much as you can, since the delays are unpredictable.
-    The ```sync_arrival_time``` option enables synchronizing incoming messages
-    with the arrival ROS time instead of the message timestamp. You should
-    avoid this as much as you can, since the delays are unpredictable.
     """
 
-    def __init__(self, fs, queue_size, slop,
-                 queue_offset=False,
-                 allow_headerless=False,
-                 sync_arrival_time=False):
+    def __init__(self, fs, queue_size, slop, allow_headerless=False):
         TimeSynchronizer.__init__(self, fs, queue_size)
         self.slop = Duration(seconds=slop)
         self.allow_headerless = allow_headerless
-        self.queue_offset = queue_offset
-        self.sync_arrival_time = sync_arrival_time
 
     def add(self, msg, my_queue, my_queue_index=None):
-        if not hasattr(msg, 'header') or not hasattr(msg.header, 'stamp') or \
-                self.sync_arrival_time:
-            if not self.allow_headerless and not self.sync_arrival_time:
+        if not hasattr(msg, 'header') or not hasattr(msg.header, 'stamp'):
+            if not self.allow_headerless:
                 msg_filters_logger = rclpy.logging.get_logger('message_filters_approx')
                 msg_filters_logger.set_level(LoggingSeverity.INFO)
-                msg_filters_logger.warn('can not use message filters messages '
-                                        'without timestamp infomation when '
-                                        '"allow_headerless" is disabled. '
-                                        'auto assign ROSTIME to headerless '
-                                        'messages once enabling constructor '
-                                        'option of "allow_headerless".')
+                msg_filters_logger.warn("can not use message filters for "
+                              "messages without timestamp infomation when "
+                              "'allow_headerless' is disabled. auto assign "
+                              "ROSTIME to headerless messages once enabling "
+                              "constructor option of 'allow_headerless'.")
                 return
 
             stamp = ROSClock().now()
@@ -402,11 +381,8 @@ class ApproximateTimeSynchronizer(TimeSynchronizer):
             if not hasattr(stamp, 'nanoseconds'):
                 stamp = Time.from_msg(stamp)
             # print(stamp)
-        new_timestamp = stamp.nanoseconds
-        if my_queue_index is not None and self.queue_offset:
-            new_timestamp -= self.queue_offset[my_queue_index]
         self.lock.acquire()
-        my_queue[new_timestamp] = msg
+        my_queue[stamp.nanoseconds] = msg
         while len(my_queue) > self.queue_size:
             del my_queue[min(my_queue)]
         # self.queues = [topic_0 {stamp: msg}, topic_1 {stamp: msg}, ...]
@@ -420,12 +396,11 @@ class ApproximateTimeSynchronizer(TimeSynchronizer):
         for queue in search_queues:
             topic_stamps = []
             for s in queue:
-                stamp_delta = Duration(nanoseconds=abs(s - new_timestamp))
+                stamp_delta = Duration(nanoseconds=abs(s - stamp.nanoseconds))
                 if stamp_delta > self.slop:
                     continue  # far over the slop
                 topic_stamps.append(((Time(nanoseconds=s,
-                                           clock_type=stamp.clock_type)),
-                                    stamp_delta))
+                                   clock_type=stamp.clock_type)), stamp_delta))
             if not topic_stamps:
                 self.lock.release()
                 return
@@ -437,136 +412,11 @@ class ApproximateTimeSynchronizer(TimeSynchronizer):
             if my_queue_index is not None:
                 vv.insert(my_queue_index, stamp)
             qt = list(zip(self.queues, vv))
-            if (((max(vv) - min(vv)) < self.slop) and
-               (len([1 for q, t in qt if t.nanoseconds not in q]) == 0)):
-                msgs = [q[t.nanoseconds] for q, t in qt]
+            if ( ((max(vv) - min(vv)) < self.slop) and
+                (len([1 for q,t in qt if t.nanoseconds not in q]) == 0) ):
+                msgs = [q[t.nanoseconds] for q,t in qt]
                 self.signalMessage(*msgs)
-                for q, t in qt:
+                for q,t in qt:
                     del q[t.nanoseconds]
                 break  # fast finish after the synchronization
         self.lock.release()
-
-
-class TimeSequencer(SimpleFilter):
-    """
-    Sequences messages based on the timestamp of their header.
-
-    At construction, the TimeSequencer takes a duration 'delay' which specifies
-    how long to queue up messages to provide a time sequencing over them.
-    As messages arrive, they are sorted according to their timestamps.
-    A callback for a message is never invoked until the messages' timestamp is
-    out of date by at least the delay. However, for all messages which are out of
-    date by at least delay, their callbacks are invoked in temporal order.
-    If a message arrives from a time prior to a message which has already had its
-    callback invoked, it is thrown away.
-    """
-
-    def __init__(
-        self,
-        input_filter: SimpleFilter,
-        delay: Union[Duration, float],
-        update_rate: Union[Duration, float],
-        queue_size: int,
-        node: Node,
-        msg_stamp_attr: str = 'header.stamp',
-    ):
-        """
-        Construct a TimeSequencer filter for a subscriber.
-
-        Args:
-        ----
-        input_filter (SimpleFilter): The input filter to connect to.
-            Typically a Subscriber.
-        delay (Duration | float): The delay (in seconds) to wait for
-            messages to arrive before dispatching them.
-        update_rate (Duration | float): The rate at which to check for
-            messages that are ready to be dispatched.
-        queue_size (int): The maximum number of messages to store. Set 0
-            for no limit.
-        node (Node): The node to create the timer on.
-        msg_stamp_attr (str, optional): The attribute to use for retrieving
-            the timestamp from the message. Should point to a
-            builtin_interfaces.msg.Time field. Defaults to "header.stamp".
-
-        """
-        super().__init__()
-        if not isinstance(delay, Duration):
-            delay = Duration(seconds=delay)
-        if not isinstance(update_rate, Duration):
-            update_rate = Duration(seconds=update_rate)
-        self.delay: float = delay
-        self.update_rate: float = update_rate
-        self.queue_size: int = queue_size
-        self.lock = threading.Lock()
-        self.messages = []
-        self.last_time: Time = Time()
-        self.node: Node = node
-        self.msg_stamp_attrs = msg_stamp_attr.split('.')
-        self.update_timer = self.node.create_timer(
-            self.update_rate.nanoseconds / 1e9, self._dispatch
-        )
-        self.incoming_connection = None
-        if input_filter is not None:
-            self.connectInput(input_filter)
-
-    def _getMsgStampAttr(self, msg):
-        obj = msg
-        for attr in self.msg_stamp_attrs:
-            if not hasattr(obj, attr):
-                return None
-            obj = getattr(obj, attr)
-        return obj
-
-    def connectInput(self, input_filter: SimpleFilter):
-        if self.incoming_connection is not None:
-            raise RuntimeError('Already connected to an input filter.')
-        self.incoming_connection = input_filter.registerCallback(self._add)
-
-    def _add(self, msg):
-        with self.lock:
-            stamp = self._getStamp(msg)
-            if stamp is None:
-                return
-            if stamp.nanoseconds < self.last_time.nanoseconds:
-                return
-            # Insert msg into messages in sorted order
-            insort_right(self.messages, (stamp, msg))
-            # If queue_size is exceeded, remove the earliest message
-            if self.queue_size != 0 and len(self.messages) > self.queue_size:
-                del self.messages[0]
-
-    def _getStamp(self, msg):
-        stamp = self._getMsgStampAttr(msg)
-        if stamp is not None:
-            if not isinstance(stamp, TimeMsg):
-                raise TypeError(
-                    f'Expected {TimeMsg}, got {type(stamp)} in msg attribute '
-                    f"{'.'.join(self.msg_stamp_attrs)}"
-                )
-            stamp = Time.from_msg(stamp)
-            return stamp
-        else:
-            self.node.get_logger().warn(
-                'Cannot use message without timestamp; discarding message.'
-            )
-            return None
-
-    def _dispatch(self):
-        to_call = []
-        with self.lock:
-            while self.messages:
-                stamp, msg = self.messages[0]
-                if stamp + self.delay <= self.node.get_clock().now():
-                    self.last_time = stamp
-                    # Remove message from messages
-                    self.messages.pop(0)
-                    to_call.append(msg)
-                else:
-                    break
-        for msg in to_call:
-            self.signalMessage(msg)
-
-    def shutdown(self):
-        """Clean up the TimeSequencer."""
-        self.update_timer.cancel()
-        self.node.destroy_timer(self.update_timer)
