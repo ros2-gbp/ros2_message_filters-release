@@ -2,6 +2,12 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.6 (2026-02-04)
+------------------
+* Add kwargs passing from Subscriber to node.create_subscription (`#247 <https://github.com/ros2/message_filters/issues/247>`_)
+  Fixes callers that use callback_group
+* Contributors: Alex Spitzer
+
 7.3.5 (2026-01-15)
 ------------------
 * Get topic name from base class to propagate remaps (`#68 <https://github.com/ros2/message_filters/issues/68>`_)
