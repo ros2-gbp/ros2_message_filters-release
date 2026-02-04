@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.3.13 (2026-02-04)
+-------------------
+* Add kwargs passing from Subscriber to node.create_subscription (`#247 <https://github.com/ros2/message_filters/issues/247>`_) (`#250 <https://github.com/ros2/message_filters/issues/250>`_)
+* Contributors: mergify[bot]
+
 4.3.12 (2026-01-15)
 -------------------
 * `#200 <https://github.com/ros2/message_filters/issues/200>`_ fix inconsistensy between cpp and python exact time synchronizer impl (backport `#238 <https://github.com/ros2/message_filters/issues/238>`_) (`#245 <https://github.com/ros2/message_filters/issues/245>`_)
