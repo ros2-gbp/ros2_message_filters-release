@@ -31,9 +31,8 @@
 
 #include <cstddef>
 #include <deque>
-#include <functional>
 #include <memory>
-#include <stdexcept>
+#include <functional>
 #include <vector>
 
 #include <rclcpp/rclcpp.hpp>
@@ -68,21 +67,9 @@ public:
 
   template<class F>
   explicit Cache(F & f, unsigned int cache_size = 1)
-  : Cache(f, cache_size, false) {}
-
-  template<class F>
-  explicit Cache(F & f, unsigned int cache_size, bool allow_headerless)
   {
     setCacheSize(cache_size);
     connectInput(f);
-
-    if (message_filters::message_traits::HasHeader<M>::value) {
-      getMessageTime = getMessageTimeFromHeader;
-    } else if (allow_headerless) {
-      getMessageTime = getMessageReceiveTime;
-    } else {
-      throw std::runtime_error("Caching messages with no header not allowed");
-    }
   }
 
   /**
@@ -91,24 +78,8 @@ public:
    * called later
    */
   explicit Cache(unsigned int cache_size = 1)
-  : Cache(cache_size, false) {}
-
-  /**
-   * Initializes a Message Cache without specifying a parent filter. This implies that in
-   * order to populate the cache, the user then has to call add themselves, or connectInput() is
-   * called later
-   */
-  explicit Cache(unsigned int cache_size, bool allow_headerless)
   {
     setCacheSize(cache_size);
-
-    if (message_filters::message_traits::HasHeader<M>::value) {
-      getMessageTime = getMessageTimeFromHeader;
-    } else if (allow_headerless) {
-      getMessageTime = getMessageReceiveTime;
-    } else {
-      throw std::runtime_error("Caching messages with no header not allowed");
-    }
   }
 
   template<class F>
@@ -173,8 +144,10 @@ public:
 
       // Keep walking backwards along deque until we hit the beginning,
       // or until we find a timestamp that's smaller than (or equal to) msg's timestamp
-      rclcpp::Time evt_stamp = getMessageTime(evt);
-      while (rev_it != cache_.rend() && getMessageTime(*rev_it) > evt_stamp) {
+      rclcpp::Time evt_stamp = mt::TimeStamp<M>::value(*evt.getMessage());
+      while (rev_it != cache_.rend() &&
+        mt::TimeStamp<M>::value(*(*rev_it).getMessage()) > evt_stamp)
+      {
         rev_it++;
       }
 
@@ -200,20 +173,16 @@ public:
 
     // Find the starting index. (Find the first index after [or at] the start of the interval)
     size_t start_index = 0;
-    while (
-      start_index < cache_.size() &&
-      getMessageTime(cache_[start_index]) < start
-    )
+    while (start_index < cache_.size() &&
+      mt::TimeStamp<M>::value(*cache_[start_index].getMessage()) < start)
     {
       start_index++;
     }
 
     // Find the ending index. (Find the first index after the end of interval)
     size_t end_index = start_index;
-    while (
-      end_index < cache_.size() &&
-      getMessageTime(cache_[end_index]) <= end
-    )
+    while (end_index < cache_.size() &&
+      mt::TimeStamp<M>::value(*cache_[end_index].getMessage()) <= end)
     {
       end_index++;
     }
@@ -248,19 +217,15 @@ public:
 
     // Find the starting index. (Find the first index after [or at] the start of the interval)
     int start_index = static_cast<int>(cache_.size()) - 1;
-    while (
-      start_index > 0 &&
-      getMessageTime(cache_[start_index]) > start
-    )
+    while (start_index > 0 &&
+      mt::TimeStamp<M>::value(*cache_[start_index].getMessage()) > start)
     {
       start_index--;
     }
 
     int end_index = start_index;
-    while (
-      end_index < static_cast<int>(cache_.size()) - 1 &&
-      getMessageTime(cache_[end_index]) < end
-    )
+    while (end_index < static_cast<int>(cache_.size()) - 1 &&
+      mt::TimeStamp<M>::value(*cache_[end_index].getMessage()) < end)
     {
       end_index++;
     }
@@ -289,11 +254,7 @@ public:
 
     unsigned int i = 0;
     int elem_index = -1;
-    while (
-      i < cache_.size() &&
-      getMessageTime(cache_[i]) < time
-    )
-    {
+    while (i < cache_.size() && mt::TimeStamp<M>::value(*cache_[i].getMessage()) < time) {
       elem_index = i;
       i++;
     }
@@ -320,11 +281,7 @@ public:
 
     int i = static_cast<int>(cache_.size()) - 1;
     int elem_index = -1;
-    while (
-      i >= 0 &&
-      getMessageTime(cache_[i]) > time
-    )
-    {
+    while (i >= 0 && mt::TimeStamp<M>::value(*cache_[i].getMessage()) > time) {
       elem_index = i;
       i--;
     }
@@ -350,7 +307,7 @@ public:
     rclcpp::Time latest_time;
 
     if (cache_.size() > 0) {
-      latest_time = getMessageTime(cache_.back());
+      latest_time = mt::TimeStamp<M>::value(*cache_.back().getMessage());
     }
 
     return latest_time;
@@ -368,7 +325,7 @@ public:
     rclcpp::Time oldest_time;
 
     if (cache_.size() > 0) {
-      oldest_time = getMessageTime(cache_.front());
+      oldest_time = mt::TimeStamp<M>::value(*cache_.front().getMessage());
     }
 
     return oldest_time;
@@ -380,23 +337,11 @@ private:
     add(evt);
   }
 
-  static rclcpp::Time getMessageTimeFromHeader(const EventType & evt)
-  {
-    return message_filters::message_traits::TimeStamp<M>::value(*(evt.getMessage()));
-  }
-
-  static rclcpp::Time getMessageReceiveTime(const EventType & evt)
-  {
-    return evt.getReceiptTime();
-  }
-
   mutable std::mutex cache_lock_;      //!< Lock for cache_
   std::deque<EventType> cache_;        //!< Cache for the messages
   unsigned int cache_size_;            //!< Maximum number of elements allowed in the cache.
 
   Connection incoming_connection_;
-
-  std::function<rclcpp::Time(const EventType & evt)> getMessageTime;
 };
 }  // namespace message_filters
 

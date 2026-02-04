@@ -37,6 +37,7 @@ import threading
 from typing import Type, Union
 
 from builtin_interfaces.msg import Time as TimeMsg
+
 import rclpy
 from rclpy.clock import ROSClock
 from rclpy.duration import Duration
@@ -45,6 +46,8 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile
 from rclpy.time import Time
 from rclpy.type_support import MsgT
+
+from typing_extensions import deprecated
 
 
 class SimpleFilter(object):
@@ -153,12 +156,12 @@ class Cache(SimpleFilter):
             if not self.allow_headerless:
                 msg_filters_logger = rclpy.logging.get_logger('message_filters_cache')
                 msg_filters_logger.set_level(LoggingSeverity.INFO)
-                msg_filters_logger.warning('can not use message filters messages '
-                                           'without timestamp infomation when '
-                                           '"allow_headerless" is disabled. '
-                                           'auto assign ROSTIME to headerless '
-                                           'messages once enabling constructor '
-                                           'option of "allow_headerless".')
+                msg_filters_logger.warn('can not use message filters messages '
+                                        'without timestamp infomation when '
+                                        '"allow_headerless" is disabled. '
+                                        'auto assign ROSTIME to headerless '
+                                        'messages once enabling constructor '
+                                        'option of "allow_headerless".')
 
                 return
 
@@ -201,6 +204,15 @@ class Cache(SimpleFilter):
         if not older:
             return None
         return older[-1]
+
+    @deprecated('Deprecated in favour of :py:classmethod:Cache.getLatestTime:.')
+    def getLastestTime(self):
+        """
+        Return the newest recorded timestamp.
+
+        Deprecated in favour of :py:classmethod:Cache.getLatestTime:.
+        """
+        return self.getLatestTime()
 
     def getLatestTime(self):
         """Return the newest recorded timestamp."""
@@ -379,12 +391,12 @@ class ApproximateTimeSynchronizer(TimeSynchronizer):
             if not self.allow_headerless and not self.sync_arrival_time:
                 msg_filters_logger = rclpy.logging.get_logger('message_filters_approx')
                 msg_filters_logger.set_level(LoggingSeverity.INFO)
-                msg_filters_logger.warning('can not use message filters messages '
-                                           'without timestamp infomation when '
-                                           '"allow_headerless" is disabled. '
-                                           'auto assign ROSTIME to headerless '
-                                           'messages once enabling constructor '
-                                           'option of "allow_headerless".')
+                msg_filters_logger.warn('can not use message filters messages '
+                                        'without timestamp infomation when '
+                                        '"allow_headerless" is disabled. '
+                                        'auto assign ROSTIME to headerless '
+                                        'messages once enabling constructor '
+                                        'option of "allow_headerless".')
                 return
 
             stamp = ROSClock().now()
@@ -537,7 +549,7 @@ class TimeSequencer(SimpleFilter):
             stamp = Time.from_msg(stamp)
             return stamp
         else:
-            self.node.get_logger().warning(
+            self.node.get_logger().warn(
                 'Cannot use message without timestamp; discarding message.'
             )
             return None

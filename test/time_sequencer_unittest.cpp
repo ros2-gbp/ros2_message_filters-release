@@ -55,7 +55,7 @@ struct TimeStamp<Msg>
 {
   static rclcpp::Time value(const Msg & m)
   {
-    return rclcpp::Time(m.header.stamp, RCL_ROS_TIME);
+    return m.header.stamp;
   }
 };
 }  // namespace message_traits
@@ -79,23 +79,21 @@ public:
 TEST(TimeSequencer, simple)
 {
   rclcpp::Node::SharedPtr node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(0, 250000000),
     rclcpp::Duration(0, 10000000), 10, node);
   Helper h;
   seq.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   MsgPtr msg(std::make_shared<Msg>());
-  msg->header.stamp = rclcpp::Clock(RCL_ROS_TIME).now();
+  msg->header.stamp = rclcpp::Clock().now();
   seq.add(msg);
 
   rclcpp::Rate(10).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
   ASSERT_EQ(h.count_, 0);
 
   // Must be longer than the first duration above
   rclcpp::Rate(3).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_EQ(h.count_, 1);
 }
@@ -125,8 +123,6 @@ public:
 TEST(TimeSequencer, eventInEventOut)
 {
   rclcpp::Node::SharedPtr nh = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(nh);
   message_filters::TimeSequencer<Msg> seq(rclcpp::Duration(1, 0), rclcpp::Duration(0, 10000000), 10,
     nh);
   message_filters::TimeSequencer<Msg> seq2(seq, rclcpp::Duration(1, 0), rclcpp::Duration(
@@ -137,12 +133,12 @@ TEST(TimeSequencer, eventInEventOut)
   seq2.registerCallback(&EventHelper::cb, &h);
 
   message_filters::MessageEvent<Msg const> evt(std::make_shared<Msg const>(),
-    rclcpp::Clock(RCL_ROS_TIME).now());
+    rclcpp::Clock().now());
   seq.add(evt);
 
   while (!h.event_.getMessage()) {
     rclcpp::Rate(100).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(nh);
   }
 
   EXPECT_EQ(h.event_.getReceiptTime(), evt.getReceiptTime());
