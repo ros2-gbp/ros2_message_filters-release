@@ -32,8 +32,6 @@ Message Filter Objects
 
 """Message Filter Objects."""
 
-from bisect import insort_right
-from dataclasses import dataclass
 from functools import reduce
 import itertools
 import threading
@@ -238,10 +236,14 @@ class Chain(SimpleFilter):
     to the callback you've registered with Chain::registerCallback.
     """
 
-    @dataclass
     class FilterInfo:
-        message_filter: any
-        connection_callback_index: int
+        def __init__(
+            self,
+            message_filter: any,
+            connection_callback_index: int,
+        ):
+            self.message_filter = message_filter
+            self.connection_callback_index = connection_callback_index
 
     def __init__(self, message_filter=None):
         SimpleFilter.__init__(self)
