@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.3.14 (2026-02-18)
+-------------------
+* `#253 <https://github.com/ros2/message_filters/issues/253>`_ message_filters.chain.python: Remove dataclass. Make FilterInfo a regular class with regular __init_\_ (`#254 <https://github.com/ros2/message_filters/issues/254>`_)
+* Contributors: Pavel Esipov
+
 4.3.13 (2026-02-04)
 -------------------
 * Add kwargs passing from Subscriber to node.create_subscription (`#247 <https://github.com/ros2/message_filters/issues/247>`_) (`#250 <https://github.com/ros2/message_filters/issues/250>`_)
