@@ -2,6 +2,16 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.3.15 (2026-03-24)
+-------------------
+* Tutorials minor fixers: Replace the TODOs with the actual links to other tutorials as required. Rename Approximate-Tyme tutorial to Approximate-Time (`#266 <https://github.com/ros2/message_filters/issues/266>`_)
+* Tutorials: Add LatestTime synchronization policy tutorial (`#266 <https://github.com/ros2/message_filters/issues/266>`_)
+* Tutorials: Approximate-Synchronizer: Label CMake code blocks with the right language markings
+* Tutorials: Add C++ tutorial for Approximate Epsilon Time Sync policy
+* DeltaFilter(Python): Add DeltaFilter for Python. Add tests. Add docstring to filters and comparison handlers (`#252 <https://github.com/ros2/message_filters/issues/252>`_) (`#260 <https://github.com/ros2/message_filters/issues/260>`_)
+  Co-authored-by: Pavel Esipov <38457822+EsipovPA@users.noreply.github.com>
+* Contributors: EsipovPA, mergify[bot]
+
 4.3.14 (2026-02-18)
 -------------------
 * `#253 <https://github.com/ros2/message_filters/issues/253>`_ message_filters.chain.python: Remove dataclass. Make FilterInfo a regular class with regular __init_\_ (`#254 <https://github.com/ros2/message_filters/issues/254>`_)
