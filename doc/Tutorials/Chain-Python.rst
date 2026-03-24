@@ -11,14 +11,14 @@ It allows you to store an N-long set of filters inside a single structure, makin
 To demonstrate the functionality of the ``Chain`` filter in a more clear manner, we are going to add a custom filter to this tutorial.
 This is going to be the ``CounterFilter`` that will be counting the number of messages passing through it.
 This filter class will be a successor to the ``SimpleFilter`` class, but this is a topic for another tutorial.
-For more information on this topic, please refer to the `SimpleFilter for Python tutorial <https://docs.ros.org/en/jazzy/p/message_filters/doc/Tutorials/SimpleFilter-Python.html>`.
+For more information on this topic, please refer to the `SimpleFilter for Python tutorial <https://docs.ros.org/en/humble/p/message_filters/doc/Tutorials/SimpleFilter-Python.html>`.
 
 Prerequisites
 ~~~~~~~~~~~~~
 
 This tutorial assumes you have a working knowledge of ROS 2.
 
-If you have not done so already `create a workspace <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/jazzy/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
+If you have not done so already `create a workspace <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
 
 1. Create a Basic Node
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -173,7 +173,7 @@ The ``add`` method increases messages count, and passes messages to the followin
 The ``connectInput`` connects this filter to a previous filter's output.
 The ``counter`` property grants access to the current messages count.
 
-For more information on this succession mechanism, please refer to the `SimpleFilter for Python tutorial <https://docs.ros.org/en/jazzy/p/message_filters/doc/Tutorials/SimpleFilter-Python.html>`.
+For more information on this succession mechanism, please refer to the `SimpleFilter for Python tutorial <https://docs.ros.org/en/humble/p/message_filters/doc/Tutorials/SimpleFilter-Python.html>`.
 
 And now we can turn our attention to the main tutorial class, that is the ``ChainNode`` class.
 For starters, let's take a look at the ``__init__`` method of this class:
