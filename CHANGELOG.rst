@@ -2,6 +2,18 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.7 (2026-03-24)
+------------------
+* Use new ROSIDL aggregate CMake target
+* Tutorials minor fixers: Replace the TODOs with the actual links to other tutorials as required. Rename Approximate-Tyme tutorial to Approximate-Time (`#266 <https://github.com/ros2/message_filters/issues/266>`_)
+* Tutorials: Add LatestTime synchronization policy tutorial (`#266 <https://github.com/ros2/message_filters/issues/266>`_)
+* Tutorials: Approximate-Synchronizer: Label CMake code blocks with the right language markings
+* Tutorials: Add C++ tutorial for Approximate Epsilon Time Sync policy
+* DeltaFilter(Python): Add DeltaFilter for Python. Add tests. Add docstring to filters and comparison handlers (`#252 <https://github.com/ros2/message_filters/issues/252>`_)
+* remove setup.py (`#257 <https://github.com/ros2/message_filters/issues/257>`_)
+* (`#246 <https://github.com/ros2/message_filters/issues/246>`_, `#186 <https://github.com/ros2/message_filters/issues/186>`_) Subscriber(Python): Add callback_group, event_callbacks, qos_overriding_options, raw and content_filter_options arguments to __init_\_. (`#251 <https://github.com/ros2/message_filters/issues/251>`_)
+* Contributors: Emerson Knapp, EsipovPA, Michael Carlstrom, Pavel Esipov
+
 7.3.6 (2026-02-04)
 ------------------
 * Add kwargs passing from Subscriber to node.create_subscription (`#247 <https://github.com/ros2/message_filters/issues/247>`_)
