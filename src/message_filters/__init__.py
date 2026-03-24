@@ -34,15 +34,19 @@ from dataclasses import dataclass
 from functools import reduce
 import itertools
 import threading
-from typing import Type, Union
+from typing import Optional, Type, Union
 
 from builtin_interfaces.msg import Time as TimeMsg
 import rclpy
+from rclpy.callback_groups import CallbackGroup
 from rclpy.clock import ROSClock
 from rclpy.duration import Duration
+from rclpy.event_handler import SubscriptionEventCallbacks
 from rclpy.logging import LoggingSeverity
 from rclpy.node import Node
 from rclpy.qos import QoSProfile
+from rclpy.qos_overriding_options import QoSOverridingOptions
+from rclpy.subscription_content_filter_options import ContentFilterOptions
 from rclpy.time import Time
 from rclpy.type_support import MsgT
 
@@ -84,7 +88,12 @@ class Subscriber(SimpleFilter):
         msg_type: Type[MsgT],
         topic: str,
         qos_profile: Union[QoSProfile, int] = QoSProfile(depth=10),
-        **kwargs,
+        *,
+        callback_group: Optional[CallbackGroup] = None,
+        event_callbacks: Optional[SubscriptionEventCallbacks] = None,
+        qos_overriding_options: Optional[QoSOverridingOptions] = None,
+        raw: bool = False,
+        content_filter_options: Optional[ContentFilterOptions] = None
     ) -> None:
         """
         Construct a Subscriber.
@@ -96,7 +105,12 @@ class Subscriber(SimpleFilter):
             subscription. In the case that a history depth is provided, the QoS history is
             set to KEEP_LAST, the QoS history depth is set to the value of the parameter,
             and all other QoS settings are set to their default values.
-        :param kwargs: Additional keyword arguments passed to node.create_subscription.
+        :param callback_group: The callback group for the subscription. If ``None``, then the
+            default callback group for the node is used.
+        :param event_callbacks: User-defined callbacks for middleware events.
+        :param raw: If ``True``, then received messages will be stored in raw binary
+            representation.
+        :param content_filter_options: The filter expression and parameters for content filtering.
         """
         SimpleFilter.__init__(self)
         self.node = node
@@ -106,7 +120,11 @@ class Subscriber(SimpleFilter):
             topic=self.topic,
             callback=self.callback,
             qos_profile=qos_profile,
-            **kwargs,
+            callback_group=callback_group,
+            event_callbacks=event_callbacks,
+            qos_overriding_options=qos_overriding_options,
+            raw=raw,
+            content_filter_options=content_filter_options,
         )
 
     def callback(self, msg):
