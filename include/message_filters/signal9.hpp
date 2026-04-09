@@ -33,7 +33,6 @@
 #include <functional>
 #include <mutex>
 #include <memory>
-#include <tuple>
 #include <vector>
 
 #include "message_filters/connection.hpp"
@@ -69,12 +68,11 @@ public:
 
   virtual void call(bool nonconst_force_copy, const typename ParameterAdapter<Ps>::Event &... es)
   {
-    std::tuple<typename ParameterAdapter<Ps>::Event...> my_es{
-      typename ParameterAdapter<Ps>::Event(es, nonconst_force_copy || es.nonConstWillCopy())...};
-    std::apply(
-      [this](const typename ParameterAdapter<Ps>::Event &... evts) {
-        callback_(ParameterAdapter<Ps>::getParameter(evts)...);
-      }, my_es);
+    auto my_es{std::make_tuple(
+        typename ParameterAdapter<Ps>::Event(
+          es,
+          nonconst_force_copy || es.nonConstWillCopy())...)};
+    callback_(ParameterAdapter<Ps>::getParameter(es)...);
   }
 
 private:
@@ -140,13 +138,12 @@ public:
 
   void call(const MessageEvent<Ms const> & ... es)
   {
-    V_CallbackHelper9 local_callbacks;
-    {
-      std::lock_guard<std::mutex> lock(mutex_);
-      local_callbacks = callbacks_;
-    }
-    bool nonconst_force_copy = local_callbacks.size() > 1;
-    for (const CallbackHelper9Ptr & helper : local_callbacks) {
+    std::lock_guard<std::mutex> lock(mutex_);
+    bool nonconst_force_copy = callbacks_.size() > 1;
+    typename V_CallbackHelper9::iterator it = callbacks_.begin();
+    typename V_CallbackHelper9::iterator end = callbacks_.end();
+    for (; it != end; ++it) {
+      const CallbackHelper9Ptr & helper = *it;
       helper->call(nonconst_force_copy, es ...);
     }
   }
