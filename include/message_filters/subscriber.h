@@ -36,7 +36,6 @@
 #define MESSAGE_FILTERS__SUBSCRIBER_H_
 
 #include <stdexcept>
-#include <type_traits>
 
 #include <rclcpp/rclcpp.hpp>
 
@@ -102,14 +101,16 @@ public:
    *
    * \param node The rclcpp::Node to use to subscribe.
    * \param topic The topic to subscribe to.
-   * \param qos The rmw qos profile to use to subscribe.
-   * \param options The subscription options to use to subscribe.
+   * \param qos (optional) The rmw qos profile to use to subscribe
    */
   virtual void subscribe(
     NodeType * node,
     const std::string& topic,
     const rmw_qos_profile_t qos,
-    rclcpp::SubscriptionOptions options) = 0;
+    rclcpp::SubscriptionOptions options)
+  {
+    this->subscribe(node, topic, qos, options);
+  }
 
   /**
    * \brief Re-subscribe to a topic.  Only works if this subscriber has previously been subscribed to a topic.
@@ -142,34 +143,12 @@ using SubscriberBasePtr = std::shared_ptr<SubscriberBase<T>>;
 void callback(const std::shared_ptr<M const>&);
 \endverbatim
  */
-
-template <typename M, bool is_adapter = rclcpp::is_type_adapter<M>::value>
-struct message_type;
-
-template <typename M>
-struct message_type <M, true>
-{
-  using type = typename M::custom_type;
-};
-
-template <typename M> 
-struct message_type <M, false> 
-{
-  using type = M;
-};
-
-template <typename M>
-using message_type_t = typename message_type<M>::type;
-
 template<class M, class NodeType = rclcpp::Node>
-class Subscriber 
-: public SubscriberBase<NodeType>
-, public SimpleFilter<message_type_t<M>>
+class Subscriber : public SubscriberBase<NodeType>, public SimpleFilter<M>
 {
 public:
   typedef std::shared_ptr<NodeType> NodePtr;
-  typedef message_type_t<M> MessageType;
-  typedef MessageEvent<MessageType const> EventType;
+  typedef MessageEvent<M const> EventType;
 
   /**
    * \brief Constructor
@@ -305,9 +284,9 @@ public:
       qos_ = qos;
       options_ = options;
       sub_ = node->template create_subscription<M>(topic, rclcpp_qos,
-          [this](const std::shared_ptr<MessageType const> msg) {
-            this->cb(EventType(msg));
-          }, options);
+               [this](std::shared_ptr<M const> msg) {
+                 this->cb(EventType(msg));
+               }, options);
 
       node_raw_ = node;
     }
