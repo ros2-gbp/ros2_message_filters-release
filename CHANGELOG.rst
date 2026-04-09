@@ -2,6 +2,13 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+7.3.8 (2026-04-09)
+------------------
+* DeltaFilter(C++): Add DeltaFilter class. Add tests (`#273 <https://github.com/ros2/message_filters/issues/273>`_) (`#273 <https://github.com/ros2/message_filters/issues/273>`_)
+* Removed dead code
+* Improvements and more test coverage
+* Contributors: Alejandro Hernandez Cordero, Pavel Esipov
+
 7.3.7 (2026-03-24)
 ------------------
 * Use new ROSIDL aggregate CMake target
