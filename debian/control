@@ -1,0 +1,12 @@
+Source: ros-lyrical-message-filters
+Section: misc
+Priority: optional
+Maintainer: Geoffrey Biggs <geoff@openrobotics.org>
+Build-Depends: debhelper (>= 9.0.0), ros-lyrical-ament-cmake-gtest <!nocheck>, ros-lyrical-ament-cmake-pytest <!nocheck>, ros-lyrical-ament-cmake-python, ros-lyrical-ament-cmake-ros, ros-lyrical-ament-lint-auto <!nocheck>, ros-lyrical-ament-lint-common <!nocheck>, ros-lyrical-rclcpp, ros-lyrical-rclcpp-lifecycle <!nocheck>, ros-lyrical-rcutils, ros-lyrical-sensor-msgs <!nocheck>, ros-lyrical-std-msgs, ros-lyrical-ros-workspace
+Homepage: https://github.com/ros2/message_filters
+Standards-Version: 3.9.2
+
+Package: ros-lyrical-message-filters
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-lyrical-builtin-interfaces, ros-lyrical-rclcpp, ros-lyrical-rclpy, ros-lyrical-rcutils, ros-lyrical-std-msgs, ros-lyrical-ros-workspace
+Description: A set of ROS 2 message filters which take in messages and may output those messages at a later time, based on the conditions that filter needs met.
