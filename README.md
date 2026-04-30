@@ -1,3 +1,26 @@
+## message_filters (lyrical) - 7.3.9-1
+
+The packages in the `message_filters` repository were released into the `lyrical` distro by running `/usr/local/google/home/sloretz/projects/lyrical/env3/bin/bloom-release message_filters -r lyrical -t lyrical` on `Thu, 30 Apr 2026 16:05:06 -0000`
+
+The `message_filters` package was released.
+
+Version of package(s) in repository `message_filters`:
+
+- upstream repository: https://github.com/ros2/message_filters.git
+- release repository: https://github.com/ros2-gbp/ros2_message_filters-release.git
+- rosdistro version: `7.3.8-3`
+- old version: `7.3.8-3`
+- new version: `7.3.9-1`
+
+Versions of tools used:
+
+- bloom version: `0.14.2`
+- catkin_pkg version: `1.1.0`
+- rosdep version: `0.26.0`
+- rosdistro version: `1.0.1`
+- vcstools version: `0.1.42`
+
+
 ## message_filters (humble) - 4.3.16-1
 
 The packages in the `message_filters` repository were released into the `humble` distro by running `/usr/bin/bloom-release --rosdistro humble --track humble message_filters` on `Thu, 09 Apr 2026 15:10:10 -0000`
