@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.20)
 
 project(message_filters)
 
-# Default to C++17
+# Default to C++20
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
@@ -148,6 +148,7 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_approxsync.py "test/test_approxsync.py")
   ament_add_pytest_test(test_message_filters_cache.py "test/test_message_filters_cache.py")
   ament_add_pytest_test(test_message_filters_chain.py "test/test_message_filters_chain.py")
+  ament_add_pytest_test(test_input_aligner.py "test/test_input_aligner.py")
 endif()
 
 ament_package()
