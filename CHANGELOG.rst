@@ -2,6 +2,11 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.0.1 (2026-05-13)
+------------------
+* Avoid vector assignment in message_filters signal callback (`#292 <https://github.com/ros2/message_filters/issues/292>`_)
+* Contributors: Maurice Alexander Purnawan
+
 8.0.0 (2026-05-06)
 ------------------
 * fix tutorials table of contents fix input aligner type hint (`#290 <https://github.com/ros2/message_filters/issues/290>`_)
