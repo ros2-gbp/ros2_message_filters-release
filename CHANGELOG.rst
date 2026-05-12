@@ -2,17 +2,19 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-7.4.0 (2026-05-06)
+8.0.1 (2026-05-13)
 ------------------
-* Cleanup headers and removed deadcode (`#284 <https://github.com/ros2/message_filters/issues/284>`_) (`#291 <https://github.com/ros2/message_filters/issues/291>`_)
-* feat(python): add python implementation of InputAligner  (backport `#283 <https://github.com/ros2/message_filters/issues/283>`_) (`#286 <https://github.com/ros2/message_filters/issues/286>`_)
-* Contributors: mergify[bot]
+* Avoid vector assignment in message_filters signal callback (`#292 <https://github.com/ros2/message_filters/issues/292>`_)
+* Contributors: Maurice Alexander Purnawan
 
-7.3.9 (2026-04-30)
+8.0.0 (2026-05-06)
 ------------------
+* fix tutorials table of contents fix input aligner type hint (`#290 <https://github.com/ros2/message_filters/issues/290>`_)
+* feat(python): add python implementation of InputAligner  (`#283 <https://github.com/ros2/message_filters/issues/283>`_)
+* Cleanup headers and removed deadcode (`#284 <https://github.com/ros2/message_filters/issues/284>`_)
 * C++20 style (`#272 <https://github.com/ros2/message_filters/issues/272>`_)
 * (`#221 <https://github.com/ros2/message_filters/issues/221>`_) Tutorials: Add DeltaFilter Python tutorial (`#277 <https://github.com/ros2/message_filters/issues/277>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
+* Contributors: Alejandro Hernández Cordero, Pavel Esipov, YANG Zhenfei
 
 7.3.8 (2026-04-09)
 ------------------
