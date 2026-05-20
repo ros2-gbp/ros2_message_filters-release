@@ -2,6 +2,12 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+4.11.14 (2026-05-20)
+--------------------
+* feat(python): add python implementation of InputAligner  (backport `#283 <https://github.com/ros2/message_filters/issues/283>`_) (`#288 <https://github.com/ros2/message_filters/issues/288>`_)
+* (`#221 <https://github.com/ros2/message_filters/issues/221>`_) Tutorials: Add DeltaFilter Python tutorial (backport `#277 <https://github.com/ros2/message_filters/issues/277>`_) (`#279 <https://github.com/ros2/message_filters/issues/279>`_)
+* Contributors: mergify[bot]
+
 4.11.13 (2026-04-09)
 --------------------
 * DeltaFilter(C++): Add DeltaFilter class. Add tests (`#273 <https://github.com/ros2/message_filters/issues/273>`_) (`#273 <https://github.com/ros2/message_filters/issues/273>`_) (`#275 <https://github.com/ros2/message_filters/issues/275>`_)
