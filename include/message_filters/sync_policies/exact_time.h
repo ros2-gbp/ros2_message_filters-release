@@ -32,8 +32,8 @@
 *  POSSIBILITY OF SUCH DAMAGE.
 *********************************************************************/
 
-#ifndef MESSAGE_FILTERS__SYNC_POLICIES__EXACT_TIME_H_
-#define MESSAGE_FILTERS__SYNC_POLICIES__EXACT_TIME_H_
+#ifndef MESSAGE_FILTERS__SYNC_EXACT_TIME_H_
+#define MESSAGE_FILTERS__SYNC_EXACT_TIME_H_
 
 #include <deque>
 #include <string>
@@ -138,11 +138,6 @@ struct ExactTime : public PolicyBase<M0, M1, M2, M3, M4, M5, M6, M7, M8>
     return drop_signal_.addCallback(callback, t);
   }
 
-  rclcpp::Time getLastSignalTime() const
-  {
-    return last_signal_time_;
-  }
-
 private:
 
   // assumes mutex_ is already locked
@@ -229,5 +224,5 @@ private:
 }  // namespace sync_policies
 }  // namespace message_filters
 
-#endif  // MESSAGE_FILTERS__SYNC_POLICIES__EXACT_TIME_H_
+#endif  // MESSAGE_FILTERS__SYNC_EXACT_TIME_H_
 

@@ -33,9 +33,7 @@
 *********************************************************************/
 
 #include <gtest/gtest.h>
-
 #include "message_filters/message_traits.h"
-#include "rclcpp/time.hpp"
 #include "std_msgs/msg/header.hpp"
 
 struct Msg
@@ -52,7 +50,5 @@ TEST(MessageTraits, timeSource)
   EXPECT_EQ(time.get_clock_type(), RCL_ROS_TIME);
 
   // Ensure an exception isn't thrown when compared with a RCL_ROS_TIME time.
-  bool unused;
-  EXPECT_NO_THROW(unused = (time == rclcpp::Time{msg.header.stamp, RCL_ROS_TIME}));
-  (void)unused;
+  EXPECT_NO_THROW((time == rclcpp::Time{msg.header.stamp, RCL_ROS_TIME}));
 }
