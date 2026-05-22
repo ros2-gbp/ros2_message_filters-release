@@ -29,6 +29,48 @@
 #ifndef MESSAGE_FILTERS__NULL_TYPES_HPP_
 #define MESSAGE_FILTERS__NULL_TYPES_HPP_
 
-#include "null_types.h"
+#include <memory>
+
+#include <rclcpp/rclcpp.hpp>
+
+#include "message_filters/connection.hpp"
+#include "message_filters/message_traits.hpp"
+
+namespace message_filters
+{
+
+struct NullType
+{
+};
+typedef std::shared_ptr<NullType const> NullTypeConstPtr;
+
+template<class M>
+struct NullFilter
+{
+  template<typename C>
+  Connection registerCallback(const C &)
+  {
+    return Connection();
+  }
+
+  template<typename P>
+  Connection registerCallback(const std::function<void(P)> &)
+  {
+    return Connection();
+  }
+};
+
+namespace message_traits
+{
+template<>
+struct TimeStamp<message_filters::NullType>
+{
+  static rclcpp::Time value(const message_filters::NullType &)
+  {
+    return rclcpp::Time();
+  }
+};
+}  // namespace message_traits
+}  // namespace message_filters
 
 #endif  // MESSAGE_FILTERS__NULL_TYPES_HPP_

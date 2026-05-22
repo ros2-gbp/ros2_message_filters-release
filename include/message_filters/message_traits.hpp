@@ -26,9 +26,82 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
+// File imported from
+// https://github.com/ros/roscpp_core/blob/38b9663/roscpp_traits/include/ros/message_traits.h
+
 #ifndef MESSAGE_FILTERS__MESSAGE_TRAITS_HPP_
 #define MESSAGE_FILTERS__MESSAGE_TRAITS_HPP_
 
-#include "message_traits.h"
+#include <string>
+#include <type_traits>
+
+#include <rclcpp/rclcpp.hpp>
+#include <std_msgs/msg/header.hpp>
+
+namespace message_filters
+{
+namespace message_traits
+{
+
+/**
+ * False if the message does not have a header
+ * @tparam M
+ */
+template<typename M, typename = void>
+struct HasHeader : public std::false_type {};
+
+/**
+ * True if the message has a field named 'header' with a type of std_msgs::msg::Header
+ * @tparam M
+ */
+template<typename M>
+struct HasHeader<M, typename std::enable_if<std::is_same<std_msgs::msg::Header,
+  decltype(M().header)>::value>::type>: public std::true_type {};
+
+/**
+ * \brief FrameId trait.  In the default implementation pointer()
+ * returns &m.header.frame_id if HasHeader<M>::value is true, otherwise returns NULL.  value()
+ * does not exist, and causes a compile error
+ */
+template<typename M, typename Enable = void>
+struct FrameId
+{
+  static std::string * pointer(M & m) {(void)m; return nullptr;}
+  static std::string const * pointer(const M & m) {(void)m; return nullptr;}
+};
+template<typename M>
+struct FrameId<M, typename std::enable_if<HasHeader<M>::value>::type>
+{
+  static std::string * pointer(M & m) {return &m.header.frame_id;}
+  static std::string const * pointer(const M & m) {return &m.header.frame_id;}
+  static std::string value(const M & m) {return m.header.frame_id;}
+};
+
+/**
+ * \brief TimeStamp trait.  In the default implementation pointer()
+ * returns &m.header.stamp if HasHeader<M>::value is true, otherwise returns NULL.  value()
+ * does not exist, and causes a compile error
+ */
+template<typename M, typename Enable = void>
+struct TimeStamp
+{
+  static rclcpp::Time value(const M & m)
+  {
+    (void)m;
+    return rclcpp::Time(0, 0, RCL_ROS_TIME);
+  }
+};
+
+template<typename M>
+struct TimeStamp<M, typename std::enable_if<HasHeader<M>::value>::type>
+{
+  static rclcpp::Time value(const M & m)
+  {
+    return rclcpp::Time(m.header.stamp, RCL_ROS_TIME);
+  }
+};
+
+}  // namespace message_traits
+}  // namespace message_filters
 
 #endif  // MESSAGE_FILTERS__MESSAGE_TRAITS_HPP_

@@ -29,6 +29,130 @@
 #ifndef MESSAGE_FILTERS__SIGNAL9_HPP_
 #define MESSAGE_FILTERS__SIGNAL9_HPP_
 
-#include "signal9.h"
+
+#include <functional>
+#include <mutex>
+#include <memory>
+#include <vector>
+
+#include "message_filters/connection.hpp"
+#include "message_filters/null_types.hpp"
+#include "message_filters/message_event.hpp"
+#include "message_filters/parameter_adapter.hpp"
+
+namespace message_filters
+{
+
+template<typename ... Ms>
+class CallbackHelper9
+{
+public:
+  virtual ~CallbackHelper9() {}
+
+  virtual void call(bool nonconst_force_copy, const MessageEvent<Ms const> & ... es) = 0;
+
+  typedef std::shared_ptr<CallbackHelper9> Ptr;
+};
+
+template<typename ... Ps>
+class CallbackHelper9T
+  : public CallbackHelper9<typename ParameterAdapter<Ps>::Message...>
+{
+public:
+  typedef std::function<void (typename ParameterAdapter<Ps>::Parameter...)> Callback;
+
+  CallbackHelper9T(const Callback & cb)  // NOLINT(runtime/explicit)
+  : callback_(cb)
+  {
+  }
+
+  virtual void call(bool nonconst_force_copy, const typename ParameterAdapter<Ps>::Event &... es)
+  {
+    auto my_es{std::make_tuple(
+        typename ParameterAdapter<Ps>::Event(
+          es,
+          nonconst_force_copy || es.nonConstWillCopy())...)};
+    callback_(ParameterAdapter<Ps>::getParameter(es)...);
+  }
+
+private:
+  Callback callback_;
+};
+
+template<typename ... Ms>
+class Signal9
+{
+  typedef std::shared_ptr<CallbackHelper9<Ms...>> CallbackHelper9Ptr;
+  typedef std::vector<CallbackHelper9Ptr> V_CallbackHelper9;
+
+public:
+  typedef const std::shared_ptr<NullType const> & NullP;
+
+  template<typename ... Ps>
+  Connection addCallback(const std::function<void(Ps...)> & callback)
+  {
+    CallbackHelper9T<Ps...> * helper = new CallbackHelper9T<Ps...>(callback);
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    callbacks_.push_back(CallbackHelper9Ptr(helper));
+    return Connection(std::bind(&Signal9::removeCallback, this, callbacks_.back()));
+  }
+
+  template<typename ... Ps>
+  Connection addCallback(void (* callback)(Ps...))
+  {
+    return addCallback(
+      std::function<void(Ps...)>(
+        [callback](auto &&... args) {
+          callback(args ...);
+        }));
+  }
+
+  template<typename T, typename ... Ps>
+  Connection addCallback(void (T::* callback)(Ps...), T * t)
+  {
+    return addCallback(
+      std::function<void(Ps...)>(
+        [ = ](const Ps &... ps) {
+          (t->*callback)(ps ...);
+        }));
+  }
+
+  template<typename C>
+  Connection addCallback(C & callback)
+  {
+    return addCallback(
+      std::function<void(const std::shared_ptr<const Ms> & ...)>(
+        [callback](const std::shared_ptr<const Ms> & ... msgs) {callback(msgs ...);}));
+  }
+
+  void removeCallback(const CallbackHelper9Ptr & helper)
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    typename V_CallbackHelper9::iterator it =
+      std::find(callbacks_.begin(), callbacks_.end(), helper);
+    if (it != callbacks_.end()) {
+      callbacks_.erase(it);
+    }
+  }
+
+  void call(const MessageEvent<Ms const> & ... es)
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    bool nonconst_force_copy = callbacks_.size() > 1;
+    typename V_CallbackHelper9::iterator it = callbacks_.begin();
+    typename V_CallbackHelper9::iterator end = callbacks_.end();
+    for (; it != end; ++it) {
+      const CallbackHelper9Ptr & helper = *it;
+      helper->call(nonconst_force_copy, es ...);
+    }
+  }
+
+private:
+  std::mutex mutex_;
+  V_CallbackHelper9 callbacks_;
+};
+
+}  // namespace message_filters
 
 #endif  // MESSAGE_FILTERS__SIGNAL9_HPP_

@@ -30,12 +30,16 @@
 #define MESSAGE_FILTERS__DELTA_FILTER_HPP_
 
 #include <algorithm>
+#include <cstddef>
 #include <cstdint>
 #include <forward_list>
 #include <functional>
 #include <memory>
 #include <mutex>
+#include <optional>
+#include <string>
 #include <type_traits>
+#include <variant>
 
 #include <message_filters/connection.hpp>
 #include <message_filters/message_event.hpp>
@@ -43,6 +47,21 @@
 
 namespace message_filters
 {
+
+// Supported final field types
+typedef std::variant<
+    bool,
+    std::byte,
+    char,
+    std::uint8_t,
+    std::int16_t, std::uint16_t,
+    std::int32_t, std::uint32_t,
+    std::int64_t, std::uint64_t,
+    float,
+    double,
+    std::string
+> MFieldType;
+
 
 /**
  * \brief Base class for comparison handlers.
@@ -55,30 +74,22 @@ class ComparisonHandler
 public:
   typedef std::shared_ptr<MessageType const> MConstPtr;
   typedef MessageEvent<MessageType const> EventType;
-
-  /**
-   * Comparator function type: takes two messages (cached and current),
-   * returns true if the fields being observed satisfy the comparison condition.
-   */
-  typedef std::function<bool(const MConstPtr &, const MConstPtr &)> FieldComparatorFunctionType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   virtual ~ComparisonHandler() = default;
 
   virtual bool message_fits(const EventType & message) = 0;
 
-  virtual bool do_fields_fit(
-    const FieldComparatorFunctionType & comparator,
-    const MConstPtr & cached,
-    const MConstPtr & current) const = 0;
+  virtual bool do_fields_fit(MFieldType field_a, MFieldType field_b) const = 0;
 };
 
 /**
  * \brief CachedComparisonHandler implements messages comparison field by field.
  *
  * A successor to this class should implement 'do_fields_fit' method.
- * If any of the comparators provided to 'do_fields_fit' satisfies the comparison
- * conditions the message is accepted. That means that the message is stored in
- * the 'message_cache_' and the 'message_fits' method returns 'true'.
+ * If any of the fields provided to the 'do_fields_fit' method do satisfy
+ * a comparison conditions the message is accepted. That means that the message
+ * is stored in the 'message_cache_' and the 'message_fits' method returns 'true'.
  */
 template<typename MessageType>
 class CachedComparisonHandler : public ComparisonHandler<MessageType>
@@ -86,19 +97,21 @@ class CachedComparisonHandler : public ComparisonHandler<MessageType>
 public:
   typedef std::shared_ptr<MessageType const> MConstPtr;
   typedef MessageEvent<MessageType const> EventType;
-  typedef std::function<bool(const MConstPtr &, const MConstPtr &)> FieldComparatorFunctionType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * Initialize handler.
-   * \param field_comparators A list of callable objects that take the cached and
-   * current message and return true if the comparison condition is satisfied.
-   * If any comparator returns true the current message is accepted.
+   * \param field_getters A list of callable objects that are expected
+   * to retrieve a value of a basic type from a message field for comparison.
+   * Any of the 'field_getters' is applied to the cached and to the current
+   * message. The returned values are compared. If any of these values differ
+   * between cached and current message, the current message is accepted.
    */
   explicit CachedComparisonHandler(
-    std::forward_list<FieldComparatorFunctionType> field_comparators
+    std::forward_list<FieldGetterFunctionType> field_getters
   )
   : ComparisonHandler<MessageType>(),
-    field_comparators_(field_comparators)
+    field_getters_(field_getters)
   {}
 
   virtual ~CachedComparisonHandler() = default;
@@ -107,76 +120,72 @@ public:
   {
     std::lock_guard<std::mutex> lock(message_cache_mutex_);
 
-    if (!message_cache_) {
-      message_cache_.reset(new EventType(message));
+    if (!message_cache_.has_value()) {
+      message_cache_.emplace(message);
       return true;
     }
 
-    const MConstPtr & cached_msg = message_cache_->getConstMessage();
-    const MConstPtr & current_msg = message.getConstMessage();
-
     const bool any_field_fits = std::any_of(
-      field_comparators_.begin(),
-      field_comparators_.end(),
-      [&] (const FieldComparatorFunctionType & comparator)
+      field_getters_.begin(),
+      field_getters_.end(),
+      [&] (FieldGetterFunctionType get_field)
       {
-        return do_fields_fit(comparator, cached_msg, current_msg);
+        return do_fields_fit(
+          get_field(message_cache_.value().getConstMessage()),
+          get_field(message.getConstMessage())
+        );
       }
     );
 
     if (any_field_fits) {
-      message_cache_.reset(new EventType(message));
+      message_cache_.emplace(message);
     }
     return any_field_fits;
   }
 
-  virtual bool do_fields_fit(
-    const FieldComparatorFunctionType & comparator,
-    const MConstPtr & cached,
-    const MConstPtr & current) const = 0;
+  virtual bool do_fields_fit(MFieldType field_a, MFieldType field_b) const = 0;
 
 private:
   std::mutex message_cache_mutex_;
 
-  std::unique_ptr<EventType> message_cache_;
+  std::optional<const EventType> message_cache_;
 
-  std::forward_list<FieldComparatorFunctionType> field_comparators_;
+  std::forward_list<FieldGetterFunctionType> field_getters_;
 };
 
 /**
  * \brief DeltaCompare implements delta comparison.
  *
- * If any of the comparators returns true when applied to the previously cached
- * and current message, the current message is accepted.
+ * If any of the fields, acquired by any of the 'field_getters' do differ
+ * between previously cached and current message, the current message is accepted.
  */
 template<typename MessageType>
 class DeltaCompare : public CachedComparisonHandler<MessageType>
 {
 public:
   typedef std::shared_ptr<MessageType const> MConstPtr;
-  typedef std::function<bool(const MConstPtr &, const MConstPtr &)> FieldComparatorFunctionType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * Initialize handler.
    *
-   * \param field_comparators A list of callable objects that take the cached and
-   * current message and return true if the fields being observed differ.
-   * If any comparator returns true the current message is accepted.
+   * \param field_getters A list of callable objects that are expected
+   * to retrieve a value of a basic type from a message field for comparison.
+   * Any of the 'field_getters' is applied to the cached and to the current
+   * message. The returned values are compared. If any of these values differ
+   * between cached and current message, the current message is accepted.
    */
   explicit DeltaCompare(
-    std::forward_list<FieldComparatorFunctionType> field_comparators
+    std::forward_list<FieldGetterFunctionType> field_getters
   )
-  : CachedComparisonHandler<MessageType>(field_comparators)
+  : CachedComparisonHandler<MessageType>(field_getters)
   {}
 
   virtual ~DeltaCompare() = default;
 
-  bool do_fields_fit(
-    const FieldComparatorFunctionType & comparator,
-    const MConstPtr & cached,
-    const MConstPtr & current) const
+  bool do_fields_fit(MFieldType field_a, MFieldType field_b) const
   {
-    return comparator(cached, current);
+    return field_a != field_b;
   }
 };
 
@@ -192,13 +201,13 @@ public:
  * for a provided message, that message is considered valid and is passed
  * to a next filter if any.
  */
-template<typename MessageType, template<typename HandlerMessageType> class HandlerType>
+template<typename MessageType, template<typename HandlerMessageType> typename HandlerType>
 class ComparisonFilter : public SimpleFilter<MessageType>
 {
 public:
   typedef std::shared_ptr<MessageType const> MConstPtr;
   typedef MessageEvent<MessageType const> EventType;
-  typedef std::function<bool(const MConstPtr &, const MConstPtr &)> FieldComparatorFunctionType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * Initialize ComparisonFilter.
@@ -206,17 +215,19 @@ public:
    * \param filter An instance of the 'SimpleFilter' successor class.
    * The input filter to connect to.
    *
-   * \param field_comparators A list of callable objects that take the cached and
-   * current message and return true if the comparison condition is satisfied.
-   * If any comparator returns true the current message is accepted.
+   * \param field_getters A list of callable objects that are expected
+   * to retrieve a value of a basic type from a message field for comparison.
+   * Any of the 'field_getters' is applied to the cached and to the current
+   * message. The returned values are compared. If any of these values differ
+   * between cached and current message, the current message is accepted.
    */
   template<typename FilterType>
   explicit ComparisonFilter(
     FilterType & filter,
-    std::forward_list<FieldComparatorFunctionType> field_comparators
+    std::forward_list<FieldGetterFunctionType> field_getters
   )
   :SimpleFilter<MessageType>(),
-    comparison_handler_(field_comparators)
+    comparison_handler_(field_getters)
   {
     connectInput(filter);
   }
@@ -256,15 +267,15 @@ private:
  * \brief ROS 2 Delta filter.
  *
  * Given a stream of messages, the message is passed down to the next filter
- * if any of the comparators returns true when applied to the previously accepted
- * message and the current message.
+ * if any of the message fields, that may be acquired by ``field_getters``
+ * have changed compared to the previously accepted message.
  */
 template<typename MessageType>
 class DeltaFilter : public ComparisonFilter<MessageType, DeltaCompare>
 {
 public:
   typedef std::shared_ptr<MessageType const> MConstPtr;
-  typedef std::function<bool(const MConstPtr &, const MConstPtr &)> FieldComparatorFunctionType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * \brief Initialize DeltaFilter
@@ -272,18 +283,20 @@ public:
    * \param filter An instance of the 'SimpleFilter' successor class.
    * The input filter to connect to.
    *
-   * \param field_comparators A list of callable objects that take the cached and
-   * current message and return true if the observed fields differ.
-   * If any comparator returns true the current message is accepted.
+   * \param field_getters A list of callable objects that are expected
+   * to retrieve a value of a basic type from a message field for comparison.
+   * Any of the 'field_getters' is applied to the cached and to the current
+   * message. The returned values are compared. If any of these values differ
+   * between cached and current message, the current message is accepted.
    */
   template<typename FilterType>
   explicit DeltaFilter(
     FilterType & filter,
-    std::forward_list<FieldComparatorFunctionType> field_comparators
+    std::forward_list<FieldGetterFunctionType> field_getters
   )
   : ComparisonFilter<MessageType, DeltaCompare>(
       filter,
-      field_comparators
+      field_getters
   ) {}
 
   virtual ~DeltaFilter() = default;

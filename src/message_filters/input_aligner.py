@@ -28,6 +28,7 @@
 
 """Input aligner for synchronizing messages from multiple sources based on their timestamps."""
 
+from dataclasses import dataclass
 import heapq
 import threading
 import typing as tp
@@ -36,22 +37,17 @@ from builtin_interfaces.msg import Time as TimeMsg
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.time import Time
+from rclpy.type_support import MsgT
 
 from .simple_filter import SimpleFilter
 
 
+@dataclass
 class QueueStatus:
-    def __init__(
-        self,
-        active: bool,
-        queue_size: int,
-        msgs_processed: int,
-        msgs_dropped: int,
-    ) -> None:
-        self.active = active
-        self.queue_size = queue_size
-        self.msgs_processed = msgs_processed
-        self.msgs_dropped = msgs_dropped
+    active: bool
+    queue_size: int
+    msgs_processed: int
+    msgs_dropped: int
 
 
 def _ros_zero_time() -> Time:
@@ -173,7 +169,7 @@ class InputAligner:
     def registerCallback(
         self,
         index: int,
-        callback: tp.Callable,  # TODO: @EsipovPA Fix typing for callable
+        callback: tp.Callable[tp.Concatenate[MsgT, ...], None],
         *args: tp.Any,
     ) -> int:
         return self.signals[index].registerCallback(callback, *args)

@@ -29,6 +29,44 @@
 #ifndef MESSAGE_FILTERS__CONNECTION_HPP_
 #define MESSAGE_FILTERS__CONNECTION_HPP_
 
-#include "connection.h"
+#include <functional>
+#include <memory>
+
+#include "message_filters/visibility_control.hpp"
+
+namespace message_filters
+{
+
+class noncopyable
+{
+protected:
+  noncopyable() {}
+  ~noncopyable() {}
+  noncopyable(const noncopyable &) = delete;
+  noncopyable & operator=(const noncopyable &) = delete;
+};
+
+/**
+ * \brief Encapsulates a connection from one filter to another (or to a user-specified callback)
+ */
+class Connection
+{
+public:
+  using VoidDisconnectFunction = std::function<void (void)>;
+  using WithConnectionDisconnectFunction = std::function<void (const Connection &)>;
+  MESSAGE_FILTERS_PUBLIC Connection() {}
+  MESSAGE_FILTERS_PUBLIC Connection(const VoidDisconnectFunction & func);
+
+  /**
+   * \brief disconnects this connection
+   */
+  MESSAGE_FILTERS_PUBLIC void disconnect();
+
+private:
+  VoidDisconnectFunction void_disconnect_;
+  WithConnectionDisconnectFunction connection_disconnect_;
+};
+
+}  // namespace message_filters
 
 #endif  // MESSAGE_FILTERS__CONNECTION_HPP_
