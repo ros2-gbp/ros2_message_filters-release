@@ -166,7 +166,7 @@ tracks:
     - git-bloom-generate -y rosdynrpm --prefix release/:{ros_distro} :{ros_distro}
       -i :{release_inc} --require-os fedora rhel
     devel_branch: humble
-    last_version: 4.3.17
+    last_version: 4.3.18
     name: message_filters
     patches: null
     release_inc: '1'
