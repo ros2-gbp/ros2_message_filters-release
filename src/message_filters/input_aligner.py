@@ -36,8 +36,12 @@ from builtin_interfaces.msg import Time as TimeMsg
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.time import Time
+from rclpy.node import MsgType
 
 from .simple_filter import SimpleFilter
+
+
+P = tp.ParamSpec('P')
 
 
 class QueueStatus:
@@ -173,7 +177,7 @@ class InputAligner:
     def registerCallback(
         self,
         index: int,
-        callback: tp.Callable,  # TODO: @EsipovPA Fix typing for callable
+        callback: tp.Callable[tp.Concatenate[MsgType, P], None],
         *args: tp.Any,
     ) -> int:
         return self.signals[index].registerCallback(callback, *args)
