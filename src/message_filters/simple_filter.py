@@ -25,6 +25,12 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
+import typing as tp
+
+from rclpy.node import MsgType
+
+
+P = tp.ParamSpec('P')
 
 
 class SimpleFilter:
@@ -32,7 +38,11 @@ class SimpleFilter:
     def __init__(self):
         self.callbacks = {}
 
-    def registerCallback(self, callback, *args):
+    def registerCallback(
+        self,
+        callback: tp.Callable[tp.Concatenate[MsgType, P], None],
+        *args
+    ):
         """
         Register a callback `callback` to be called when this filter has output.
 
