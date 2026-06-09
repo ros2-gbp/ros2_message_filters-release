@@ -32,6 +32,8 @@ Message Filter Objects
 
 """Message Filter Objects."""
 
+from bisect import insort_right
+from dataclasses import dataclass
 from functools import reduce
 import itertools
 import threading
@@ -51,10 +53,10 @@ from .simple_filter import SimpleFilter
 class Subscriber(SimpleFilter):
 
     """
-    ROS2 subscription filter,Identical arguments as :class:`rclpy.Subscriber`.
+    ROS 2 subscription filter, takes identical arguments as :class:`rclpy.Subscriber`.
 
     This class acts as a highest-level filter, simply passing messages
-    from a ROS2 subscription through to the filters which have connected
+    from a ROS 2 subscription through to the filters which have connected
     to it.
     """
 
@@ -216,14 +218,10 @@ class Chain(SimpleFilter):
     to the callback you've registered with Chain::registerCallback.
     """
 
+    @dataclass
     class FilterInfo:
-        def __init__(
-            self,
-            message_filter: any,
-            connection_callback_index: int,
-        ):
-            self.message_filter = message_filter
-            self.connection_callback_index = connection_callback_index
+        message_filter: any
+        connection_callback_index: int
 
     def __init__(self, message_filter=None):
         SimpleFilter.__init__(self)
