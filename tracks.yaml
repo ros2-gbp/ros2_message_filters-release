@@ -220,7 +220,7 @@ tracks:
     - git-bloom-generate -y rosdynrpm --prefix release/:{ros_distro} :{ros_distro}
       -i :{release_inc} --require-os fedora rhel
     devel_branch: jazzy
-    last_version: 4.11.15
+    last_version: 4.11.16
     name: message_filters
     patches: null
     release_inc: '1'
