@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.20)
 
 project(message_filters)
 
-# Default to C++17
+# Default to C++20
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 17)
+  set(CMAKE_CXX_STANDARD 20)
   set(CMAKE_CXX_STANDARD_REQUIRED ON)
 endif()
 
@@ -18,7 +18,9 @@ find_package(rclcpp REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(std_msgs REQUIRED)
 
-add_library(${PROJECT_NAME} src/connection.cpp)
+add_library(${PROJECT_NAME}
+  src/connection.cpp
+  src/message_event.cpp)
 if(WIN32)
   target_compile_definitions(${PROJECT_NAME}
     PRIVATE "MESSAGE_FILTERS_BUILDING_DLL")
@@ -29,7 +31,7 @@ target_include_directories(${PROJECT_NAME} PUBLIC
 target_link_libraries(${PROJECT_NAME} PUBLIC
   rclcpp::rclcpp
   rcutils::rcutils
-  ${std_msgs_TARGETS}
+  std_msgs::std_msgs
 )
 
 install(
@@ -58,6 +60,7 @@ ament_export_dependencies(rclcpp rcutils std_msgs)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
+  set(ament_cmake_cppcheck_LANGUAGE "c++")
   find_package(rclcpp_lifecycle REQUIRED)
   find_package(sensor_msgs REQUIRED)
 
@@ -87,7 +90,8 @@ if(BUILD_TESTING)
 
   ament_add_gtest(${PROJECT_NAME}-test_subscriber test/test_subscriber.cpp)
   if(TARGET ${PROJECT_NAME}-test_subscriber)
-    target_link_libraries(${PROJECT_NAME}-test_subscriber ${PROJECT_NAME} rclcpp::rclcpp rclcpp_lifecycle::rclcpp_lifecycle ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-test_subscriber ${PROJECT_NAME} rclcpp::rclcpp
+    rclcpp_lifecycle::rclcpp_lifecycle sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-test_synchronizer test/test_synchronizer.cpp)
@@ -122,22 +126,17 @@ if(BUILD_TESTING)
 
   ament_add_gtest(${PROJECT_NAME}-test_fuzz test/test_fuzz.cpp SKIP_TEST)
   if(TARGET ${PROJECT_NAME}-test_fuzz)
-    target_link_libraries(${PROJECT_NAME}-test_fuzz ${PROJECT_NAME} rclcpp::rclcpp ${sensor_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-test_fuzz ${PROJECT_NAME} rclcpp::rclcpp sensor_msgs::sensor_msgs)
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-test_message_traits test/test_message_traits.cpp)
   if(TARGET ${PROJECT_NAME}-test_message_traits)
-    target_link_libraries(${PROJECT_NAME}-test_message_traits ${PROJECT_NAME} rclcpp::rclcpp ${std_msgs_TARGETS})
+    target_link_libraries(${PROJECT_NAME}-test_message_traits ${PROJECT_NAME} rclcpp::rclcpp std_msgs::std_msgs)
   endif()
 
-  # Provides PYTHON_EXECUTABLE_DEBUG
-  find_package(python_cmake_module REQUIRED)
-  find_package(PythonExtra REQUIRED)
-  set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE}")
-  if(WIN32)
-    if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-      set(_PYTHON_EXECUTABLE "${PYTHON_EXECUTABLE_DEBUG}")
-    endif()
+  ament_add_gtest(${PROJECT_NAME}-test_input_aligner test/test_input_aligner.cpp)
+  if(TARGET ${PROJECT_NAME}-test_input_aligner)
+    target_link_libraries(${PROJECT_NAME}-test_input_aligner ${PROJECT_NAME})
   endif()
 
   ament_add_gtest(${PROJECT_NAME}-test_message_filters_delta_filter test/test_message_filters_delta_filter.cpp)
@@ -147,16 +146,11 @@ if(BUILD_TESTING)
 
   # python tests with python interfaces of message filters
   find_package(ament_cmake_pytest REQUIRED)
-  ament_add_pytest_test(test_time_synchronizer.py "test/test_time_synchronizer.py"
-    PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}")
-  ament_add_pytest_test(test_approxsync.py "test/test_approxsync.py"
-    PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}")
-  ament_add_pytest_test(test_message_filters_cache.py "test/test_message_filters_cache.py"
-    PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}")
-  ament_add_pytest_test(test_message_filters_chain.py "test/test_message_filters_chain.py"
-    PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}")
-  ament_add_pytest_test(test_input_aligner.py "test/test_input_aligner.py"
-    PYTHON_EXECUTABLE "${_PYTHON_EXECUTABLE}")
+  ament_add_pytest_test(test_time_synchronizer.py "test/test_time_synchronizer.py")
+  ament_add_pytest_test(test_approxsync.py "test/test_approxsync.py")
+  ament_add_pytest_test(test_message_filters_cache.py "test/test_message_filters_cache.py")
+  ament_add_pytest_test(test_message_filters_chain.py "test/test_message_filters_chain.py")
+  ament_add_pytest_test(test_input_aligner.py "test/test_input_aligner.py")
 endif()
 
 ament_package()
