@@ -2,6 +2,18 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+8.0.2 (2026-06-29)
+------------------
+* hygiene sweep: fabs→std::abs, empty {} ctors/dtors → = default, etc (`#315 <https://github.com/ros2/message_filters/issues/315>`_)
+* Optimize header include (`#316 <https://github.com/ros2/message_filters/issues/316>`_)
+* Missed make_shared and removed redundant virtual (`#314 <https://github.com/ros2/message_filters/issues/314>`_)
+* Removed CopyMEssageIfNecessary (`#313 <https://github.com/ros2/message_filters/issues/313>`_)
+* const-correct comparisons and migration from typedef to the using (`#312 <https://github.com/ros2/message_filters/issues/312>`_)
+* replaced the raw new CallbackHelperT(...) with a single std::make_shared in signalX.hpp (`#311 <https://github.com/ros2/message_filters/issues/311>`_)
+* typedefs to using and std::bind to lambdas (`#310 <https://github.com/ros2/message_filters/issues/310>`_)
+* Tutorials: Add DeltaFilter C++ tutorial (`#304 <https://github.com/ros2/message_filters/issues/304>`_)
+* Contributors: Alejandro Hernández Cordero, Pavel Esipov
+
 8.0.1 (2026-05-13)
 ------------------
 * Avoid vector assignment in message_filters signal callback (`#292 <https://github.com/ros2/message_filters/issues/292>`_)
