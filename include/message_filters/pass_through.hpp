@@ -42,8 +42,8 @@ template<typename M>
 class PassThrough : public SimpleFilter<M>
 {
 public:
-  using MConstPtr = std::shared_ptr<M const>;
-  using EventType = MessageEvent<M const>;
+  typedef std::shared_ptr<M const> MConstPtr;
+  typedef MessageEvent<M const> EventType;
 
   PassThrough()
   {
@@ -63,7 +63,9 @@ public:
     incoming_connection_ =
       f.registerCallback(
       typename SimpleFilter<M>::EventCallback(
-        [this](const EventType & evt) {cb(evt);}));
+        std::bind(
+          &PassThrough::cb, this,
+          std::placeholders::_1)));
   }
 
   void add(const MConstPtr & msg)

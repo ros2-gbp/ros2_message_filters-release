@@ -35,7 +35,7 @@
 #include <string>
 #include <tuple>
 
-#include <rclcpp/time.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
@@ -51,13 +51,13 @@ namespace sync_policies
 template<typename ... Ms>
 struct ExactTime : public PolicyBase<Ms...>
 {
-  using Sync = Synchronizer<ExactTime>;
-  using Super = PolicyBase<Ms...>;
-  using Messages = typename Super::Messages;
-  using Signal = typename Super::Signal;
-  using Events = typename Super::Events;
-  using RealTypeCount = typename Super::RealTypeCount;
-  using Tuple = Events;
+  typedef Synchronizer<ExactTime> Sync;
+  typedef PolicyBase<Ms...> Super;
+  typedef typename Super::Messages Messages;
+  typedef typename Super::Signal Signal;
+  typedef typename Super::Events Events;
+  typedef typename Super::RealTypeCount RealTypeCount;
+  typedef Events Tuple;
 
   ExactTime(uint32_t queue_size)  // NOLINT(runtime/explicit)
   : parent_(0)
@@ -86,12 +86,12 @@ struct ExactTime : public PolicyBase<Ms...>
   }
 
   template<int i>
-  void add(const std::tuple_element_t<i, Events> & evt)
+  void add(const typename std::tuple_element<i, Events>::type & evt)
   {
     assert(parent_);
 
     namespace mt = message_filters::message_traits;
-    using Message = std::tuple_element_t<i, Messages>;
+    using Message = typename std::tuple_element<i, Messages>::type;
 
     std::lock_guard<std::mutex> lock(mutex_);
 

@@ -49,18 +49,18 @@ namespace message_filters
 {
 
 // Supported final field types
-using MFieldType = std::variant<
-  bool,
-  std::byte,
-  char,
-  std::uint8_t,
-  std::int16_t, std::uint16_t,
-  std::int32_t, std::uint32_t,
-  std::int64_t, std::uint64_t,
-  float,
-  double,
-  std::string
->;
+typedef std::variant<
+    bool,
+    std::byte,
+    char,
+    std::uint8_t,
+    std::int16_t, std::uint16_t,
+    std::int32_t, std::uint32_t,
+    std::int64_t, std::uint64_t,
+    float,
+    double,
+    std::string
+> MFieldType;
 
 
 /**
@@ -72,9 +72,9 @@ template<typename MessageType>
 class ComparisonHandler
 {
 public:
-  using MConstPtr = std::shared_ptr<MessageType const>;
-  using EventType = MessageEvent<MessageType const>;
-  using FieldGetterFunctionType = std::function<MFieldType(const MConstPtr &)>;
+  typedef std::shared_ptr<MessageType const> MConstPtr;
+  typedef MessageEvent<MessageType const> EventType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   virtual ~ComparisonHandler() = default;
 
@@ -95,9 +95,9 @@ template<typename MessageType>
 class CachedComparisonHandler : public ComparisonHandler<MessageType>
 {
 public:
-  using MConstPtr = std::shared_ptr<MessageType const>;
-  using EventType = MessageEvent<MessageType const>;
-  using FieldGetterFunctionType = std::function<MFieldType(const MConstPtr &)>;
+  typedef std::shared_ptr<MessageType const> MConstPtr;
+  typedef MessageEvent<MessageType const> EventType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * Initialize handler.
@@ -116,7 +116,7 @@ public:
 
   virtual ~CachedComparisonHandler() = default;
 
-  bool message_fits(const EventType & message) override
+  bool message_fits(const EventType & message)
   {
     std::lock_guard<std::mutex> lock(message_cache_mutex_);
 
@@ -143,7 +143,7 @@ public:
     return any_field_fits;
   }
 
-  bool do_fields_fit(MFieldType field_a, MFieldType field_b) const override = 0;
+  virtual bool do_fields_fit(MFieldType field_a, MFieldType field_b) const = 0;
 
 private:
   std::mutex message_cache_mutex_;
@@ -163,8 +163,8 @@ template<typename MessageType>
 class DeltaCompare : public CachedComparisonHandler<MessageType>
 {
 public:
-  using MConstPtr = std::shared_ptr<MessageType const>;
-  using FieldGetterFunctionType = std::function<MFieldType(const MConstPtr &)>;
+  typedef std::shared_ptr<MessageType const> MConstPtr;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * Initialize handler.
@@ -183,7 +183,7 @@ public:
 
   virtual ~DeltaCompare() = default;
 
-  bool do_fields_fit(MFieldType field_a, MFieldType field_b) const override
+  bool do_fields_fit(MFieldType field_a, MFieldType field_b) const
   {
     return field_a != field_b;
   }
@@ -205,9 +205,9 @@ template<typename MessageType, template<typename HandlerMessageType> typename Ha
 class ComparisonFilter : public SimpleFilter<MessageType>
 {
 public:
-  using MConstPtr = std::shared_ptr<MessageType const>;
-  using EventType = MessageEvent<MessageType const>;
-  using FieldGetterFunctionType = std::function<MFieldType(const MConstPtr &)>;
+  typedef std::shared_ptr<MessageType const> MConstPtr;
+  typedef MessageEvent<MessageType const> EventType;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * Initialize ComparisonFilter.
@@ -240,7 +240,11 @@ public:
     incoming_connection_.disconnect();
     incoming_connection_ = filter.registerCallback(
       typename SimpleFilter<MessageType>::EventCallback(
-        [this](const EventType & evt) {add(evt);}
+        std::bind(
+          &ComparisonFilter::add,
+          this,
+          std::placeholders::_1
+        )
       )
     );
   }
@@ -270,8 +274,8 @@ template<typename MessageType>
 class DeltaFilter : public ComparisonFilter<MessageType, DeltaCompare>
 {
 public:
-  using MConstPtr = std::shared_ptr<MessageType const>;
-  using FieldGetterFunctionType = std::function<MFieldType(const MConstPtr &)>;
+  typedef std::shared_ptr<MessageType const> MConstPtr;
+  typedef std::function<MFieldType(const MConstPtr &)> FieldGetterFunctionType;
 
   /**
    * \brief Initialize DeltaFilter

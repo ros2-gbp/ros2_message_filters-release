@@ -31,7 +31,7 @@
 
 #include <memory>
 
-#include <rclcpp/time.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
@@ -42,7 +42,7 @@ namespace message_filters
 struct NullType
 {
 };
-using NullTypeConstPtr = std::shared_ptr<NullType const>;
+typedef std::shared_ptr<NullType const> NullTypeConstPtr;
 
 template<class M>
 struct NullFilter

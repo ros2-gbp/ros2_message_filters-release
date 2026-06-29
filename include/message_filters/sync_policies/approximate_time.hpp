@@ -40,8 +40,7 @@
 #include <tuple>
 #include <vector>
 
-#include <rclcpp/duration.hpp>
-#include <rclcpp/time.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
@@ -57,14 +56,14 @@ namespace sync_policies
 template<typename ... Ms>
 struct ApproximateTime : public PolicyBase<Ms...>
 {
-  using Sync = Synchronizer<ApproximateTime>;
-  using Super = PolicyBase<Ms...>;
-  using Messages = typename Super::Messages;
-  using Signal = typename Super::Signal;
-  using Events = typename Super::Events;
-  using Tuple = Events;
-  using DequeTuple = std::tuple<std::deque<MessageEvent<Ms const>>...>;
-  using VectorTuple = std::tuple<std::vector<MessageEvent<Ms const>>...>;
+  typedef Synchronizer<ApproximateTime> Sync;
+  typedef PolicyBase<Ms...> Super;
+  typedef typename Super::Messages Messages;
+  typedef typename Super::Signal Signal;
+  typedef typename Super::Events Events;
+  typedef Events Tuple;
+  typedef std::tuple<std::deque<MessageEvent<Ms const>>...> DequeTuple;
+  typedef std::tuple<std::vector<MessageEvent<Ms const>>...> VectorTuple;
 
   using Super::N_MESSAGES;
 
@@ -122,12 +121,12 @@ struct ApproximateTime : public PolicyBase<Ms...>
     if (warned_about_incorrect_bound_[i]) {
       return;
     }
-    std::deque<std::tuple_element_t<i, Events>> & deque = std::get<i>(deques_);
-    std::vector<std::tuple_element_t<i, Events>> & v = std::get<i>(past_);
+    std::deque<typename std::tuple_element<i, Events>::type> & deque = std::get<i>(deques_);
+    std::vector<typename std::tuple_element<i, Events>::type> & v = std::get<i>(past_);
     assert(!deque.empty());
-    const std::tuple_element_t<i, Messages> & msg = *(deque.back()).getMessage();
+    const typename std::tuple_element<i, Messages>::type & msg = *(deque.back()).getMessage();
     rclcpp::Time msg_time =
-      mt::TimeStamp<std::tuple_element_t<i, Messages>>::value(msg);
+      mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(msg);
     rclcpp::Time previous_msg_time;
     if (deque.size() == static_cast<size_t>(1)) {
       if (v.empty()) {
@@ -135,15 +134,16 @@ struct ApproximateTime : public PolicyBase<Ms...>
         // we cannot check the bound
         return;
       }
-      const std::tuple_element_t<i, Messages> & previous_msg = *(v.back()).getMessage();
-      previous_msg_time = mt::TimeStamp<std::tuple_element_t<i, Messages>>::value(
+      const typename std::tuple_element<i,
+        Messages>::type & previous_msg = *(v.back()).getMessage();
+      previous_msg_time = mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(
         previous_msg);
     } else {
       // There are at least 2 elements in the deque.
       // Check that the gap respects the bound if it was provided.
-      const std::tuple_element_t<i,
-        Messages> & previous_msg = *(deque[deque.size() - 2]).getMessage();
-      previous_msg_time = mt::TimeStamp<std::tuple_element_t<i, Messages>>::value(
+      const typename std::tuple_element<i,
+        Messages>::type & previous_msg = *(deque[deque.size() - 2]).getMessage();
+      previous_msg_time = mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(
         previous_msg);
     }
     if (msg_time < previous_msg_time) {
@@ -163,11 +163,11 @@ struct ApproximateTime : public PolicyBase<Ms...>
 
 
   template<int i>
-  void add(const std::tuple_element_t<i, Events> & evt)
+  void add(const typename std::tuple_element<i, Events>::type & evt)
   {
     std::lock_guard<std::mutex> lock(data_mutex_);
 
-    std::deque<std::tuple_element_t<i, Events>> & deque = std::get<i>(deques_);
+    std::deque<typename std::tuple_element<i, Events>::type> & deque = std::get<i>(deques_);
     deque.push_back(evt);
     if (deque.size() == static_cast<size_t>(1)) {
       // We have just added the first message, so it was empty before
@@ -181,7 +181,7 @@ struct ApproximateTime : public PolicyBase<Ms...>
     }
     // Check whether we have more messages than allowed in the queue.
     // Note that during the above call to process(), queue i may contain queue_size_+1 messages.
-    std::vector<std::tuple_element_t<i, Events>> & past = std::get<i>(past_);
+    std::vector<typename std::tuple_element<i, Events>::type> & past = std::get<i>(past_);
     if (deque.size() + past.size() > queue_size_) {
       // Cancel ongoing candidate search, if any:
       num_non_empty_deques_ = 0;  // We will recompute it from scratch
@@ -229,7 +229,7 @@ private:
   template<int i>
   void dequeDeleteFront()
   {
-    std::deque<std::tuple_element_t<i, Events>> & deque = std::get<i>(deques_);
+    std::deque<typename std::tuple_element<i, Events>::type> & deque = std::get<i>(deques_);
     assert(!deque.empty());
     deque.pop_front();
     if (deque.empty()) {
@@ -261,8 +261,8 @@ private:
   template<int i>
   void dequeMoveFrontToPast()
   {
-    std::deque<std::tuple_element_t<i, Events>> & deque = std::get<i>(deques_);
-    std::vector<std::tuple_element_t<i, Events>> & vector = std::get<i>(past_);
+    std::deque<typename std::tuple_element<i, Events>::type> & deque = std::get<i>(deques_);
+    std::vector<typename std::tuple_element<i, Events>::type> & vector = std::get<i>(past_);
     assert(!deque.empty());
     vector.push_back(deque.front());
     deque.pop_front();
@@ -323,8 +323,8 @@ private:
   template<int i>
   void recover(size_t num_messages)
   {
-    std::vector<std::tuple_element_t<i, Events>> & v = std::get<i>(past_);
-    std::deque<std::tuple_element_t<i, Events>> & q = std::get<i>(deques_);
+    std::vector<typename std::tuple_element<i, Events>::type> & v = std::get<i>(past_);
+    std::deque<typename std::tuple_element<i, Events>::type> & q = std::get<i>(deques_);
     assert(num_messages <= v.size());
     while (num_messages > 0) {
       q.push_front(v.back());
@@ -346,8 +346,8 @@ private:
   template<int i>
   void recover()
   {
-    std::vector<std::tuple_element_t<i, Events>> & v = std::get<i>(past_);
-    std::deque<std::tuple_element_t<i, Events>> & q = std::get<i>(deques_);
+    std::vector<typename std::tuple_element<i, Events>::type> & v = std::get<i>(past_);
+    std::deque<typename std::tuple_element<i, Events>::type> & q = std::get<i>(deques_);
     while (!v.empty()) {
       q.push_front(v.back());
       v.pop_back();
@@ -367,8 +367,8 @@ private:
   template<int i>
   void recoverAndDelete()
   {
-    std::vector<std::tuple_element_t<i, Events>> & v = std::get<i>(past_);
-    std::deque<std::tuple_element_t<i, Events>> & q = std::get<i>(deques_);
+    std::vector<typename std::tuple_element<i, Events>::type> & v = std::get<i>(past_);
+    std::deque<typename std::tuple_element<i, Events>::type> & q = std::get<i>(deques_);
     while (!v.empty()) {
       q.push_front(v.back());
       v.pop_back();
@@ -415,7 +415,7 @@ private:
   void checkBoundary(uint32_t & index, rclcpp::Time & time, bool end)
   {
     namespace mt = message_filters::message_traits;
-    using MEvent = std::tuple_element_t<I, Events>;
+    using MEvent = typename std::tuple_element<I, Events>::type;
     MEvent & m = std::get<I>(deques_).front();
     using M = typename MEvent::Message;
     if ((I == 0) || ((mt::TimeStamp<M>::value(*m.getMessage()) < time) ^ end)) {
@@ -448,12 +448,12 @@ private:
 
     assert(pivot_ != NO_PIVOT);
 
-    std::vector<std::tuple_element_t<i, Events>> & v = std::get<i>(past_);
-    std::deque<std::tuple_element_t<i, Events>> & q = std::get<i>(deques_);
+    std::vector<typename std::tuple_element<i, Events>::type> & v = std::get<i>(past_);
+    std::deque<typename std::tuple_element<i, Events>::type> & q = std::get<i>(deques_);
     if (q.empty()) {
       assert(!v.empty());  // Because we have a candidate
       rclcpp::Time last_msg_time =
-        mt::TimeStamp<std::tuple_element_t<i, Messages>>::value(
+        mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(
         *(v.back()).getMessage());
       rclcpp::Time msg_time_lower_bound = last_msg_time + inter_message_lower_bounds_[i];
       if (msg_time_lower_bound > pivot_time_) {  // Take the max
@@ -462,7 +462,7 @@ private:
       return pivot_time_;
     }
     rclcpp::Time current_msg_time =
-      mt::TimeStamp<std::tuple_element_t<i, Messages>>::value(
+      mt::TimeStamp<typename std::tuple_element<i, Messages>::type>::value(
       *(q.front()).getMessage());
     return current_msg_time;
   }

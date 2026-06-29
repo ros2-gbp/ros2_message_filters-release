@@ -51,10 +51,10 @@ template<class M>
 class SimpleFilter : public noncopyable
 {
 public:
-  using MConstPtr = std::shared_ptr<M const>;
-  using Callback = std::function<void (const MConstPtr &)>;
-  using EventType = MessageEvent<M const>;
-  using EventCallback = std::function<void (const EventType &)>;
+  typedef std::shared_ptr<M const> MConstPtr;
+  typedef std::function<void (const MConstPtr &)> Callback;
+  typedef MessageEvent<M const> EventType;
+  typedef std::function<void (const EventType &)> EventCallback;
 
   /**
    * \brief Register a callback to be called when this filter has passed
@@ -64,7 +64,7 @@ public:
   Connection registerCallback(const C & callback)
   {
     typename CallbackHelper1<M>::Ptr helper = signal_.addCallback(Callback(callback));
-    return Connection([this, helper]() {signal_.removeCallback(helper);});
+    return Connection(std::bind(&Signal::removeCallback, &signal_, helper));
   }
 
   /**
@@ -74,8 +74,7 @@ public:
   template<typename P>
   Connection registerCallback(const std::function<void(P)> & callback)
   {
-    auto helper = signal_.addCallback(callback);
-    return Connection([this, helper]() {signal_.removeCallback(helper);});
+    return Connection(std::bind(&Signal::removeCallback, &signal_, signal_.addCallback(callback)));
   }
 
   /**
@@ -86,8 +85,8 @@ public:
   Connection registerCallback(void (* callback)(P))
   {
     typename CallbackHelper1<M>::Ptr helper =
-      signal_.template addCallback<P>([callback](auto &&... args) {callback(args ...);});
-    return Connection([this, helper]() {signal_.removeCallback(helper);});
+      signal_.template addCallback<P>(std::bind(callback, std::placeholders::_1));
+    return Connection(std::bind(&Signal::removeCallback, &signal_, helper));
   }
 
   /**
@@ -98,8 +97,8 @@ public:
   Connection registerCallback(void (T::* callback)(P), T * t)
   {
     typename CallbackHelper1<M>::Ptr helper =
-      signal_.template addCallback<P>([callback, t](auto &&... args) {(t->*callback)(args ...);});
-    return Connection([this, helper]() {signal_.removeCallback(helper);});
+      signal_.template addCallback<P>(std::bind(callback, t, std::placeholders::_1));
+    return Connection(std::bind(&Signal::removeCallback, &signal_, helper));
   }
 
   /**
@@ -131,7 +130,7 @@ protected:
   }
 
 private:
-  using Signal = Signal1<M>;
+  typedef Signal1<M> Signal;
 
   Signal signal_;
 

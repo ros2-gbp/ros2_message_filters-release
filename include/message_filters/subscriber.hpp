@@ -36,6 +36,7 @@
 
 #include <rclcpp/create_subscription.hpp>
 #include <rclcpp/node_interfaces/node_interfaces.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/simple_filter.hpp"
@@ -138,8 +139,8 @@ class Subscriber
   public SimpleFilter<message_type_t<M>>
 {
 public:
-  using MessageType = message_type_t<M>;
-  using EventType = MessageEvent<MessageType const>;
+  typedef message_type_t<M> MessageType;
+  typedef MessageEvent<MessageType const> EventType;
 
   /**
    * \brief Constructor

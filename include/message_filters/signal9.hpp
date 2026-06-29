@@ -48,11 +48,11 @@ template<typename ... Ms>
 class CallbackHelper9
 {
 public:
-  virtual ~CallbackHelper9() = default;
+  virtual ~CallbackHelper9() {}
 
   virtual void call(bool nonconst_force_copy, const MessageEvent<Ms const> & ... es) = 0;
 
-  using Ptr = std::shared_ptr<CallbackHelper9>;
+  typedef std::shared_ptr<CallbackHelper9> Ptr;
 };
 
 template<typename ... Ps>
@@ -60,14 +60,14 @@ class CallbackHelper9T
   : public CallbackHelper9<typename ParameterAdapter<Ps>::Message...>
 {
 public:
-  using Callback = std::function<void (typename ParameterAdapter<Ps>::Parameter...)>;
+  typedef std::function<void (typename ParameterAdapter<Ps>::Parameter...)> Callback;
 
   CallbackHelper9T(const Callback & cb)  // NOLINT(runtime/explicit)
   : callback_(cb)
   {
   }
 
-  void call(bool nonconst_force_copy, const typename ParameterAdapter<Ps>::Event &... es) override
+  virtual void call(bool nonconst_force_copy, const typename ParameterAdapter<Ps>::Event &... es)
   {
     std::tuple<typename ParameterAdapter<Ps>::Event...> my_es{
       typename ParameterAdapter<Ps>::Event(es, nonconst_force_copy || es.nonConstWillCopy())...};
@@ -84,20 +84,20 @@ private:
 template<typename ... Ms>
 class Signal9
 {
-  using CallbackHelper9Ptr = std::shared_ptr<CallbackHelper9<Ms...>>;
-  using V_CallbackHelper9 = std::vector<CallbackHelper9Ptr>;
+  typedef std::shared_ptr<CallbackHelper9<Ms...>> CallbackHelper9Ptr;
+  typedef std::vector<CallbackHelper9Ptr> V_CallbackHelper9;
 
 public:
-  using NullP = const std::shared_ptr<NullType const> &;
+  typedef const std::shared_ptr<NullType const> & NullP;
 
   template<typename ... Ps>
   Connection addCallback(const std::function<void(Ps...)> & callback)
   {
-    auto helper = std::make_shared<CallbackHelper9T<Ps...>>(callback);
+    CallbackHelper9T<Ps...> * helper = new CallbackHelper9T<Ps...>(callback);
 
     std::lock_guard<std::mutex> lock(mutex_);
-    callbacks_.push_back(helper);
-    return Connection([this, cb = callbacks_.back()]() {removeCallback(cb);});
+    callbacks_.push_back(CallbackHelper9Ptr(helper));
+    return Connection(std::bind(&Signal9::removeCallback, this, callbacks_.back()));
   }
 
   template<typename ... Ps>
