@@ -36,7 +36,8 @@
 #include <set>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/create_timer.hpp>
+#include <rclcpp/node.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
@@ -77,8 +78,8 @@ template<class M>
 class TimeSequencer : public SimpleFilter<M>
 {
 public:
-  typedef std::shared_ptr<M const> MConstPtr;
-  typedef MessageEvent<M const> EventType;
+  using MConstPtr = std::shared_ptr<M const>;
+  using EventType = MessageEvent<M const>;
 
   /**
    * \brief Constructor
@@ -134,9 +135,7 @@ public:
     incoming_connection_ =
       f.registerCallback(
       typename SimpleFilter<M>::EventCallback(
-        std::bind(
-          &TimeSequencer::cb, this,
-          std::placeholders::_1)));
+        [this](const EventType & evt) {cb(evt);}));
   }
 
   ~TimeSequencer()
@@ -181,8 +180,8 @@ public:
              mt::TimeStamp<M>::value(*rhs.getMessage());
     }
   };
-  typedef std::multiset<EventType, MessageSort> S_Message;
-  typedef std::vector<EventType> V_Message;
+  using S_Message = std::multiset<EventType, MessageSort>;
+  using V_Message = std::vector<EventType>;
 
   void cb(const EventType & evt)
   {
