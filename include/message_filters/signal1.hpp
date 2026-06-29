@@ -44,27 +44,27 @@ template<class M>
 class CallbackHelper1
 {
 public:
-  virtual ~CallbackHelper1() {}
+  virtual ~CallbackHelper1() = default;
 
   virtual void call(const MessageEvent<M const> & event, bool nonconst_need_copy) = 0;
 
-  typedef std::shared_ptr<CallbackHelper1<M>> Ptr;
+  using Ptr = std::shared_ptr<CallbackHelper1<M>>;
 };
 
 template<typename P, typename M>
 class CallbackHelper1T : public CallbackHelper1<M>
 {
 public:
-  typedef ParameterAdapter<P> Adapter;
-  typedef std::function<void (typename Adapter::Parameter)> Callback;
-  typedef typename Adapter::Event Event;
+  using Adapter = ParameterAdapter<P>;
+  using Callback = std::function<void (typename Adapter::Parameter)>;
+  using Event = typename Adapter::Event;
 
   CallbackHelper1T(const Callback & cb)  // NOLINT(runtime/explicit)
   : callback_(cb)
   {
   }
 
-  virtual void call(const MessageEvent<M const> & event, bool nonconst_force_copy)
+  void call(const MessageEvent<M const> & event, bool nonconst_force_copy) override
   {
     Event my_event(event, nonconst_force_copy || event.nonConstWillCopy());
     callback_(Adapter::getParameter(my_event));
@@ -77,17 +77,17 @@ private:
 template<class M>
 class Signal1
 {
-  typedef std::shared_ptr<CallbackHelper1<M>> CallbackHelper1Ptr;
-  typedef std::vector<CallbackHelper1Ptr> V_CallbackHelper1;
+  using CallbackHelper1Ptr = std::shared_ptr<CallbackHelper1<M>>;
+  using V_CallbackHelper1 = std::vector<CallbackHelper1Ptr>;
 
 public:
   template<typename P>
   CallbackHelper1Ptr addCallback(const std::function<void(P)> & callback)
   {
-    CallbackHelper1T<P, M> * helper = new CallbackHelper1T<P, M>(callback);
+    auto helper = std::make_shared<CallbackHelper1T<P, M>>(callback);
 
     std::lock_guard<std::mutex> lock(mutex_);
-    callbacks_.emplace_back(CallbackHelper1Ptr(helper));
+    callbacks_.emplace_back(helper);
     return callbacks_.back();
   }
 
