@@ -38,7 +38,8 @@
 #include <utility>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/duration.hpp>
+#include <rclcpp/time.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
@@ -55,13 +56,13 @@ template<typename ... Ms>
 class ApproximateEpsilonTime : public PolicyBase<Ms...>
 {
 public:
-  typedef Synchronizer<ApproximateEpsilonTime> Sync;
-  typedef PolicyBase<Ms...> Super;
-  typedef typename Super::Messages Messages;
-  typedef typename Super::Signal Signal;
-  typedef typename Super::Events Events;
-  typedef typename Super::RealTypeCount RealTypeCount;
-  typedef Events Tuple;
+  using Sync = Synchronizer<ApproximateEpsilonTime>;
+  using Super = PolicyBase<Ms...>;
+  using Messages = typename Super::Messages;
+  using Signal = typename Super::Signal;
+  using Events = typename Super::Events;
+  using RealTypeCount = typename Super::RealTypeCount;
+  using Tuple = Events;
 
   using Super::N_MESSAGES;
 
@@ -94,7 +95,7 @@ public:
   }
 
   template<size_t i>
-  void add(const typename std::tuple_element<i, Events>::type & evt)
+  void add(const std::tuple_element_t<i, Events> & evt)
   {
     assert(parent_);
 
@@ -120,7 +121,7 @@ private:
   get_older_timestamp_between(const TimeIndexPair & current)
   {
     namespace mt = message_filters::message_traits;
-    using ThisEventType = typename std::tuple_element<Is, Events>::type;
+    using ThisEventType = std::tuple_element_t<Is, Events>;
     const auto & events_of_this_type = std::get<Is>(events_);
     if (0u == events_of_this_type.size()) {
       // this condition should not happen
@@ -157,7 +158,7 @@ private:
   check_timestamp_within_epsilon(const TimeIndexPair & older)
   {
     namespace mt = message_filters::message_traits;
-    using ThisEventType = typename std::tuple_element<Is, Events>::type;
+    using ThisEventType = std::tuple_element_t<Is, Events>;
     if (Is == older.second) {
       return true;
     }
@@ -222,7 +223,7 @@ private:
   erase_beginning_of_vector_if_on_sync_with_ts(rclcpp::Time timestamp)
   {
     namespace mt = message_filters::message_traits;
-    using ThisEventType = typename std::tuple_element<Is, Events>::type;
+    using ThisEventType = std::tuple_element_t<Is, Events>;
     auto & this_vector = std::get<Is>(events_);
     if (this_vector.begin() == this_vector.end()) {
       return;
