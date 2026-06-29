@@ -39,8 +39,8 @@ namespace message_filters
 class noncopyable
 {
 protected:
-  noncopyable() {}
-  ~noncopyable() {}
+  noncopyable() = default;
+  ~noncopyable() = default;
   noncopyable(const noncopyable &) = delete;
   noncopyable & operator=(const noncopyable &) = delete;
 };
@@ -52,7 +52,7 @@ class Connection
 {
 public:
   using VoidDisconnectFunction = std::function<void (void)>;
-  MESSAGE_FILTERS_PUBLIC Connection() {}
+  MESSAGE_FILTERS_PUBLIC Connection();
   MESSAGE_FILTERS_PUBLIC Connection(const VoidDisconnectFunction & func);
 
   /**
