@@ -32,11 +32,15 @@
 #include <memory>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/time.hpp>
+#include <rclcpp/utilities.hpp>
 #include <std_msgs/msg/header.hpp>
 
 #include "message_filters/cache.hpp"
 #include "message_filters/message_traits.hpp"
+
+namespace
+{
 
 struct Msg
 {
@@ -481,12 +485,4 @@ TEST(Cache, outOfOrderInsertionSorted)
   EXPECT_EQ(data[1]->data, 2);
   EXPECT_EQ(data[2]->data, 3);
 }
-
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  rclcpp::init(argc, argv);
-  auto ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
-}
+}  // namespace

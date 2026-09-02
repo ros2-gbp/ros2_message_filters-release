@@ -33,11 +33,12 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
+#include <mutex>
 #include <set>
 #include <vector>
 
+#include <rclcpp/clock.hpp>
 #include <rclcpp/create_timer.hpp>
-#include <rclcpp/node.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
@@ -74,7 +75,9 @@ void callback(const std::shared_ptr<M const>&);
 \endverbatim
  *
  */
-template<class M>
+template<class M,
+  template<typename> typename TimeGetter = message_traits::DefaultTimeGetter>
+requires message_traits::TimeGetterFor<TimeGetter, M>
 class TimeSequencer : public SimpleFilter<M>
 {
 public:
@@ -87,19 +90,19 @@ public:
    * \param delay The minimum time to hold a message before passing it through.
    * \param update_rate The rate at which to check for messages which have passed "delay"
    * \param queue_size The number of messages to store
-   * \param node The Node to use to create the rclcpp::SteadyTimer that runs at update_rate
+   * \param node The node (e.g. rclcpp::Node::SharedPtr) used to create the timer that runs at
+   *   update_rate
    */
-  template<class F>
+  template<class F, class NodeT>
   TimeSequencer(
     F & f, rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size,
-    rclcpp::Node::SharedPtr node)
+    NodeT node)
   : delay_(delay)
     , update_rate_(update_rate)
     , queue_size_(queue_size)
-    , node_(node)
     , last_time_ (0, 0, RCL_ROS_TIME)
   {
-    init();
+    init(node);
     connectInput(f);
   }
 
@@ -111,18 +114,19 @@ public:
    * \param delay The minimum time to hold a message before passing it through.
    * \param update_rate The rate at which to check for messages which have passed "delay"
    * \param queue_size The number of messages to store
-   * \param node The Node to use to create the rclcpp::SteadyTimer that runs at update_rate
+   * \param node The node (e.g. rclcpp::Node::SharedPtr) used to create the timer that runs at
+   *   update_rate
    */
+  template<class NodeT>
   TimeSequencer(
     rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size,
-    rclcpp::Node::SharedPtr node)
+    NodeT node)
   : delay_(delay)
     , update_rate_(update_rate)
     , queue_size_(queue_size)
-    , node_(node)
     , last_time_ (0, 0, RCL_ROS_TIME)
   {
-    init();
+    init(node);
   }
 
   /**
@@ -146,10 +150,8 @@ public:
 
   void add(const EventType & evt)
   {
-    namespace mt = message_filters::message_traits;
-
     std::lock_guard<std::mutex> lock(messages_mutex_);
-    if (mt::TimeStamp<M>::value(*evt.getMessage()) < last_time_) {
+    if (TimeGetter<M>::getTime(*evt.getMessage()) < last_time_) {
       return;
     }
 
@@ -175,9 +177,8 @@ private:
 public:
     bool operator()(const EventType & lhs, const EventType & rhs) const
     {
-      namespace mt = message_filters::message_traits;
-      return mt::TimeStamp<M>::value(*lhs.getMessage()) <
-             mt::TimeStamp<M>::value(*rhs.getMessage());
+      return TimeGetter<M>::getTime(*lhs.getMessage()) <
+             TimeGetter<M>::getTime(*rhs.getMessage());
     }
   };
   using S_Message = std::multiset<EventType, MessageSort>;
@@ -190,17 +191,15 @@ public:
 
   void dispatch()
   {
-    namespace mt = message_filters::message_traits;
-
     V_Message to_call;
 
     {
       std::lock_guard<std::mutex> lock(messages_mutex_);
 
-      const rclcpp::Time now = node_->get_clock()->now();
+      const rclcpp::Time now = clock_->now();
       auto it = messages_.begin();
       while (it != messages_.end()) {
-        const rclcpp::Time stamp = mt::TimeStamp<M>::value(*it->getMessage());
+        const rclcpp::Time stamp = TimeGetter<M>::getTime(*it->getMessage());
         if ((stamp + delay_) <= now) {
           last_time_ = stamp;
           to_call.push_back(*it);
@@ -216,11 +215,13 @@ public:
     }
   }
 
-  void init()
+  template<class NodeT>
+  void init(NodeT node)
   {
+    clock_ = node->get_clock();
     update_timer_ = rclcpp::create_timer(
-      node_,
-      node_->get_clock(),
+      node,
+      clock_,
       std::chrono::nanoseconds(update_rate_.nanoseconds()), [this]() {
         dispatch();
       });
@@ -229,7 +230,7 @@ public:
   rclcpp::Duration delay_;
   rclcpp::Duration update_rate_;
   uint32_t queue_size_;
-  rclcpp::Node::SharedPtr node_;
+  rclcpp::Clock::SharedPtr clock_;
   rclcpp::TimerBase::SharedPtr update_timer_;
   Connection incoming_connection_;
 

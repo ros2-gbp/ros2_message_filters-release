@@ -32,8 +32,17 @@
 #include <memory>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/clock.hpp>
+#include <rclcpp/duration.hpp>
+#include <rclcpp/executors.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/time.hpp>
+#include <rclcpp/utilities.hpp>
 #include "message_filters/time_sequencer.hpp"
+
+namespace
+{
 
 struct Header
 {
@@ -47,6 +56,7 @@ struct Msg
 };
 typedef std::shared_ptr<Msg> MsgPtr;
 typedef std::shared_ptr<Msg const> MsgConstPtr;
+}  // namespace
 
 namespace message_filters
 {
@@ -79,6 +89,9 @@ public:
   int32_t count_;
   std::vector<MsgConstPtr> received_;
 };
+
+namespace
+{
 
 // Spin the executor until predicate returns true or timeout_ms elapses.
 template<typename Pred>
@@ -352,14 +365,4 @@ TEST(TimeSequencer, addMsgPtrOverload)
   ASSERT_TRUE(spinUntil(executor, [&h]() {return h.count_ >= 1;}));
   EXPECT_EQ(h.count_, 1);
 }
-
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-
-  rclcpp::init(argc, argv);
-
-  auto ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
-}
+}  // namespace
