@@ -34,11 +34,16 @@
 #include <utility>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/duration.hpp>
+#include <rclcpp/time.hpp>
+#include <rclcpp/utilities.hpp>
 
 #include "message_filters/synchronizer.hpp"
 #include "message_filters/sync_policies/approximate_epsilon_time.hpp"
 #include "message_filters/message_traits.hpp"
+
+namespace
+{
 
 struct Header
 {
@@ -52,6 +57,7 @@ struct Msg
 };
 using MsgPtr = std::shared_ptr<Msg>;
 using MsgConstPtr = std::shared_ptr<const Msg>;
+}  // namespace
 
 namespace message_filters
 {
@@ -69,6 +75,9 @@ struct TimeStamp<Msg>
 }  // namespace message_filters
 
 typedef std::pair<rclcpp::Time, rclcpp::Time> TimePair;
+
+namespace
+{
 typedef std::pair<rclcpp::Time, unsigned int> TimeAndTopic;
 struct TimeQuad
 {
@@ -138,7 +147,7 @@ public:
   Sync2 sync_;
 };
 
-TEST(ApproxTimeSync, ExactMatch) {
+TEST(ApproxEpsilonTimeSync, ExactMatch) {
   // Input A:  a..b..c
   // Input B:  A..B..C
   // Output:   a..b..c
@@ -165,7 +174,7 @@ TEST(ApproxTimeSync, ExactMatch) {
 }
 
 
-TEST(ApproxTimeSync, PerfectMatch) {
+TEST(ApproxEpsilonTimeSync, PerfectMatch) {
   // Input A:  a..b..c.
   // Input B:  .A..B..C
   // Output:   ...a..b.c
@@ -192,7 +201,7 @@ TEST(ApproxTimeSync, PerfectMatch) {
 }
 
 
-TEST(ApproxTimeSync, ImperfectMatch) {
+TEST(ApproxEpsilonTimeSync, ImperfectMatch) {
   // Input A:  a.xb..c.
   // Input B:  .A...B.C
   // Output:   ..a...b.c
@@ -218,13 +227,4 @@ TEST(ApproxTimeSync, ImperfectMatch) {
     input, output, 10, rclcpp::Duration::from_seconds(1.5));
   sync_test.run();
 }
-
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  rclcpp::init(argc, argv);
-
-  auto ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
-}
+}  // namespace

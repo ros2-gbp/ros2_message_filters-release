@@ -35,12 +35,24 @@
 #include <thread>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
-#include "rclcpp/time_source.hpp"
+#include <rclcpp/clock.hpp>
+#include <rclcpp/duration.hpp>
+#include <rclcpp/executors.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/parameter.hpp>
+#include <rclcpp/parameter_client.hpp>
+#include <rclcpp/qos.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/time.hpp>
+#include <rclcpp/time_source.hpp>
+#include <rclcpp/utilities.hpp>
 #include "message_filters/synchronizer.hpp"
 #include "message_filters/sync_policies/latest_time.hpp"
 
 #include "rosgraph_msgs/msg/clock.hpp"
+
+namespace
+{
 
 struct Header
 {
@@ -327,12 +339,4 @@ TEST_F(LatestTimePolicy, ChangeRateTrailing)
     }
   }
 }
-
-int main(int argc, char ** argv)
-{
-  testing::InitGoogleTest(&argc, argv);
-  rclcpp::init(argc, argv);
-  auto ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
-}
+}  // namespace
