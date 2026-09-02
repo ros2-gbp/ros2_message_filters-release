@@ -35,8 +35,16 @@
 #include <type_traits>
 #include <vector>
 
-#include <rclcpp/rclcpp.hpp>
+#include <rclcpp/duration.hpp>
+#include <rclcpp/executors.hpp>
+#include <rclcpp/node.hpp>
+#include <rclcpp/rate.hpp>
+#include <rclcpp/time.hpp>
+#include <rclcpp/utilities.hpp>
 #include "message_filters/input_aligner.hpp"
+
+namespace
+{
 
 class InputAligner;
 
@@ -56,6 +64,7 @@ struct Msg2
   Header header;
   int data;
 };
+}  // namespace
 
 namespace message_filters
 {
@@ -112,6 +121,9 @@ public:
   rclcpp::Duration update_rate_;
   std::vector<int> cb_content_;
 };
+
+namespace
+{
 
 TEST_F(InputAlignerTest, init)
 {
@@ -408,3 +420,5 @@ TEST_F(InputAlignerTest, get_queue_status)
   EXPECT_EQ(status_1.msgs_processed, 1);
   EXPECT_EQ(status_1.msgs_dropped, 0);
 }
+
+}  // namespace
