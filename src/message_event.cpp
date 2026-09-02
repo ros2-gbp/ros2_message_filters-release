@@ -1,4 +1,4 @@
-// Copyright 2010, Willow Garage, Inc. All rights reserved.
+// Copyright 2009, Willow Garage, Inc. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are met:
@@ -26,65 +26,16 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-#ifndef MESSAGE_FILTERS__PASS_THROUGH_HPP_
-#define MESSAGE_FILTERS__PASS_THROUGH_HPP_
+#include "message_filters/message_event.hpp"
 
-#include <memory>
-
-#include "message_filters/simple_filter.hpp"
+#include <rclcpp/clock.hpp>
 
 namespace message_filters
 {
-/**
- * \brief Simple passthrough filter.  What comes in goes out immediately.
- */
-template<typename M>
-class PassThrough : public SimpleFilter<M>
+
+rclcpp::Time systemClockNow()
 {
-public:
-  using MConstPtr = std::shared_ptr<M const>;
-  using EventType = MessageEvent<M const>;
-
-  PassThrough()
-  {
-  }
-
-
-  template<typename F>
-  PassThrough(F & f)  // NOLINT(runtime/explicit)
-  {
-    connectInput(f);
-  }
-
-  template<class F>
-  void connectInput(F & f)
-  {
-    incoming_connection_.disconnect();
-    incoming_connection_ =
-      f.registerCallback(
-      typename SimpleFilter<M>::EventCallback(
-        [this](const EventType & evt) {cb(evt);}));
-  }
-
-  void add(const MConstPtr & msg)
-  {
-    add(EventType(msg));
-  }
-
-  void add(const EventType & evt)
-  {
-    this->signalMessage(evt);
-  }
-
-private:
-  void cb(const EventType & evt)
-  {
-    add(evt);
-  }
-
-  Connection incoming_connection_;
-};
+  return rclcpp::Clock().now();
+}
 
 }  // namespace message_filters
-
-#endif  // MESSAGE_FILTERS__PASS_THROUGH_HPP_

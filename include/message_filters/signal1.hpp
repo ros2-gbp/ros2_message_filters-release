@@ -29,6 +29,98 @@
 #ifndef MESSAGE_FILTERS__SIGNAL1_HPP_
 #define MESSAGE_FILTERS__SIGNAL1_HPP_
 
-#include "signal1.h"
+#include <algorithm>
+#include <memory>
+#include <mutex>
+#include <vector>
+
+#include "message_filters/connection.hpp"
+#include "message_filters/message_event.hpp"
+#include "message_filters/parameter_adapter.hpp"
+
+namespace message_filters
+{
+template<class M>
+class CallbackHelper1
+{
+public:
+  virtual ~CallbackHelper1() = default;
+
+  virtual void call(const MessageEvent<M const> & event, bool nonconst_need_copy) = 0;
+
+  using Ptr = std::shared_ptr<CallbackHelper1<M>>;
+};
+
+template<typename P, typename M>
+class CallbackHelper1T : public CallbackHelper1<M>
+{
+public:
+  using Adapter = ParameterAdapter<P>;
+  using Callback = std::function<void (typename Adapter::Parameter)>;
+  using Event = typename Adapter::Event;
+
+  CallbackHelper1T(const Callback & cb)  // NOLINT(runtime/explicit)
+  : callback_(cb)
+  {
+  }
+
+  void call(const MessageEvent<M const> & event, bool nonconst_force_copy) override
+  {
+    Event my_event(event, nonconst_force_copy || event.nonConstWillCopy());
+    callback_(Adapter::getParameter(my_event));
+  }
+
+private:
+  Callback callback_;
+};
+
+template<class M>
+class Signal1
+{
+  using CallbackHelper1Ptr = std::shared_ptr<CallbackHelper1<M>>;
+  using V_CallbackHelper1 = std::vector<CallbackHelper1Ptr>;
+
+public:
+  template<typename P>
+  CallbackHelper1Ptr addCallback(const std::function<void(P)> & callback)
+  {
+    auto helper = std::make_shared<CallbackHelper1T<P, M>>(callback);
+
+    std::lock_guard<std::mutex> lock(mutex_);
+    callbacks_.emplace_back(helper);
+    return callbacks_.back();
+  }
+
+  void removeCallback(const CallbackHelper1Ptr & helper)
+  {
+    std::lock_guard<std::mutex> lock(mutex_);
+    typename V_CallbackHelper1::iterator it =
+      std::find(callbacks_.begin(), callbacks_.end(), helper);
+    if (it != callbacks_.end()) {
+      callbacks_.erase(it);
+    }
+  }
+
+  void call(const MessageEvent<M const> & event)
+  {
+    V_CallbackHelper1 local_callbacks;
+    {
+      std::lock_guard<std::mutex> lock(mutex_);
+      local_callbacks.reserve(callbacks_.size());
+      for (const auto & callback : callbacks_) {
+        local_callbacks.push_back(callback);
+      }
+    }
+    bool nonconst_force_copy = local_callbacks.size() > 1;
+    for (const CallbackHelper1Ptr & helper : local_callbacks) {
+      helper->call(event, nonconst_force_copy);
+    }
+  }
+
+private:
+  std::mutex mutex_;
+  V_CallbackHelper1 callbacks_;
+};
+}  // namespace message_filters
 
 #endif  // MESSAGE_FILTERS__SIGNAL1_HPP_
