@@ -14,7 +14,6 @@ The filters currently implemented in this package are:
  * :class:`message_filters.Cache` Caches messages which pass through it, allowing later lookup by time stamp.
  * :class:`message_filters.TimeSynchronizer` Synchronizes multiple messages by their timestamps, only passing them through when all have arrived.
  * :class:`message_filters.TimeSequencer` Tries to pass messages through ordered by their timestamps, even if some arrive out of order.
- * :class:`message_filters.InputAligner` Synchronizes multiple messages by their timestamps, passing them through to individial callbacks in the right order.
 
 1. Filter Pattern
 -----------------
@@ -39,6 +38,96 @@ Filter Construction (Python)::
 You can register multiple callbacks with the ``registerCallbacks()`` method. They will get called in the order they are registered. The signature of the callback depends on the definition of the filter
 
 In C++ ``registerCallback()`` returns a ``message_filters::Connection`` object that allows you to disconnect the callback by calling its ``disconnect()``  method. You do not need to store this connection object if you do not need to manually disconnect the callback.
+
+The base ``SimpleFilter`` class has four distinct overloads of a ``registerCallback`` method.
+These overloads allow you to pass different types of callable objects depending on your architectural needs such as lambdas, standard functions, free functions or member functions.
+
+1.1.1 Lambda or generic function as a callback
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The first overload is ``template<typename C> Connection registerCallback(const C & callback)``.
+It accepts any callable type, including lambdas and the result of ``std::bind``.
+The callable must accept the message as a constant reference, since it is invoked through a
+``std::function<void(const std::shared_ptr<M const> &)>``
+
+.. code-block:: C++
+
+    class ExampleNode
+    {
+    public:
+      explicit ExampleNode(rclcpp::Node * node)
+      : sub_(node, "my_topic", 1)
+      {
+        connection_1_ = sub_.registerCallback(
+          [](const example_interfaces::msg::UInt32::ConstSharedPtr & msg) {
+            // Some work done here on a message
+          }
+        );
+        connection_2_ = sub_.registerCallback(
+          std::bind(
+            &ExampleNode::callback,
+            this,
+            std::placeholders::_1
+          )
+        );
+      }
+    private:
+      void callback(example_interfaces::msg::UInt32::ConstSharedPtr msg);
+      message_filters::Subscriber<example_interfaces::msg::UInt32> sub_;
+      message_filters::Connection connection_1_;
+      message_filters::Connection connection_2_;
+    };
+
+1.1.2 std::function as a callback
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The second overload is ``template<typename P> Connection registerCallback(const std::function<void(P)> & callback)``.
+It explicitly takes a standard library ``std::function`` object, which lets you choose how the
+message is passed to the callback.
+One may invoke this overload for example as follows
+
+.. code-block:: C++
+
+    message_filters::Subscriber<example_interfaces::msg::UInt32> sub(node, "my_topic", 1);
+    std::function<void(example_interfaces::msg::UInt32::ConstSharedPtr)> callback =
+      [](example_interfaces::msg::UInt32::ConstSharedPtr msg) {
+        // Some work done here on a message
+      };
+    message_filters::Connection conn_std_func = sub.registerCallback(callback);
+
+1.1.3 Free function as a callback
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The third overload allows you to pass a standard C-style function pointer.
+It is the ``template<typename P> Connection registerCallback(void (* callback)(P))`` overload.
+Note that a function pointer cannot capture any state, unlike a lambda.
+
+.. code-block:: C++
+
+    void freeFunctionCallback(example_interfaces::msg::UInt32::ConstSharedPtr msg);
+    void freeFunctionModifyingCallback(example_interfaces::msg::UInt32::SharedPtr msg);
+
+    message_filters::Subscriber<example_interfaces::msg::UInt32> sub(node, "my_topic", 1);
+    message_filters::Connection conn_free_func = sub.registerCallback(freeFunctionCallback);
+    message_filters::Connection comm_modifying_free_func = sub.registerCallback(freeFunctionModifyingCallback);
+
+1.1.4 Member function as a callback
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+he last overload is ``template<typename T, typename P> Connection registerCallback(void (T::* callback)(P), T * t)``.
+It requires two arguments: a pointer to the member function (e.g., ``&Class::method``) and a pointer to the instance (``this`` or a specific object) on which the method should be invoked.
+This overload allows you to bind a non-static member function of a specific class instance.
+
+.. code-block:: C++
+
+    class CallbackHandler
+    {
+    public:
+      void handle_msg(const example_interfaces::msg::UInt32::ConstSharedPtr & msg);
+      void handle_and_modify_msg(example_interfaces::msg::UInt32::SharedPtr msg);
+    };
+    CallbackHandler handler_instance;
+    message_filters::Subscriber<example_interfaces::msg::UInt32> sub(node, "my_topic", 1);
+    message_filters::Connection conn_member_function = sub.registerCallback(&CallbackHandler::handle_msg, &handler_instance);
+    message_filters::Connection conn_modifying_member_function = sub.registerCallback(
+      &CallbackHandler::handle_and_modify_msg, &handler_instance
+    );
 
 2. Subscriber
 -------------
@@ -75,16 +164,16 @@ or
 
 3. Time Synchronizer
 --------------------
-The TimeSynchronizer filter synchronizes incoming channels by the timestamps contained in their headers, and outputs them in the form of a single callback that takes the same number of channels.
+The TimeSynchronizer filter synchronizes incoming channels by the timestamps contained in their headers, and outputs them in the form of a single callback that takes the same number of channels. The C++ implementation can synchronize up to 9 channels.
 
 3.1 Connections
 ~~~~~~~~~~~~~~~
 Input:
-  * C++: N separate filters, each of which is of the form ``void callback(const std::shared_ptr<M const>&)``. The number of filters supported is determined by the number of template arguments the class was created with.
+  * C++: Up to 9 separate filters, each of which is of the form ``void callback(const std::shared_ptr<M const>&)``. The number of filters supported is determined by the number of template arguments the class was created with.
   * Python: N separate filters, each of which has signature ``callback(msg)``.
 
 Output:
-  * C++: For message types M0..MN, ``void callback(const std::shared_ptr<M0 const>&, ..., const std::shared_ptr<MN const>&)``. The number of parameters is determined by the number of template arguments the class was created with.
+  * C++: For message types M0..M8, ``void callback(const std::shared_ptr<M0 const>&, ..., const std::shared_ptr<M8 const>&)``. The number of parameters is determined by the number of template arguments the class was created with.
   * Python: ``callback(msg0.. msgN)``. The number of parameters is determined by the number of template arguments the class was created with.
 
 4. Time Sequencer
@@ -221,36 +310,6 @@ It is possible to pass bare pointers in. These will not be automatically deleted
      Chain<Msg> c;
      size_t sub_index = c.addFilter(std::shared_ptr<Subscriber<Msg> >(new Subscriber<Msg>));
      std::shared_ptr<Subscriber<Msg> > sub = c.getFilter<Subscriber<Msg> >(sub_index);
-
-
-8. Input Aligner
------------------
-* Python: the InputAligner filter is not yet implemented.
-
-The InputAligner filter aligns multiple inputs in time and passing them through in order. For N inputs this filter provides N outputs. Often sensors or pre-processing chains might introduce delays to messages until they arrive at a target node. The input aligner ensures that the messages are forwarded in order.
-
-8.1 Connections
-~~~~~~~~~~~~~~~
-Input:
-  * C++: N separted filters, each of which is of the signature ``void callback(const std::shared_ptr<M const>&)``. The number of filters supported is determined by the number of template arguments the class was created with.
-Output:
-  * C++: N separted filters, each of which is of the signature ``void callback(const std::shared_ptr<M const>&)``. The number of filters supported is determined by the number of template arguments the class was created with.
-
-8.2 Example (C++)
-~~~~~~~~~~~~~~~~~
-.. code-block:: C++
-
-     message_filters::Subscriber<geometry_msgs::msg::TwistStamped> sub0(node, "my_twist", 10);
-     message_filters::Subscriber<geometry_msgs::msg::Vector3Stamped> sub1(node, "my_vector", 10);
-     message_filters::InputAligner<geometry_msgs::msg::TwistStamped, geometry_msgs::msg::Vector3Stamped> aligner(
-       rclcpp::Duration(0.5), sub0, sub1);
-     aligner.registerCallback<0>(myTwistCallback);
-     aligner.registerCallback<1>(myVectorCallback);
-     // optinally give a hint about the input periods
-     aligner.setInputPeriod<0>(rclcpp::Duration(0.009));
-     aligner.setInputPeriod<1>(rclcpp::Duration(0.045));
-     // Setup dispatch timer (alternativly `aligner.dispatchMessages()` can be called as required)
-     aligner.setupDispatchTimer(node, rclcpp::Duration(0.01));
 
 
 The message filter interface

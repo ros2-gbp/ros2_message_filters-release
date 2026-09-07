@@ -1,51 +1,50 @@
-// Copyright 2008, Willow Garage, Inc. All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
-//
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//
-//    * Neither the name of the Willow Garage nor the names of its
-//      contributors may be used to endorse or promote products derived from
-//      this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+/*********************************************************************
+* Software License Agreement (BSD License)
+*
+*  Copyright (c) 2008, Willow Garage, Inc.
+*  All rights reserved.
+*
+*  Redistribution and use in source and binary forms, with or without
+*  modification, are permitted provided that the following conditions
+*  are met:
+*
+*   * Redistributions of source code must retain the above copyright
+*     notice, this list of conditions and the following disclaimer.
+*   * Redistributions in binary form must reproduce the above
+*     copyright notice, this list of conditions and the following
+*     disclaimer in the documentation and/or other materials provided
+*     with the distribution.
+*   * Neither the name of the Willow Garage nor the names of its
+*     contributors may be used to endorse or promote products derived
+*     from this software without specific prior written permission.
+*
+*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*  POSSIBILITY OF SUCH DAMAGE.
+*********************************************************************/
 
 #include <gtest/gtest.h>
 
-#include <functional>
-#include <memory>
-#include <string>
-#include <utility>
-
-#include <rclcpp/clock.hpp>
-#include <rclcpp/duration.hpp>
-#include <rclcpp/executors.hpp>
-#include <rclcpp/node.hpp>
-#include <rclcpp/node_options.hpp>
-#include <rclcpp/qos.hpp>
-#include <rclcpp/rate.hpp>
-#include <rclcpp/utilities.hpp>
+// see ros2/rclcpp#1619,1713
+// TODO: remove this comment, and the `NonConstHelper` tests
+// once the deprecated signatures have been discontinued.
+#define RCLCPP_AVOID_DEPRECATIONS_FOR_UNIT_TESTS 1
+#include <rclcpp/rclcpp.hpp>
 #include <rclcpp_lifecycle/lifecycle_node.hpp>
-#include "message_filters/subscriber.hpp"
-#include "message_filters/chain.hpp"
+#include "message_filters/subscriber.h"
+#include "message_filters/chain.h"
 #include "sensor_msgs/msg/imu.hpp"
 
+using namespace message_filters;
 typedef sensor_msgs::msg::Imu Msg;
 typedef std::shared_ptr<sensor_msgs::msg::Imu const> MsgConstPtr;
 typedef std::shared_ptr<sensor_msgs::msg::Imu> MsgPtr;
@@ -68,20 +67,17 @@ public:
 TEST(Subscriber, simple)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -90,20 +86,17 @@ TEST(Subscriber, simple)
 TEST(Subscriber, simple_raw)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node.get(), "test_topic", default_qos);
+  Subscriber<Msg> sub(node.get(), "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -112,13 +105,9 @@ TEST(Subscriber, simple_raw)
 TEST(Subscriber, subUnsubSub)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
-  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
+  Subscriber<Msg> sub(node, "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
 
   sub.unsubscribe();
@@ -126,10 +115,11 @@ TEST(Subscriber, subUnsubSub)
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -138,13 +128,9 @@ TEST(Subscriber, subUnsubSub)
 TEST(Subscriber, subUnsubSub_raw)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node.get(), "test_topic", default_qos);
-  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
+  Subscriber<Msg> sub(node.get(), "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
 
   sub.unsubscribe();
@@ -152,10 +138,11 @@ TEST(Subscriber, subUnsubSub_raw)
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -164,24 +151,21 @@ TEST(Subscriber, subUnsubSub_raw)
 TEST(Subscriber, switchRawAndShared)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
-  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
+  Subscriber<Msg> sub(node, "test_topic");
+  sub.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic2", 10);
 
   sub.unsubscribe();
-  sub.subscribe(*node.get(), "test_topic2", default_qos);
+  sub.subscribe(node.get(), "test_topic2");
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -190,22 +174,19 @@ TEST(Subscriber, switchRawAndShared)
 TEST(Subscriber, subInChain)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
   Helper h;
-  message_filters::Chain<Msg> c;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  c.addFilter(std::make_shared<message_filters::Subscriber<Msg>>(node, "test_topic", default_qos));
-  c.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
+  Chain<Msg> c;
+  c.addFilter(std::make_shared<Subscriber<Msg> >(node, "test_topic"));
+  c.registerCallback(std::bind(&Helper::cb, &h,  std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
 
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node);
   }
 
   ASSERT_GT(h.count_, 0);
@@ -234,20 +215,15 @@ struct NonConstHelper
 TEST(Subscriber, singleNonConstCallback)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
   NonConstHelper h;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
-  // Add the node here so that waitsets include the subscriber callbacks
-  executor.add_node(node);
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   Msg msg;
   pub->publish(Msg());
 
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
   ASSERT_EQ(msg, *h.msg_.get());
@@ -256,21 +232,16 @@ TEST(Subscriber, singleNonConstCallback)
 TEST(Subscriber, multipleNonConstCallbacksFilterSubscriber)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
   NonConstHelper h, h2;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
+  Subscriber<Msg> sub(node, "test_topic");
   sub.registerCallback(&NonConstHelper::cb, &h);
   sub.registerCallback(&NonConstHelper::cb, &h2);
-  // Add the node here so that waitsets include the subscriber callbacks
-  executor.add_node(node);
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   auto msg = std::make_unique<Msg>();
   pub->publish(std::move(msg));
 
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
   ASSERT_TRUE(h2.msg_);
@@ -282,24 +253,20 @@ TEST(Subscriber, multipleNonConstCallbacksFilterSubscriber)
 TEST(Subscriber, multipleCallbacksSomeFilterSomeDirect)
 {
   auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
-  ConstHelper h, h2;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, "test_topic", default_qos);
-  sub.registerCallback(&ConstHelper::cb, &h);
+  NonConstHelper h, h2;
+  Subscriber<Msg> sub(node, "test_topic");
+  sub.registerCallback(&NonConstHelper::cb, &h);
   auto sub2 = node->create_subscription<Msg>(
-    "test_topic", 10, std::bind(&ConstHelper::cb, &h2, std::placeholders::_1));
+    "test_topic", 10, std::bind(&NonConstHelper::cb, &h2, std::placeholders::_1));
 
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   auto msg = std::make_unique<Msg>();
   pub->publish(std::move(msg));
 
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
   rclcpp::Rate(50).sleep();
-  executor.spin_some();
+  rclcpp::spin_some(node);
 
   ASSERT_TRUE(h.msg_);
   ASSERT_TRUE(h2.msg_);
@@ -311,97 +278,28 @@ TEST(Subscriber, multipleCallbacksSomeFilterSomeDirect)
 TEST(Subscriber, lifecycle)
 {
   auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node->get_node_base_interface());
   Helper h;
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, "test_topic",
-    default_qos);
+  Subscriber<Msg, rclcpp_lifecycle::LifecycleNode> sub(node, "test_topic");
   sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
   auto pub = node->create_publisher<Msg>("test_topic", 10);
   pub->on_activate();
   rclcpp::Clock ros_clock;
   auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
+  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0))
+  {
     pub->publish(Msg());
     rclcpp::Rate(50).sleep();
-    executor.spin_some();
+    rclcpp::spin_some(node->get_node_base_interface());
   }
 
   ASSERT_GT(h.count_, 0);
 }
 
-TEST(Subscriber, node_interfaces)
-{
-  auto node = std::make_shared<rclcpp_lifecycle::LifecycleNode>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node->get_node_base_interface());
-  Helper h;
 
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(*node, "test_topic",
-    default_qos);
-  sub.registerCallback(std::bind(&Helper::cb, &h, std::placeholders::_1));
-  auto pub = node->create_publisher<Msg>("test_topic", 10);
-  pub->on_activate();
-  rclcpp::Clock ros_clock;
-  auto start = ros_clock.now();
-  while (h.count_ == 0 && (ros_clock.now() - start) < rclcpp::Duration(1, 0)) {
-    pub->publish(Msg());
-    rclcpp::Rate(50).sleep();
-    executor.spin_some();
-  }
-
-  ASSERT_GT(h.count_, 0);
-}
-
-TEST(Subscriber, topicNoRemap)
-{
-  auto node = std::make_shared<rclcpp::Node>("test_node");
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
-  const std::string original_topic_name = "test_topic";
-
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, original_topic_name, default_qos);
-
-  std::string reported_topic = sub.getTopic();
-  ASSERT_TRUE(reported_topic == original_topic_name ||
-              reported_topic == "/" + original_topic_name);
-}
-
-TEST(Subscriber, topicWithRemap) {
-  const std::string original_topic_name = "test_topic";
-  const std::string remapped_topic_name = "remapped_topic";
-  // Create node with remap arguments
-  rclcpp::NodeOptions options;
-  options.arguments({
-    "--ros-args",
-    "-r", original_topic_name + ":=" + remapped_topic_name
-  });
-
-  auto node = std::make_shared<rclcpp::Node>("test_node", options);
-  rclcpp::executors::SingleThreadedExecutor executor;
-  executor.add_node(node);
-  rclcpp::QoS default_qos =
-    rclcpp::QoS(rclcpp::QoSInitialization::from_rmw(rmw_qos_profile_default));
-  message_filters::Subscriber<Msg> sub(node, original_topic_name, default_qos);
-
-  std::string reported_topic = sub.getTopic();
-  ASSERT_TRUE(reported_topic == remapped_topic_name ||
-              reported_topic == "/" + remapped_topic_name);
-}
-
-int main(int argc, char ** argv)
-{
+int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
 
   rclcpp::init(argc, argv);
 
-  auto ret = RUN_ALL_TESTS();
-  rclcpp::shutdown();
-  return ret;
+  return RUN_ALL_TESTS();
 }

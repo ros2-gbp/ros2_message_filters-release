@@ -29,62 +29,6 @@
 #ifndef MESSAGE_FILTERS__PASS_THROUGH_HPP_
 #define MESSAGE_FILTERS__PASS_THROUGH_HPP_
 
-#include <memory>
-
-#include "message_filters/simple_filter.hpp"
-
-namespace message_filters
-{
-/**
- * \brief Simple passthrough filter.  What comes in goes out immediately.
- */
-template<typename M>
-class PassThrough : public SimpleFilter<M>
-{
-public:
-  using MConstPtr = std::shared_ptr<M const>;
-  using EventType = MessageEvent<M const>;
-
-  PassThrough()
-  {
-  }
-
-
-  template<typename F>
-  PassThrough(F & f)  // NOLINT(runtime/explicit)
-  {
-    connectInput(f);
-  }
-
-  template<class F>
-  void connectInput(F & f)
-  {
-    incoming_connection_.disconnect();
-    incoming_connection_ =
-      f.registerCallback(
-      typename SimpleFilter<M>::EventCallback(
-        [this](const EventType & evt) {cb(evt);}));
-  }
-
-  void add(const MConstPtr & msg)
-  {
-    add(EventType(msg));
-  }
-
-  void add(const EventType & evt)
-  {
-    this->signalMessage(evt);
-  }
-
-private:
-  void cb(const EventType & evt)
-  {
-    add(evt);
-  }
-
-  Connection incoming_connection_;
-};
-
-}  // namespace message_filters
+#include "pass_through.h"
 
 #endif  // MESSAGE_FILTERS__PASS_THROUGH_HPP_

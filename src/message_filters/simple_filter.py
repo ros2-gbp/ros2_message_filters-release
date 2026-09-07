@@ -27,8 +27,6 @@
 # POSSIBILITY OF SUCH DAMAGE.
 import typing as tp
 
-from rclpy.type_support import MsgT
-
 
 class SimpleFilter:
 
@@ -37,7 +35,7 @@ class SimpleFilter:
 
     def registerCallback(
         self,
-        callback: tp.Callable[tp.Concatenate[MsgT, ...], None],
+        callback: tp.Callable,
         *args
     ):
         """
