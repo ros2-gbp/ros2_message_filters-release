@@ -33,8 +33,11 @@
 #include <cstddef>
 #include <deque>
 #include <functional>
+#include <iterator>
 #include <memory>
+#include <mutex>
 #include <stdexcept>
+#include <type_traits>
 #include <vector>
 
 #include <rclcpp/time.hpp>
@@ -53,7 +56,7 @@ namespace message_filters
  *
  * Cache immediately passes messages through to its output connections.
  *
- * \section connections CONNECTIONS
+ * \section cache_connections CONNECTIONS
  *
  * Cache's input and output connections are both of the same signature as rclcpp subscription callbacks, ie.
 \verbatim
