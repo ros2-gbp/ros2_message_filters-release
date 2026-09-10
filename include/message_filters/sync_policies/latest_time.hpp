@@ -35,7 +35,7 @@
  * whenever a new one is received. This is essentially an upsampling of slower messages using a
  * zero-order hold (no interpolation).
 
- * \section usage USAGE
+ * \section latest_time_usage USAGE
  * Example usage would be:
 \verbatim
 using latest_policy = LatestTime<sensor_msgs::CameraInfo, sensor_msgs::Image, sensor_msgs::Image>;
@@ -62,10 +62,15 @@ void callback(const sensor_msgs::CameraInfo::ConstPtr &, const sensor_msgs::Imag
 #define MESSAGE_FILTERS__SYNC_POLICIES__LATEST_TIME_HPP_
 
 #include <algorithm>
+#include <cassert>
 #include <cmath>
+#include <cstddef>
 #include <memory>
+#include <mutex>
 #include <numeric>
+#include <stdexcept>
 #include <tuple>
+#include <utility>
 #include <vector>
 
 #include <rclcpp/clock.hpp>
