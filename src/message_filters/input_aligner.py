@@ -27,6 +27,8 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 """Input aligner for synchronizing messages from multiple sources based on their timestamps."""
+
+from dataclasses import dataclass
 import heapq
 import threading
 import typing as tp
@@ -35,22 +37,17 @@ from builtin_interfaces.msg import Time as TimeMsg
 from rclpy.duration import Duration
 from rclpy.node import Node
 from rclpy.time import Time
+from rclpy.type_support import MsgT
 
 from .simple_filter import SimpleFilter
 
 
+@dataclass
 class QueueStatus:
-    def __init__(
-        self,
-        active: bool,
-        queue_size: int,
-        msgs_processed: int,
-        msgs_dropped: int,
-    ) -> None:
-        self.active = active
-        self.queue_size = queue_size
-        self.msgs_processed = msgs_processed
-        self.msgs_dropped = msgs_dropped
+    active: bool
+    queue_size: int
+    msgs_processed: int
+    msgs_dropped: int
 
 
 def _ros_zero_time() -> Time:
@@ -100,7 +97,7 @@ class InputAligner:
                 return self.next_ts
             return _ros_max_time()
 
-        def pop_first(self) -> tp.Tuple[Time, tp.Any]:
+        def pop_first(self) -> tuple[Time, tp.Any]:
             stamp, _, msg = heapq.heappop(self.events)
             self.msgs_processed += 1
             return stamp, msg
@@ -125,7 +122,7 @@ class InputAligner:
     def __init__(
         self,
         timeout: Duration,
-        filters: tp.Optional[tp.Sequence[SimpleFilter]] = None,
+        filters: tp.Sequence[SimpleFilter] | None = None,
     ) -> None:
         self.timeout: Duration = timeout
         zero_time = _ros_zero_time()
@@ -172,7 +169,7 @@ class InputAligner:
     def registerCallback(
         self,
         index: int,
-        callback: tp.Callable,
+        callback: tp.Callable[tp.Concatenate[MsgT, ...], None],
         *args: tp.Any,
     ) -> int:
         return self.signals[index].registerCallback(callback, *args)

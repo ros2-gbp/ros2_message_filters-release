@@ -25,35 +25,26 @@
 # CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
-import typing as tp
 
+
+from typing import Optional
+
+from rclpy.time import Time
 from rclpy.type_support import MsgT
 
 
-class SimpleFilter:
+def get_time_from_message_header(message: MsgT) -> Optional[Time]:
+    """
+    Extract the timestamp from a message's header.
 
-    def __init__(self):
-        self.callbacks = {}
-
-    def registerCallback(
-        self,
-        callback: tp.Callable[tp.Concatenate[MsgT, ...], None],
-        *args
-    ):
-        """
-        Register a callback `callback` to be called when this filter has output.
-
-        The filter calls the function ``callback`` with a filter-dependent.
-
-        list of arguments,followed by the call-supplied arguments ``args.``.
-        """
-        conn = len(self.callbacks)
-        self.callbacks[conn] = (callback, args)
-        return conn
-
-    def signalMessage(self, *msg):
-        for (callback, args) in self.callbacks.values():
-            callback(*(msg + args))
-
-    def unregisterCallback(self, conn):
-        self.callbacks.pop(conn, None)
+    This is the default ``time_getter`` used by the filters. A time getter
+    returns the message's timestamp as an :class:`rclpy.time.Time`, or None
+    when it cannot extract one; the calling filter then applies its
+    headerless-message policy (e.g. ``allow_headerless``).
+    """
+    if not hasattr(message, 'header') or not hasattr(message.header, 'stamp'):
+        return None
+    timestamp = message.header.stamp
+    if not hasattr(timestamp, 'nanoseconds'):
+        timestamp = Time.from_msg(timestamp)
+    return timestamp

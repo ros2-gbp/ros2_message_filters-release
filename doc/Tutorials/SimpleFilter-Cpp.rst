@@ -14,7 +14,7 @@ Prerequisites
 
 This tutorial assumes you have a working knowledge of ROS 2.
 
-If you have not done so already `create a workspace <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
+If you have not done so already `create a workspace <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-A-Workspace/Creating-A-Workspace.html>`_ and `create a package <https://docs.ros.org/en/rolling/Tutorials/Beginner-Client-Libraries/Creating-Your-First-ROS2-Package.html>`_
 
 1. Create a Basic Node
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -26,9 +26,17 @@ The next step is to create a new C++ file inside your package, e.g., ``simple_fi
 
     #include <chrono>
     #include <cstddef>
+    #include <functional>
+    #include <memory>
     #include <string>
 
-    #include <rclcpp/rclcpp.hpp>
+    #include <rclcpp/executors.hpp>
+    #include <rclcpp/logging.hpp>
+    #include <rclcpp/node.hpp>
+    #include <rclcpp/publisher.hpp>
+    #include <rclcpp/qos.hpp>
+    #include <rclcpp/timer.hpp>
+    #include <rclcpp/utilities.hpp>
 
     #include <message_filters/simple_filter.hpp>
     #include <message_filters/subscriber.hpp>
@@ -178,9 +186,17 @@ Now, let's break down this code and examine the details.
 
     #include <chrono>
     #include <cstddef>
+    #include <functional>
+    #include <memory>
     #include <string>
 
-    #include <rclcpp/rclcpp.hpp>
+    #include <rclcpp/executors.hpp>
+    #include <rclcpp/logging.hpp>
+    #include <rclcpp/node.hpp>
+    #include <rclcpp/publisher.hpp>
+    #include <rclcpp/qos.hpp>
+    #include <rclcpp/timer.hpp>
+    #include <rclcpp/utilities.hpp>
 
     #include <message_filters/simple_filter.hpp>
     #include <message_filters/subscriber.hpp>
@@ -192,15 +208,18 @@ Now, let's break down this code and examine the details.
 
     const std::string TUTORIAL_TOPIC_NAME = "tutorial_topic";
 
-We start by including ``C++`` standard library headers such as ``chrono``, ``cstddef`` and ``string``.
+We start by including ``C++`` standard library headers such as ``chrono``, ``cstddef``, ``functional``, ``memory`` and ``string``.
 The ``chrono`` header is required for the ``chrono_literals`` namespace, necessary for creating timers.
 The ``cstddef`` header provides us with some basic types such as ``size_t``.
+The ``functional`` header is needed for ``std::bind`` and ``std::placeholders``, used to register callbacks.
+The ``memory`` header gives us ``std::make_shared``.
 The ``string`` header gives us access to the ``std::string`` class and ``std::to_string`` function.
-After that we include the ``rclcpp.hpp`` header that provides us with classes from ``rclcpp`` namespace.
+After that we include only the ``rclcpp`` headers that declare the classes we actually use, instead of the umbrella ``rclcpp.hpp`` header.
+Including them one by one keeps the compilation time down.
 To use message filters and some other classes from ``message_filters`` library we need to include corresponding headers.
 In this case we include ``simple_filter.hpp``, ``subscriber.hpp`` and ``connection.hpp``.
 
-Next we defne ``CounterWithLastMessageCache`` and make it a part of the ``message_filters`` namespace.
+Next we defne ``CounterWithLastMessageCache`` and make it a part of the ``message_filters`` namespace. 
 
 .. code-block:: C++
 
@@ -227,7 +246,7 @@ Now let's take a look at the ``public`` section of the class.
       {
       connectInput(filter);
       }
-``
+
 It starts with a default destructor and constructor for the class, and one constructor that receives a reference to another filter.
 The latter gives an option to create an instance of the ``CounterWithLastMessageCache`` filter that is already connected to another filter's output.
 Following the last constructor is the ``connectInput`` method, which removes the previous connection with another filter, if there was any.
@@ -310,7 +329,7 @@ Now let's take a look at the ``SimpleFilterExampleNode``.
 The public interface of the node consists of three methods.
 The node's constructor, the ``publisher_timer_callback`` and the ``query_timer_callback``.
 
-.. code-block:: C++
+.. code-block:: C++ 
 
   class SimpleFilterExampleNode : public rclcpp::Node {
     public:
@@ -435,26 +454,18 @@ Finally, add the ``install(TARGETS…)`` section so ros2 run can find your execu
 
 From the root of your workspace:
 
-.. tabs::
+**Linux and macOS**
 
-    .. group-tab:: Linux
+.. code-block:: console
 
-        .. code-block:: console
+    $ colcon build && . install/setup.bash
 
-             $ colcon build && . install/setup.bash
+**Windows**
 
-    .. group-tab:: macOS
+.. code-block:: console
 
-        .. code-block:: console
-
-            $ colcon build && . install/setup.bash
-
-    .. group-tab:: Windows
-
-        .. code-block:: console
-
-            $ colcon build
-            $ call C:\dev\ros2\local_setup.bat
+    $ colcon build
+    $ call C:\dev\ros2\local_setup.bat
 
 5. Run the Node
 ~~~~~~~~~~~~~~~
@@ -502,3 +513,4 @@ as well as the last message cache starts to update
   ... Last message: Pub count: 5
   ... Last message: Pub count: 6
   ... Last message: Pub count: 7
+

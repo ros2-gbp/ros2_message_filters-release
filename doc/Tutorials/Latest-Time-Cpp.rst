@@ -33,7 +33,13 @@ The next step is to create a new C++ file inside your package, e.g., ``latest_ti
     #include <memory>
     #include <string>
 
-    #include "rclcpp/rclcpp.hpp"
+    #include "rclcpp/executors.hpp"
+    #include "rclcpp/logging.hpp"
+    #include "rclcpp/node.hpp"
+    #include "rclcpp/publisher.hpp"
+    #include "rclcpp/qos.hpp"
+    #include "rclcpp/timer.hpp"
+    #include "rclcpp/utilities.hpp"
 
     #include <std_msgs/msg/string.hpp>
 
@@ -172,7 +178,13 @@ Now, let's break down this code and examine the details.
     #include <memory>
     #include <string>
 
-    #include "rclcpp/rclcpp.hpp"
+    #include "rclcpp/executors.hpp"
+    #include "rclcpp/logging.hpp"
+    #include "rclcpp/node.hpp"
+    #include "rclcpp/publisher.hpp"
+    #include "rclcpp/qos.hpp"
+    #include "rclcpp/timer.hpp"
+    #include "rclcpp/utilities.hpp"
 
     #include <std_msgs/msg/string.hpp>
 
@@ -187,7 +199,8 @@ The ``chrono`` header is required for the ``chrono_literals`` namespace, necessa
 The ``functional`` header is also required to use ``std::bind`` function to bind timer callbacks to timers.
 And the ``memory`` header provides us with ``std::shared_ptr`` class and ``std::make_shared`` function template.
 Also we are going to need the ``std::string`` class, so we add that via including ``string`` header.
-After that we include the ``rclcpp.hpp`` header that provides us with classes from ``rclcpp`` namespace.
+After that we include only the ``rclcpp`` headers that declare the classes we actually use, instead of the umbrella ``rclcpp.hpp`` header.
+Including them one by one keeps the compilation time down.
 To use filters in our code we need corresponding headers as well.
 Then we add ``string.hpp`` to get access to ``String`` message class from the ROS standard messages library.
 The last includes are ``subscriber.hpp``, ``synchronizer.hpp`` and ``latest_time.hpp``.
@@ -407,26 +420,18 @@ Finally, add the ``install(TARGETS…)`` section so ``ros2 run`` can find your e
 
 From the root of your workspace:
 
-.. tabs::
+**Linux and macOS**
 
-    .. group-tab:: Linux
+.. code-block:: console
 
-        .. code-block:: console
+    $ colcon build && . install/setup.bash
 
-             $ colcon build && . install/setup.bash
+**Windows**
 
-    .. group-tab:: macOS
+.. code-block:: console
 
-        .. code-block:: console
-
-            $ colcon build && . install/setup.bash
-
-    .. group-tab:: Windows
-
-        .. code-block:: console
-
-            $ colcon build
-            $ call C:\dev\ros2\local_setup.bat
+    $ colcon build
+    $ call C:\dev\ros2\local_setup.bat
 
 6. Run the Node
 ~~~~~~~~~~~~~~~
