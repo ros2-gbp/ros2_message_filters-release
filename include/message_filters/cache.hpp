@@ -33,14 +33,11 @@
 #include <cstddef>
 #include <deque>
 #include <functional>
-#include <iterator>
 #include <memory>
-#include <mutex>
 #include <stdexcept>
-#include <type_traits>
 #include <vector>
 
-#include <rclcpp/time.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/simple_filter.hpp"
@@ -56,27 +53,19 @@ namespace message_filters
  *
  * Cache immediately passes messages through to its output connections.
  *
- * \section cache_connections CONNECTIONS
+ * \section connections CONNECTIONS
  *
  * Cache's input and output connections are both of the same signature as rclcpp subscription callbacks, ie.
 \verbatim
 void callback(const std::shared_ptr<M const> &);
 \endverbatim
  */
-template<class M,
-  template<typename> typename TimeGetter = message_traits::DefaultTimeGetter>
-requires message_traits::TimeGetterFor<TimeGetter, M>
+template<class M>
 class Cache : public SimpleFilter<M>
 {
 public:
-  using MConstPtr = std::shared_ptr<M const>;
-  using EventType = MessageEvent<M const>;
-
-  // A custom TimeGetter extracts the timestamp itself, so the headerless
-  // fallback only applies when the default getter has no header to read.
-  static constexpr bool kMessageProvidesTime =
-    message_traits::HasHeader<M>::value ||
-    !std::is_same_v<TimeGetter<M>, message_traits::DefaultTimeGetter<M>>;
+  typedef std::shared_ptr<M const> MConstPtr;
+  typedef MessageEvent<M const> EventType;
 
   template<class F>
   explicit Cache(F & f, unsigned int cache_size = 1)
@@ -88,7 +77,7 @@ public:
     setCacheSize(cache_size);
     connectInput(f);
 
-    if (kMessageProvidesTime) {
+    if (message_filters::message_traits::HasHeader<M>::value) {
       getMessageTime = getMessageTimeFromHeader;
     } else if (allow_headerless) {
       getMessageTime = getMessageReceiveTime;
@@ -114,7 +103,7 @@ public:
   {
     setCacheSize(cache_size);
 
-    if (kMessageProvidesTime) {
+    if (message_filters::message_traits::HasHeader<M>::value) {
       getMessageTime = getMessageTimeFromHeader;
     } else if (allow_headerless) {
       getMessageTime = getMessageReceiveTime;
@@ -128,7 +117,7 @@ public:
   {
     incoming_connection_ = f.registerCallback(
       typename SimpleFilter<M>::EventCallback(
-        [this](const EventType & evt) {callback(evt);}));
+        std::bind(&Cache::callback, this, std::placeholders::_1)));
   }
 
   ~Cache()
@@ -195,8 +184,7 @@ public:
    * \param start The start of the requested interval
    * \param end The end of the requested interval
    */
-  [[nodiscard]] std::vector<MConstPtr> getInterval(
-    const rclcpp::Time & start, const rclcpp::Time & end) const
+  std::vector<MConstPtr> getInterval(const rclcpp::Time & start, const rclcpp::Time & end) const
   {
     std::lock_guard<std::mutex> lock(cache_lock_);
 
@@ -230,7 +218,7 @@ public:
    * If the messages in the cache do not surround (start,end), then this will return the interval
    * that gets closest to surrounding (start,end)
    */
-  [[nodiscard]] std::vector<MConstPtr> getSurroundingInterval(
+  std::vector<MConstPtr> getSurroundingInterval(
     const rclcpp::Time & start, const rclcpp::Time & end) const
   {
     std::lock_guard<std::mutex> lock(cache_lock_);
@@ -272,7 +260,7 @@ public:
    * \param time Time that must occur right after the returned elem
    * \returns shared_ptr to the newest elem that occurs before 'time'. NULL if doesn't exist
    */
-  [[nodiscard]] MConstPtr getElemBeforeTime(const rclcpp::Time & time) const
+  MConstPtr getElemBeforeTime(const rclcpp::Time & time) const
   {
     std::lock_guard<std::mutex> lock(cache_lock_);
 
@@ -295,7 +283,7 @@ public:
    * \param time Time that must occur right before the returned elem
    * \returns shared_ptr to the oldest elem that occurs after 'time'. NULL if doesn't exist
    */
-  [[nodiscard]] MConstPtr getElemAfterTime(const rclcpp::Time & time) const
+  MConstPtr getElemAfterTime(const rclcpp::Time & time) const
   {
     std::lock_guard<std::mutex> lock(cache_lock_);
 
@@ -315,7 +303,7 @@ public:
   /**
    * \brief Returns the timestamp associated with the newest packet cache
    */
-  [[nodiscard]] rclcpp::Time getLatestTime() const
+  rclcpp::Time getLatestTime() const
   {
     namespace mt = message_filters::message_traits;
 
@@ -323,7 +311,7 @@ public:
 
     rclcpp::Time latest_time;
 
-    if (!cache_.empty()) {
+    if (cache_.size() > 0) {
       latest_time = getMessageTime(cache_.back());
     }
 
@@ -333,7 +321,7 @@ public:
   /**
    * \brief Returns the timestamp associated with the oldest packet cache
    */
-  [[nodiscard]] rclcpp::Time getOldestTime() const
+  rclcpp::Time getOldestTime() const
   {
     namespace mt = message_filters::message_traits;
 
@@ -341,7 +329,7 @@ public:
 
     rclcpp::Time oldest_time;
 
-    if (!cache_.empty()) {
+    if (cache_.size() > 0) {
       oldest_time = getMessageTime(cache_.front());
     }
 
@@ -356,7 +344,7 @@ private:
 
   static rclcpp::Time getMessageTimeFromHeader(const EventType & evt)
   {
-    return TimeGetter<M>::getTime(*(evt.getMessage()));
+    return message_filters::message_traits::TimeStamp<M>::value(*(evt.getMessage()));
   }
 
   static rclcpp::Time getMessageReceiveTime(const EventType & evt)

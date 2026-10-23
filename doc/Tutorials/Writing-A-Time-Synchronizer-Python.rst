@@ -89,8 +89,8 @@ Finally, create a main function and spin the node
 
 .. code-block:: Python
 
-  def main():
-      rclpy.init()
+  def main(args=None):
+      rclpy.init(args=args)
 
       time_sync = TimeSyncNode()
 
@@ -131,18 +131,26 @@ Add the following line between the 'console_scripts': brackets, with the name of
 From the root of your package, build and source.
 
 
-**Linux and macOS**
+.. tabs::
 
-.. code-block:: console
+    .. group-tab:: Linux
 
-    $ colcon build && . install/setup.bash
+        .. code-block:: console
 
-**Windows**
+             $ colcon build && . install/setup.bash
 
-.. code-block:: console
+    .. group-tab:: macOS
 
-    $ colcon build
-    $ call C:\dev\ros2\local_setup.bat
+        .. code-block:: console
+
+            $ colcon build && . install/setup.bash
+
+    .. group-tab:: Windows
+
+        .. code-block:: console
+
+            $ colcon build
+            $ call C:\dev\ros2\local_setup.bat
 
 4. Run
 ~~~~~~

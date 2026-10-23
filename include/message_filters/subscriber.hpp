@@ -30,10 +30,13 @@
 #define MESSAGE_FILTERS__SUBSCRIBER_HPP_
 
 #include <memory>
+#include <stdexcept>
 #include <string>
+#include <type_traits>
 
 #include <rclcpp/create_subscription.hpp>
 #include <rclcpp/node_interfaces/node_interfaces.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/simple_filter.hpp"
@@ -102,7 +105,7 @@ public:
  *
  * The Subscriber object is templated on the type of message being subscribed to.
  *
- * \section subscriber_connections CONNECTIONS
+ * \section connections CONNECTIONS
  *
  * Subscriber has no input connection.
  *
@@ -136,15 +139,15 @@ class Subscriber
   public SimpleFilter<message_type_t<M>>
 {
 public:
-  using MessageType = message_type_t<M>;
-  using EventType = MessageEvent<MessageType const>;
+  typedef message_type_t<M> MessageType;
+  typedef MessageEvent<MessageType const> EventType;
 
   /**
    * \brief Constructor
    *
    * See the rclcpp::Node::subscribe() variants for more information on the parameters
    *
-   * \param node_interfaces The NodeInterfaces to use to subscribe.
+   * \param node The NodeInterfaces to use to subscribe.
    * \param topic The topic to subscribe to.
    * \param qos (optional) The rmw qos profile to use to subscribe
    */
@@ -174,7 +177,7 @@ public:
    *
    * See the rclcpp::Node::subscribe() variants for more information on the parameters
    *
-   * \param node_interfaces The NodeInterfaces to use to subscribe.
+   * \param node The NodeInterfaces to use to subscribe.
    * \param topic The topic to subscribe to.
    * \param qos The rmw qos profile to use to subscribe.
    * \param options The subscription options to use to subscribe.
@@ -220,7 +223,7 @@ public:
    *
    * If this Subscriber is already subscribed to a topic, this function will first unsubscribe.
    *
-   * \param node_interfaces The NodeInterfaces to use to subscribe.
+   * \param node The NodeInterfaces to use to subscribe.
    * \param topic The topic to subscribe to.
    * \param qos (optional) The rmw qos profile to use to subscribe
    */
@@ -252,7 +255,7 @@ public:
    *
    * If this Subscriber is already subscribed to a topic, this function will first unsubscribe.
    *
-   * \param node_interfaces The NodeInterfaces to use to subscribe.
+   * \param node The NodeInterfaces to use to subscribe.
    * \param topic The topic to subscribe to.
    * \param qos The rmw qos profile to use to subscribe.
    * \param options The subscription options to use to subscribe.

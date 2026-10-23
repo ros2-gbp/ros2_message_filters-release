@@ -29,17 +29,20 @@
 #ifndef MESSAGE_FILTERS__SYNC_POLICIES__APPROXIMATE_EPSILON_TIME_HPP_
 #define MESSAGE_FILTERS__SYNC_POLICIES__APPROXIMATE_EPSILON_TIME_HPP_
 
-#include <cstddef>
 #include <cstdint>
+#include <cstddef>
+#include <deque>
 #include <limits>
+#include <string>
 #include <tuple>
 #include <utility>
 #include <vector>
 
-#include <rclcpp/duration.hpp>
-#include <rclcpp/time.hpp>
+#include <rclcpp/rclcpp.hpp>
 
+#include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
+#include "message_filters/null_types.hpp"
 #include "message_filters/signal9.hpp"
 #include "message_filters/synchronizer.hpp"
 
@@ -48,35 +51,34 @@ namespace message_filters
 namespace sync_policies
 {
 
-template<template<typename> typename TimeGetter, typename ... Ms>
-requires (message_traits::TimeGetterFor<TimeGetter, Ms>&& ...)
-class ApproximateEpsilonTimeBase : public PolicyBase<Ms...>
+template<typename ... Ms>
+class ApproximateEpsilonTime : public PolicyBase<Ms...>
 {
 public:
-  using Sync = Synchronizer<ApproximateEpsilonTimeBase>;
-  using Super = PolicyBase<Ms...>;
-  using Messages = typename Super::Messages;
-  using Signal = typename Super::Signal;
-  using Events = typename Super::Events;
-  using RealTypeCount = typename Super::RealTypeCount;
-  using Tuple = Events;
+  typedef Synchronizer<ApproximateEpsilonTime> Sync;
+  typedef PolicyBase<Ms...> Super;
+  typedef typename Super::Messages Messages;
+  typedef typename Super::Signal Signal;
+  typedef typename Super::Events Events;
+  typedef typename Super::RealTypeCount RealTypeCount;
+  typedef Events Tuple;
 
   using Super::N_MESSAGES;
 
-  ApproximateEpsilonTimeBase(uint32_t queue_size, rclcpp::Duration epsilon)
+  ApproximateEpsilonTime(uint32_t queue_size, rclcpp::Duration epsilon)
   : parent_(nullptr)
     , queue_size_(queue_size)
     , epsilon_{epsilon}
   {
   }
 
-  ApproximateEpsilonTimeBase(const ApproximateEpsilonTimeBase & e)
+  ApproximateEpsilonTime(const ApproximateEpsilonTime & e)
   : epsilon_{e.epsilon_}
   {
     *this = e;
   }
 
-  ApproximateEpsilonTimeBase & operator=(const ApproximateEpsilonTimeBase & rhs)
+  ApproximateEpsilonTime & operator=(const ApproximateEpsilonTime & rhs)
   {
     parent_ = rhs.parent_;
     queue_size_ = rhs.queue_size_;
@@ -92,7 +94,7 @@ public:
   }
 
   template<size_t i>
-  void add(const std::tuple_element_t<i, Events> & evt)
+  void add(const typename std::tuple_element<i, Events>::type & evt)
   {
     assert(parent_);
 
@@ -117,13 +119,14 @@ private:
   TimeIndexPair
   get_older_timestamp_between(const TimeIndexPair & current)
   {
-    using ThisEventType = std::tuple_element_t<Is, Events>;
+    namespace mt = message_filters::message_traits;
+    using ThisEventType = typename std::tuple_element<Is, Events>::type;
     const auto & events_of_this_type = std::get<Is>(events_);
     if (0u == events_of_this_type.size()) {
       // this condition should not happen
       return current;
     }
-    auto candidate = TimeGetter<typename ThisEventType::Message>::getTime(
+    auto candidate = mt::TimeStamp<typename ThisEventType::Message>::value(
       *events_of_this_type.at(
         0).getMessage());
     if (current.first > candidate) {
@@ -153,7 +156,8 @@ private:
   bool
   check_timestamp_within_epsilon(const TimeIndexPair & older)
   {
-    using ThisEventType = std::tuple_element_t<Is, Events>;
+    namespace mt = message_filters::message_traits;
+    using ThisEventType = typename std::tuple_element<Is, Events>::type;
     if (Is == older.second) {
       return true;
     }
@@ -162,7 +166,7 @@ private:
       // this condition should not happen
       return false;
     }
-    auto ts = TimeGetter<typename ThisEventType::Message>::getTime(
+    auto ts = mt::TimeStamp<typename ThisEventType::Message>::value(
       *events_of_this_type.at(
         0).getMessage());
     if (older.first + epsilon_ >= ts) {
@@ -217,12 +221,13 @@ private:
   void
   erase_beginning_of_vector_if_on_sync_with_ts(rclcpp::Time timestamp)
   {
-    using ThisEventType = std::tuple_element_t<Is, Events>;
+    namespace mt = message_filters::message_traits;
+    using ThisEventType = typename std::tuple_element<Is, Events>::type;
     auto & this_vector = std::get<Is>(events_);
     if (this_vector.begin() == this_vector.end()) {
       return;
     }
-    auto event_ts = TimeGetter<typename ThisEventType::Message>::getTime(
+    auto event_ts = mt::TimeStamp<typename ThisEventType::Message>::value(
       *this_vector.at(0).getMessage());
     if (timestamp + epsilon_ < event_ts) {
       return;
@@ -284,10 +289,6 @@ private:
 
   std::mutex mutex_;
 };
-
-template<typename ... Ms>
-using ApproximateEpsilonTime =
-  ApproximateEpsilonTimeBase<message_traits::DefaultTimeGetter, Ms...>;
 
 }  // namespace sync_policies
 }  // namespace message_filters

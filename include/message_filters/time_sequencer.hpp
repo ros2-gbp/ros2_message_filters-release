@@ -33,12 +33,10 @@
 #include <cstdint>
 #include <functional>
 #include <memory>
-#include <mutex>
 #include <set>
 #include <vector>
 
-#include <rclcpp/clock.hpp>
-#include <rclcpp/create_timer.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
@@ -54,7 +52,7 @@ namespace message_filters
  *
  * The TimeSequencer object is templated on the type of message being sequenced.
  *
- * \section time_sequencer_behavior BEHAVIOR
+ * \section behavior BEHAVIOR
 
  * At construction, the TimeSequencer takes a rclcpp::Duration
  * "delay" which specifies how long to queue up messages to
@@ -67,7 +65,7 @@ namespace message_filters
  * to a message which has already had its callback invoked, it is
  * thrown away.
  *
- * \section time_sequencer_connections CONNECTIONS
+ * \section connections CONNECTIONS
  *
  * TimeSequencer's input and output connections are both of the same signature as rclcpp subscription callbacks, ie.
 \verbatim
@@ -75,14 +73,12 @@ void callback(const std::shared_ptr<M const>&);
 \endverbatim
  *
  */
-template<class M,
-  template<typename> typename TimeGetter = message_traits::DefaultTimeGetter>
-requires message_traits::TimeGetterFor<TimeGetter, M>
+template<class M>
 class TimeSequencer : public SimpleFilter<M>
 {
 public:
-  using MConstPtr = std::shared_ptr<M const>;
-  using EventType = MessageEvent<M const>;
+  typedef std::shared_ptr<M const> MConstPtr;
+  typedef MessageEvent<M const> EventType;
 
   /**
    * \brief Constructor
@@ -90,19 +86,19 @@ public:
    * \param delay The minimum time to hold a message before passing it through.
    * \param update_rate The rate at which to check for messages which have passed "delay"
    * \param queue_size The number of messages to store
-   * \param node The node (e.g. rclcpp::Node::SharedPtr) used to create the timer that runs at
-   *   update_rate
+   * \param node The Node to use to create the rclcpp::SteadyTimer that runs at update_rate
    */
-  template<class F, class NodeT>
+  template<class F>
   TimeSequencer(
     F & f, rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size,
-    NodeT node)
+    rclcpp::Node::SharedPtr node)
   : delay_(delay)
     , update_rate_(update_rate)
     , queue_size_(queue_size)
+    , node_(node)
     , last_time_ (0, 0, RCL_ROS_TIME)
   {
-    init(node);
+    init();
     connectInput(f);
   }
 
@@ -114,19 +110,18 @@ public:
    * \param delay The minimum time to hold a message before passing it through.
    * \param update_rate The rate at which to check for messages which have passed "delay"
    * \param queue_size The number of messages to store
-   * \param node The node (e.g. rclcpp::Node::SharedPtr) used to create the timer that runs at
-   *   update_rate
+   * \param node The Node to use to create the rclcpp::SteadyTimer that runs at update_rate
    */
-  template<class NodeT>
   TimeSequencer(
     rclcpp::Duration delay, rclcpp::Duration update_rate, uint32_t queue_size,
-    NodeT node)
+    rclcpp::Node::SharedPtr node)
   : delay_(delay)
     , update_rate_(update_rate)
     , queue_size_(queue_size)
+    , node_(node)
     , last_time_ (0, 0, RCL_ROS_TIME)
   {
-    init(node);
+    init();
   }
 
   /**
@@ -139,7 +134,9 @@ public:
     incoming_connection_ =
       f.registerCallback(
       typename SimpleFilter<M>::EventCallback(
-        [this](const EventType & evt) {cb(evt);}));
+        std::bind(
+          &TimeSequencer::cb, this,
+          std::placeholders::_1)));
   }
 
   ~TimeSequencer()
@@ -150,15 +147,17 @@ public:
 
   void add(const EventType & evt)
   {
+    namespace mt = message_filters::message_traits;
+
     std::lock_guard<std::mutex> lock(messages_mutex_);
-    if (TimeGetter<M>::getTime(*evt.getMessage()) < last_time_) {
+    if (mt::TimeStamp<M>::value(*evt.getMessage()) < last_time_) {
       return;
     }
 
     messages_.insert(evt);
 
     if (queue_size_ != 0 && messages_.size() > queue_size_) {
-      messages_.erase(messages_.begin());
+      messages_.erase(*messages_.begin());
     }
   }
 
@@ -177,12 +176,13 @@ private:
 public:
     bool operator()(const EventType & lhs, const EventType & rhs) const
     {
-      return TimeGetter<M>::getTime(*lhs.getMessage()) <
-             TimeGetter<M>::getTime(*rhs.getMessage());
+      namespace mt = message_filters::message_traits;
+      return mt::TimeStamp<M>::value(*lhs.getMessage()) <
+             mt::TimeStamp<M>::value(*rhs.getMessage());
     }
   };
-  using S_Message = std::multiset<EventType, MessageSort>;
-  using V_Message = std::vector<EventType>;
+  typedef std::multiset<EventType, MessageSort> S_Message;
+  typedef std::vector<EventType> V_Message;
 
   void cb(const EventType & evt)
   {
@@ -191,15 +191,17 @@ public:
 
   void dispatch()
   {
+    namespace mt = message_filters::message_traits;
+
     V_Message to_call;
 
     {
       std::lock_guard<std::mutex> lock(messages_mutex_);
 
-      const rclcpp::Time now = clock_->now();
+      const rclcpp::Time now = node_->get_clock()->now();
       auto it = messages_.begin();
       while (it != messages_.end()) {
-        const rclcpp::Time stamp = TimeGetter<M>::getTime(*it->getMessage());
+        const rclcpp::Time stamp = mt::TimeStamp<M>::value(*it->getMessage());
         if ((stamp + delay_) <= now) {
           last_time_ = stamp;
           to_call.push_back(*it);
@@ -215,13 +217,11 @@ public:
     }
   }
 
-  template<class NodeT>
-  void init(NodeT node)
+  void init()
   {
-    clock_ = node->get_clock();
     update_timer_ = rclcpp::create_timer(
-      node,
-      clock_,
+      node_,
+      node_->get_clock(),
       std::chrono::nanoseconds(update_rate_.nanoseconds()), [this]() {
         dispatch();
       });
@@ -230,7 +230,7 @@ public:
   rclcpp::Duration delay_;
   rclcpp::Duration update_rate_;
   uint32_t queue_size_;
-  rclcpp::Clock::SharedPtr clock_;
+  rclcpp::Node::SharedPtr node_;
   rclcpp::TimerBase::SharedPtr update_timer_;
   Connection incoming_connection_;
 

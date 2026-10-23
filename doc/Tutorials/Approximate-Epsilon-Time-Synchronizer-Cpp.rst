@@ -1,5 +1,5 @@
 Approximate Epsilon Time Synchronizer (C++):
---------------------------------------------
+---------------------------------------
 
 Prerequisites
 ~~~~~~~~~~~~~
@@ -20,15 +20,7 @@ The next step is to create a new C++ file inside your package, e.g., ``approxima
   #include <functional>
   #include <memory>
 
-  #include "rclcpp/clock.hpp"
-  #include "rclcpp/duration.hpp"
-  #include "rclcpp/executors.hpp"
-  #include "rclcpp/logging.hpp"
-  #include "rclcpp/node.hpp"
-  #include "rclcpp/publisher.hpp"
-  #include "rclcpp/qos.hpp"
-  #include "rclcpp/timer.hpp"
-  #include "rclcpp/utilities.hpp"
+  #include "rclcpp/rclcpp.hpp"
 
   #include <sensor_msgs/msg/temperature.hpp>
   #include <sensor_msgs/msg/fluid_pressure.hpp>
@@ -153,15 +145,7 @@ Now, let's break down this code and examine the details.
   #include <functional>
   #include <memory>
 
-  #include "rclcpp/clock.hpp"
-  #include "rclcpp/duration.hpp"
-  #include "rclcpp/executors.hpp"
-  #include "rclcpp/logging.hpp"
-  #include "rclcpp/node.hpp"
-  #include "rclcpp/publisher.hpp"
-  #include "rclcpp/qos.hpp"
-  #include "rclcpp/timer.hpp"
-  #include "rclcpp/utilities.hpp"
+  #include "rclcpp/rclcpp.hpp"
 
   #include <sensor_msgs/msg/temperature.hpp>
   #include <sensor_msgs/msg/fluid_pressure.hpp>
@@ -379,18 +363,26 @@ Finally, add the ``install(TARGETS…)`` section so ``ros2 run`` can find your e
 
 From the root of your workspace:
 
-**Linux and macOS**
+.. tabs::
 
-.. code-block:: console
+    .. group-tab:: Linux
 
-    $ colcon build && . install/setup.bash
+        .. code-block:: console
 
-**Windows**
+             $ colcon build && . install/setup.bash
 
-.. code-block:: console
+    .. group-tab:: macOS
 
-    $ colcon build
-    $ call C:\dev\ros2\local_setup.bat
+        .. code-block:: console
+
+            $ colcon build && . install/setup.bash
+
+    .. group-tab:: Windows
+
+        .. code-block:: console
+
+            $ colcon build
+            $ call C:\dev\ros2\local_setup.bat
 
 5. Run the Node
 ~~~~~~~~~~~~~~~
@@ -416,7 +408,6 @@ The console output should look something like this:
 Let's take a look at a timestamp difference between values from the first line.
 
 .. code-block:: console
-
   1773177603.600124849 sec - 1773177603.550153015 sec = 0.04997181892 sec
 
 The resulting ``0.04997181892`` seconds difference is definitely within the specified ``Epsilon``.

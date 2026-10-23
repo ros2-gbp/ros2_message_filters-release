@@ -305,18 +305,26 @@ Replace ``pkg_name`` with your actual package name.
 
 From the root of your workspace:
 
-**Linux and macOS**
+.. tabs::
 
-.. code-block:: console
+    .. group-tab:: Linux
 
-    $ colcon build && . install/setup.bash
+        .. code-block:: console
 
-**Windows**
+            $ colcon build && . install/setup.bash
 
-.. code-block:: console
+    .. group-tab:: macOS
 
-    $ colcon build
-    $ call C:\dev\ros2\local_setup.bat
+        .. code-block:: console
+
+            $ colcon build && . install/setup.bash
+
+    .. group-tab:: Windows
+
+        .. code-block:: console
+
+            $ colcon build
+            $ call C:\dev\ros2\local_setup.bat
 
 5. Run the Node
 ~~~~~~~~~~~~~~~

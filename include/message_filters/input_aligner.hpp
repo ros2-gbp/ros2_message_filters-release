@@ -29,12 +29,10 @@
 #ifndef MESSAGE_FILTERS__INPUT_ALIGNER_HPP_
 #define MESSAGE_FILTERS__INPUT_ALIGNER_HPP_
 
-#include <rcutils/logging_macros.h>
-
 #include <algorithm>
 #include <array>
 #include <chrono>
-#include <cstddef>
+#include <cstdint>
 #include <functional>
 #include <memory>
 #include <mutex>
@@ -42,12 +40,11 @@
 #include <string>
 #include <tuple>
 
-#include <rclcpp/duration.hpp>
-#include <rclcpp/time.hpp>
-#include <rclcpp/timer.hpp>
+#include <rclcpp/rclcpp.hpp>
 
 #include "message_filters/connection.hpp"
 #include "message_filters/message_traits.hpp"
+#include "message_filters/null_types.hpp"
 #include "message_filters/signal1.hpp"
 
 namespace message_filters
@@ -74,9 +71,8 @@ namespace message_filters
  * This implementation was inspired by ROCK's stream aligner.
  * https://www.rock-robotics.org/documentation/data_processing/stream_aligner.html
  */
-template<template<typename> typename TimeGetter, typename ... Ms>
-requires (message_traits::TimeGetterFor<TimeGetter, Ms>&& ...)
-class InputAlignerBase : public noncopyable
+template<typename ... Ms>
+class InputAligner : public noncopyable
 {
 public:
   static constexpr std::size_t N_INPUTS = sizeof...(Ms);
@@ -96,7 +92,7 @@ public:
   };
 
   template<class F0, class F1, class ... Fs>
-  InputAlignerBase(const rclcpp::Duration & timeout, F0 & f0, F1 & f1, Fs &... fs)
+  InputAligner(const rclcpp::Duration & timeout, F0 & f0, F1 & f1, Fs &... fs)
   : timeout_(timeout)
     , last_in_ts_(0, 0, RCL_ROS_TIME)
     , last_out_ts_(0, 0, RCL_ROS_TIME)
@@ -104,14 +100,14 @@ public:
     connectInput(f0, f1, fs ...);
   }
 
-  explicit InputAlignerBase(const rclcpp::Duration & timeout)
+  explicit InputAligner(const rclcpp::Duration & timeout)
   : timeout_(timeout)
     , last_in_ts_(0, 0, RCL_ROS_TIME)
     , last_out_ts_(0, 0, RCL_ROS_TIME)
   {
   }
 
-  virtual ~InputAlignerBase()
+  virtual ~InputAligner()
   {
     disconnectAll();
   }
@@ -157,7 +153,6 @@ public:
   /**
    * \brief Register a callback for the I-th input.
    * \param callback The callback to call
-   * \param t The instance the member function is called on
    */
   template<std::size_t I, typename T, typename P>
   Connection registerCallback(void (T::* callback)(P), T * t)
@@ -247,8 +242,8 @@ protected:
     bool operator()(
       const MessageEvent<MsgType const> & lhs, const MessageEvent<MsgType const> & rhs) const
     {
-      return TimeGetter<MsgType>::getTime(*lhs.getConstMessage()) <
-             TimeGetter<MsgType>::getTime(*rhs.getConstMessage());
+      return message_filters::message_traits::TimeStamp<MsgType>::value(*lhs.getConstMessage()) <
+             message_filters::message_traits::TimeStamp<MsgType>::value(*rhs.getConstMessage());
     }
   };
 
@@ -266,7 +261,8 @@ public:
     {
       if (!this->empty()) {
         rclcpp::Time first_ts =
-          TimeGetter<MsgType>::getTime(*(this->begin()->getConstMessage()));
+          message_filters::message_traits::TimeStamp<MsgType>::value(
+            *(this->begin()->getConstMessage()));
         next_ts_ = first_ts + period_;
         active_ = true;
         return first_ts;
@@ -346,7 +342,7 @@ protected:
     using Message = typename std::tuple_element_t<I, Messages>;
 
     rclcpp::Time msg_timestamp =
-      TimeGetter<Message>::getTime(*evt.getConstMessage());
+      message_filters::message_traits::TimeStamp<Message>::value(*evt.getConstMessage());
 
     std::lock_guard<std::mutex> lock(mutex_);
     auto & event_queue = std::get<I>(event_queues_);
@@ -403,7 +399,7 @@ protected:
         // dispatch first event
         const MEvent & evt = *event_queue.begin();
         last_out_ts_ =
-          TimeGetter<Message>::getTime(*evt.getConstMessage());
+          message_filters::message_traits::TimeStamp<Message>::value(*evt.getConstMessage());
         std::get<I>(signals_).call(evt);
         event_queue.popFirst();
         return true;
@@ -435,9 +431,6 @@ protected:
   std::mutex mutex_;
   rclcpp::TimerBase::SharedPtr dispatch_timer_;
 };
-
-template<typename ... Ms>
-using InputAligner = InputAlignerBase<message_traits::DefaultTimeGetter, Ms...>;
 
 }  // namespace message_filters
 

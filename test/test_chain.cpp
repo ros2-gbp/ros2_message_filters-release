@@ -30,11 +30,8 @@
 
 #include <memory>
 
-#include <rclcpp/utilities.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include "message_filters/chain.hpp"
-
-namespace
-{
 
 struct Msg
 {
@@ -172,4 +169,12 @@ TEST(Chain, retrieveBaseClass)
   ASSERT_TRUE(c.getFilter<message_filters::PassThrough<Msg>>(0));
   ASSERT_TRUE(c.getFilter<PTDerived>(0));
 }
-}  // namespace
+
+int main(int argc, char ** argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  rclcpp::init(argc, argv);
+  auto ret = RUN_ALL_TESTS();
+  rclcpp::shutdown();
+  return ret;
+}

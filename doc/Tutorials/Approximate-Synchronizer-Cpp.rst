@@ -12,14 +12,7 @@ If you have not done so already `create a workspace <https://docs.ros.org/en/rol
 
 .. code-block:: C++
 
-  #include "rclcpp/clock.hpp"
-  #include "rclcpp/executors.hpp"
-  #include "rclcpp/logging.hpp"
-  #include "rclcpp/node.hpp"
-  #include "rclcpp/publisher.hpp"
-  #include "rclcpp/qos.hpp"
-  #include "rclcpp/timer.hpp"
-  #include "rclcpp/utilities.hpp"
+  #include "rclcpp/rclcpp.hpp"
 
   #include <chrono>
   #include <functional>
@@ -187,18 +180,26 @@ Finally, add the ``install(TARGETS…)`` section so ``ros2 run`` can find your e
 ~~~~~~~~
 From the root of your package, build and source.
 
-**Linux and macOS**
+.. tabs::
 
-.. code-block:: console
+    .. group-tab:: Linux
 
-    $ colcon build && . install/setup.bash
+        .. code-block:: console
 
-**Windows**
+            $ colcon build && . install/setup.bash
 
-.. code-block:: console
+    .. group-tab:: macOS
 
-    $ colcon build
-    $ call C:\dev\ros2\local_setup.bat
+        .. code-block:: console
+
+            $ colcon build && . install/setup.bash
+
+    .. group-tab:: Windows
+
+        .. code-block:: console
+
+            $ colcon build
+            $ call C:\dev\ros2\local_setup.bat
 
 4. Run
 ~~~~~~

@@ -52,7 +52,7 @@ public:
    * \brief Retrieve a filter from this chain by index.  Returns an empty shared_ptr if the index is greater than
    * the size of the chain.  \b NOT type-safe
    *
-   * \tparam F The type of the filter
+   * \param F [template] The type of the filter
    * \param index The index of the filter (returned by addFilter())
    */
   template<typename F>
@@ -165,7 +165,7 @@ public:
    * \brief Retrieve a filter from this chain by index.  Returns an empty shared_ptr if the index is greater than
    * the size of the chain.  \b NOT type-safe
    *
-   * \tparam F The type of the filter
+   * \param F [template] The type of the filter
    * \param index The index of the filter (returned by addFilter())
    */
   template<typename F>
@@ -217,7 +217,7 @@ public:
   }
 
 protected:
-  std::shared_ptr<void> getFilterForIndex(size_t index) const override
+  virtual std::shared_ptr<void> getFilterForIndex(size_t index) const
   {
     std::lock_guard<std::mutex> lock(mutex_);
     if (index >= filters_.size()) {

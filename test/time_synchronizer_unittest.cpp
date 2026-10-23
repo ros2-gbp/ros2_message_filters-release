@@ -33,13 +33,7 @@
 #include "message_filters/time_synchronizer.hpp"
 #include "message_filters/pass_through.hpp"
 #include "message_filters/message_traits.hpp"
-#include "message_filters/null_types.hpp"
-#include <rclcpp/clock.hpp>
-#include <rclcpp/time.hpp>
-#include <rclcpp/utilities.hpp>
-
-namespace
-{
+#include <rclcpp/rclcpp.hpp>
 
 struct Header
 {
@@ -53,7 +47,6 @@ struct Msg
 };
 typedef std::shared_ptr<Msg> MsgPtr;
 typedef std::shared_ptr<Msg const> MsgConstPtr;
-}  // namespace
 
 namespace message_filters
 {
@@ -91,9 +84,6 @@ public:
   int32_t count_;
   int32_t drop_count_;
 };
-
-namespace
-{
 
 TEST(TimeSynchronizer, compile2)
 {
@@ -568,4 +558,12 @@ TEST(TimeSynchronizer, connectConstructor)
   pt2.add(m);
   ASSERT_EQ(h.count_, 1);
 }
-}  // namespace
+
+int main(int argc, char ** argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  rclcpp::init(argc, argv);
+  auto ret = RUN_ALL_TESTS();
+  rclcpp::shutdown();
+  return ret;
+}

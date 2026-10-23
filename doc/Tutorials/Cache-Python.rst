@@ -89,8 +89,8 @@ The next step is to create a new Python file inside your package, e.g., ``cache_
                 self.get_logger().info(f"Cached: {msg.data}")
 
 
-    def main():
-        rclpy.init()
+    def main(args=None):
+        rclpy.init(args=args)
 
         cache_node = CacheNode()
         rclpy.spin(cache_node)
@@ -248,18 +248,26 @@ Replace ``pkg_name`` with your actual package name.
 
 From the root of your workspace:
 
-**Linux and macOS**
+.. tabs::
 
-.. code-block:: console
+    .. group-tab:: Linux
 
-    $ colcon build && . install/setup.bash
+        .. code-block:: console
 
-**Windows**
+            $ colcon build && . install/setup.bash
 
-.. code-block:: console
+    .. group-tab:: macOS
 
-    $ colcon build
-    $ call C:\dev\ros2\local_setup.bat
+        .. code-block:: console
+
+            $ colcon build && . install/setup.bash
+
+    .. group-tab:: Windows
+
+        .. code-block:: console
+
+            $ colcon build
+            $ call C:\dev\ros2\local_setup.bat
 
 5. Run the Node
 ~~~~~~~~~~~~~~~

@@ -33,15 +33,10 @@
 #include <memory>
 #include <vector>
 
-#include <rclcpp/duration.hpp>
-#include <rclcpp/time.hpp>
-#include <rclcpp/utilities.hpp>
+#include <rclcpp/rclcpp.hpp>
 #include "message_filters/synchronizer.hpp"
 #include "message_filters/sync_policies/approximate_time.hpp"
 #include "message_filters/message_traits.hpp"
-
-namespace
-{
 
 struct Header
 {
@@ -55,7 +50,6 @@ struct Msg
 };
 typedef std::shared_ptr<Msg> MsgPtr;
 typedef std::shared_ptr<Msg const> MsgConstPtr;
-}  // namespace
 
 namespace message_filters
 {
@@ -73,9 +67,6 @@ struct TimeStamp<Msg>
 }  // namespace message_filters
 
 typedef std::pair<rclcpp::Time, rclcpp::Time> TimePair;
-
-namespace
-{
 typedef std::pair<rclcpp::Time, unsigned int> TimeAndTopic;
 struct TimeQuad
 {
@@ -540,4 +531,14 @@ TEST(ApproxTimeSync, RateBound) {
   sync_test2.sync_.setInterMessageLowerBound(0, s * 2);
   sync_test2.run();
 }
-}  // namespace
+
+
+int main(int argc, char ** argv)
+{
+  testing::InitGoogleTest(&argc, argv);
+  rclcpp::init(argc, argv);
+
+  auto ret = RUN_ALL_TESTS();
+  rclcpp::shutdown();
+  return ret;
+}

@@ -2,58 +2,33 @@
 Changelog for package message_filters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-8.0.5 (2026-10-23)
+7.4.3 (2026-10-23)
 ------------------
-* Cleanup headers (`#345 <https://github.com/ros2/message_filters/issues/345>`_)
-* Fix TimeSequencer dropping all messages that share the oldest stamp (`#346 <https://github.com/ros2/message_filters/issues/346>`_)
-* Register the TimeSequencer and DeltaFilter Python tests (`#347 <https://github.com/ros2/message_filters/issues/347>`_)
-* Fix Subscriber with rclcpp::TypeAdapter (`#344 <https://github.com/ros2/message_filters/issues/344>`_)
-* Delete old-style ament_export_include_directories() and ament_export_libraries() calls (`#340 <https://github.com/ros2/message_filters/issues/340>`_)
-* Remove unused args from Python tutorial main functions (`#339 <https://github.com/ros2/message_filters/issues/339>`_)
-* Fix warning (`#335 <https://github.com/ros2/message_filters/issues/335>`_)
-* Contributors: Alejandro Hernández Cordero, Francois Gonothi Toure, Manashvi Sharma
+* Fix Subscriber with rclcpp::TypeAdapter (backport `#344 <https://github.com/ros2/message_filters/issues/344>`_) (`#348 <https://github.com/ros2/message_filters/issues/348>`_)
+* (`#163 <https://github.com/ros2/message_filters/issues/163>`_) Extend registerCallback section in documentation (`#326 <https://github.com/ros2/message_filters/issues/326>`_) (`#330 <https://github.com/ros2/message_filters/issues/330>`_)
+* Contributors: mergify[bot]
 
-8.0.4 (2026-09-10)
+7.4.2 (2026-06-29)
 ------------------
-* Fixed doxygen warnings (`#329 <https://github.com/ros2/message_filters/issues/329>`_)
-* Include what you use (`#334 <https://github.com/ros2/message_filters/issues/334>`_)
-* (`#163 <https://github.com/ros2/message_filters/issues/163>`_) Extend registerCallback section in documentation (`#326 <https://github.com/ros2/message_filters/issues/326>`_)
-* Granular rclcpp/rclcpp.hpp also in documentation (`#328 <https://github.com/ros2/message_filters/issues/328>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
+* Tutorials: Add DeltaFilter C++ tutorial (`#304 <https://github.com/ros2/message_filters/issues/304>`_) (`#305 <https://github.com/ros2/message_filters/issues/305>`_)
+* Contributors: mergify[bot]
 
-8.0.3 (2026-09-02)
+7.4.1 (2026-05-13)
 ------------------
-* MessageTraits: Add support for custom TimeStamp (`#319 <https://github.com/ros2/message_filters/issues/319>`_)
-* Reduce compile time in time sequencer (`#323 <https://github.com/ros2/message_filters/issues/323>`_)
-* Optimize header include in tests (`#322 <https://github.com/ros2/message_filters/issues/322>`_)
-* Improve tests compile time (`#324 <https://github.com/ros2/message_filters/issues/324>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
+* Avoid vector assignment in message_filters signal callback (`#292 <https://github.com/ros2/message_filters/issues/292>`_) (`#293 <https://github.com/ros2/message_filters/issues/293>`_)
+* Contributors: mergify[bot]
 
-8.0.2 (2026-06-29)
+7.4.0 (2026-05-06)
 ------------------
-* hygiene sweep: fabs→std::abs, empty {} ctors/dtors → = default, etc (`#315 <https://github.com/ros2/message_filters/issues/315>`_)
-* Optimize header include (`#316 <https://github.com/ros2/message_filters/issues/316>`_)
-* Missed make_shared and removed redundant virtual (`#314 <https://github.com/ros2/message_filters/issues/314>`_)
-* Removed CopyMEssageIfNecessary (`#313 <https://github.com/ros2/message_filters/issues/313>`_)
-* const-correct comparisons and migration from typedef to the using (`#312 <https://github.com/ros2/message_filters/issues/312>`_)
-* replaced the raw new CallbackHelperT(...) with a single std::make_shared in signalX.hpp (`#311 <https://github.com/ros2/message_filters/issues/311>`_)
-* typedefs to using and std::bind to lambdas (`#310 <https://github.com/ros2/message_filters/issues/310>`_)
-* Tutorials: Add DeltaFilter C++ tutorial (`#304 <https://github.com/ros2/message_filters/issues/304>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov
+* Cleanup headers and removed deadcode (`#284 <https://github.com/ros2/message_filters/issues/284>`_) (`#291 <https://github.com/ros2/message_filters/issues/291>`_)
+* feat(python): add python implementation of InputAligner  (backport `#283 <https://github.com/ros2/message_filters/issues/283>`_) (`#286 <https://github.com/ros2/message_filters/issues/286>`_)
+* Contributors: mergify[bot]
 
-8.0.1 (2026-05-13)
+7.3.9 (2026-04-30)
 ------------------
-* Avoid vector assignment in message_filters signal callback (`#292 <https://github.com/ros2/message_filters/issues/292>`_)
-* Contributors: Maurice Alexander Purnawan
-
-8.0.0 (2026-05-06)
-------------------
-* fix tutorials table of contents fix input aligner type hint (`#290 <https://github.com/ros2/message_filters/issues/290>`_)
-* feat(python): add python implementation of InputAligner  (`#283 <https://github.com/ros2/message_filters/issues/283>`_)
-* Cleanup headers and removed deadcode (`#284 <https://github.com/ros2/message_filters/issues/284>`_)
 * C++20 style (`#272 <https://github.com/ros2/message_filters/issues/272>`_)
 * (`#221 <https://github.com/ros2/message_filters/issues/221>`_) Tutorials: Add DeltaFilter Python tutorial (`#277 <https://github.com/ros2/message_filters/issues/277>`_)
-* Contributors: Alejandro Hernández Cordero, Pavel Esipov, YANG Zhenfei
+* Contributors: Alejandro Hernández Cordero, Pavel Esipov
 
 7.3.8 (2026-04-09)
 ------------------
