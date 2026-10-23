@@ -96,7 +96,6 @@ public:
     , update_rate_(update_rate)
     , queue_size_(queue_size)
     , node_(node)
-    , last_time_ (0, 0, RCL_ROS_TIME)
   {
     init();
     connectInput(f);
@@ -119,7 +118,6 @@ public:
     , update_rate_(update_rate)
     , queue_size_(queue_size)
     , node_(node)
-    , last_time_ (0, 0, RCL_ROS_TIME)
   {
     init();
   }
@@ -198,30 +196,31 @@ public:
     {
       std::lock_guard<std::mutex> lock(messages_mutex_);
 
-      const rclcpp::Time now = node_->get_clock()->now();
-      auto it = messages_.begin();
-      while (it != messages_.end()) {
-        const rclcpp::Time stamp = mt::TimeStamp<M>::value(*it->getMessage());
-        if ((stamp + delay_) <= now) {
+      while (!messages_.empty()) {
+        const EventType & e = *messages_.begin();
+        rclcpp::Time stamp = mt::TimeStamp<M>::value(*e.getMessage());
+        if ((stamp + delay_) <= rclcpp::Clock().now()) {
           last_time_ = stamp;
-          to_call.push_back(*it);
-          it = messages_.erase(it);
+          to_call.push_back(e);
+          messages_.erase(messages_.begin());
         } else {
           break;
         }
       }
     }
 
-    for (const EventType & evt : to_call) {
-      this->signalMessage(evt);
+    {
+      typename V_Message::iterator it = to_call.begin();
+      typename V_Message::iterator end = to_call.end();
+      for (; it != end; ++it) {
+        this->signalMessage(*it);
+      }
     }
   }
 
   void init()
   {
-    update_timer_ = rclcpp::create_timer(
-      node_,
-      node_->get_clock(),
+    update_timer_ = node_->create_wall_timer(
       std::chrono::nanoseconds(update_rate_.nanoseconds()), [this]() {
         dispatch();
       });

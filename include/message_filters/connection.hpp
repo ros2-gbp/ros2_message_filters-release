@@ -30,6 +30,7 @@
 #define MESSAGE_FILTERS__CONNECTION_HPP_
 
 #include <functional>
+#include <memory>
 
 #include "message_filters/visibility_control.hpp"
 
@@ -52,6 +53,7 @@ class Connection
 {
 public:
   using VoidDisconnectFunction = std::function<void (void)>;
+  using WithConnectionDisconnectFunction = std::function<void (const Connection &)>;
   MESSAGE_FILTERS_PUBLIC Connection() {}
   MESSAGE_FILTERS_PUBLIC Connection(const VoidDisconnectFunction & func);
 
@@ -62,6 +64,7 @@ public:
 
 private:
   VoidDisconnectFunction void_disconnect_;
+  WithConnectionDisconnectFunction connection_disconnect_;
 };
 
 }  // namespace message_filters

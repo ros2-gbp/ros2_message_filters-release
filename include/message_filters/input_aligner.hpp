@@ -34,6 +34,7 @@
 #include <chrono>
 #include <cstdint>
 #include <functional>
+#include <iterator>
 #include <memory>
 #include <mutex>
 #include <set>
@@ -76,9 +77,9 @@ class InputAligner : public noncopyable
 {
 public:
   static constexpr std::size_t N_INPUTS = sizeof...(Ms);
-  using Messages = std::tuple<Ms...>;
-  using Events = std::tuple<MessageEvent<Ms const>...>;
-  using Signals = std::tuple<Signal1<Ms>...>;
+  typedef std::tuple<Ms...> Messages;
+  typedef std::tuple<MessageEvent<Ms const>...> Events;
+  typedef std::tuple<Signal1<Ms>...> Signals;
 
   /**
    * \brief Status information of a input queue
@@ -133,8 +134,9 @@ public:
   Connection registerCallback(const std::function<void(P)> & callback)
   {
     using Message = typename std::tuple_element_t<I, Messages>;
+    using Signal = typename std::tuple_element_t<I, Signals>;
     typename CallbackHelper1<Message>::Ptr helper = std::get<I>(signals_).addCallback(callback);
-    return Connection([this, helper]() {std::get<I>(signals_).removeCallback(helper);});
+    return Connection(std::bind(&Signal::removeCallback, &std::get<I>(signals_), helper));
   }
 
   /**
@@ -145,9 +147,10 @@ public:
   Connection registerCallback(void (* callback)(P))
   {
     using Message = typename std::tuple_element_t<I, Messages>;
+    using Signal = typename std::tuple_element_t<I, Signals>;
     typename CallbackHelper1<Message>::Ptr helper =
-      std::get<I>(signals_).template addCallback<P>([callback](P p) {callback(p);});
-    return Connection([this, helper]() {std::get<I>(signals_).removeCallback(helper);});
+      std::get<I>(signals_).template addCallback<P>(std::bind(callback, std::placeholders::_1));
+    return Connection(std::bind(&Signal::removeCallback, &std::get<I>(signals_), helper));
   }
 
   /**
@@ -158,9 +161,10 @@ public:
   Connection registerCallback(void (T::* callback)(P), T * t)
   {
     using Message = typename std::tuple_element_t<I, Messages>;
+    using Signal = typename std::tuple_element_t<I, Signals>;
     typename CallbackHelper1<Message>::Ptr helper =
-      std::get<I>(signals_).template addCallback<P>([callback, t](P p) {(t->*callback)(p);});
-    return Connection([this, helper]() {std::get<I>(signals_).removeCallback(helper);});
+      std::get<I>(signals_).template addCallback<P>(std::bind(callback, t, std::placeholders::_1));
+    return Connection(std::bind(&Signal::removeCallback, &std::get<I>(signals_), helper));
   }
 
   /**
@@ -171,7 +175,7 @@ public:
   /**
    * \brief Get the name of this filter. For debugging use.
    */
-  const std::string & getName() const {return name_;}
+  const std::string & getName() {return name_;}
 
   /**
    * \brief Adds a message to the I-th input queue.
@@ -295,12 +299,7 @@ public:
 
     QueueStatus getStatus() const
     {
-      return {
-        .active = active_,
-        .queue_size = this->size(),
-        .msgs_processed = msgs_processed_,
-        .msgs_dropped = msgs_dropped_,
-      };
+      return QueueStatus{active_, this->size(), msgs_processed_, msgs_dropped_};
     }
 
 protected:
@@ -311,7 +310,7 @@ protected:
     std::size_t msgs_dropped_;
   };
 
-  using EventQueues = std::tuple<EventQueue<Ms>...>;
+  typedef std::tuple<EventQueue<Ms>...> EventQueues;
 
   template<std::size_t I, class FTuple>
   void connect(FTuple & ftuple)
@@ -320,7 +319,8 @@ protected:
     input_connections_[I] =
       std::get<I>(ftuple).registerCallback(
       std::function<void(const MEvent &)>(
-        [this](const MEvent & evt) {this->template addEvent<I>(evt);}));
+        std::bind(
+          &InputAligner::template addEvent<I>, this, std::placeholders::_1)));
   }
 
   template<class FTuple, std::size_t... Is>
@@ -350,7 +350,7 @@ protected:
     // evaluate age of msg
     if (msg_timestamp < last_out_ts_) {
       event_queue.msgDropped();
-      RCUTILS_LOG_WARN("Messages of type %zu arrived too late and will be dropped", I);
+      RCUTILS_LOG_WARN("Messages of type %ld arrived too late and will be dropped", I);
       return;
     }
 
@@ -413,11 +413,10 @@ protected:
     return false;
   }
 
-  template<std::size_t N>
-  std::size_t getFirstSampleIdx(const std::array<rclcpp::Time, N> & ts) const
+  template<std::size_t I>
+  std::size_t getFirstSampleIdx(const std::array<rclcpp::Time, I> & ts) const
   {
-    auto min_it = std::ranges::min_element(ts);
-    return static_cast<std::size_t>(std::distance(ts.begin(), min_it));
+    return std::distance(ts.begin(), std::min_element(ts.begin(), ts.end()));
   }
 
   rclcpp::Duration timeout_;
