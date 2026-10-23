@@ -49,10 +49,6 @@ install(
 ament_python_install_package(${PROJECT_NAME}
   PACKAGE_DIR src/${PROJECT_NAME})
 
-# Export old-style CMake variables
-ament_export_include_directories("include/${PROJECT_NAME}")
-ament_export_libraries(${PROJECT_NAME})
-
 # Export modern CMake targets
 ament_export_targets(${PROJECT_NAME})
 
@@ -119,6 +115,8 @@ if(BUILD_TESTING)
   ament_add_pytest_test(test_message_filters_chain.py "test/test_message_filters_chain.py")
   ament_add_pytest_test(test_input_aligner.py "test/test_input_aligner.py")
   ament_add_pytest_test(test_custom_time_getter.py "test/test_custom_time_getter.py")
+  ament_add_pytest_test(test_time_sequencer.py "test/test_time_sequencer.py")
+  ament_add_pytest_test(test_message_filters_delta_filter.py "test/test_message_filters_delta_filter.py")
 endif()
 
 ament_package()
