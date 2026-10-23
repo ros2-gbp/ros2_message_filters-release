@@ -29,7 +29,7 @@ from __future__ import annotations
 
 import typing as tp
 
-from rclpy.type_support import MsgT
+from rclpy.node import MsgType
 
 
 class SimpleFilter:
@@ -39,7 +39,7 @@ class SimpleFilter:
 
     def registerCallback(
         self,
-        callback: tp.Callable[tp.Concatenate[MsgT, ...], None],
+        callback: tp.Callable[tp.Concatenate[MsgType, ...], None],
         *args
     ):
         """

@@ -1,38 +1,44 @@
-// Copyright 2008, Willow Garage, Inc. All rights reserved.
-//
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-//
-//    * Redistributions of source code must retain the above copyright
-//      notice, this list of conditions and the following disclaimer.
-//
-//    * Redistributions in binary form must reproduce the above copyright
-//      notice, this list of conditions and the following disclaimer in the
-//      documentation and/or other materials provided with the distribution.
-//
-//    * Neither the name of the Willow Garage nor the names of its
-//      contributors may be used to endorse or promote products derived from
-//      this software without specific prior written permission.
-//
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-// IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-// ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-// LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-// CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-// SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-// INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-// CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-// ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAGE.
+/*********************************************************************
+* Software License Agreement (BSD License)
+*
+*  Copyright (c) 2008, Willow Garage, Inc.
+*  All rights reserved.
+*
+*  Redistribution and use in source and binary forms, with or without
+*  modification, are permitted provided that the following conditions
+*  are met:
+*
+*   * Redistributions of source code must retain the above copyright
+*     notice, this list of conditions and the following disclaimer.
+*   * Redistributions in binary form must reproduce the above
+*     copyright notice, this list of conditions and the following
+*     disclaimer in the documentation and/or other materials provided
+*     with the distribution.
+*   * Neither the name of the Willow Garage nor the names of its
+*     contributors may be used to endorse or promote products derived
+*     from this software without specific prior written permission.
+*
+*  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+*  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+*  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS
+*  FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+*  COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT,
+*  INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+*  BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+*  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+*  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+*  LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN
+*  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+*  POSSIBILITY OF SUCH DAMAGE.
+*********************************************************************/
 
 #include <gtest/gtest.h>
 
 #include <memory>
 
-#include "message_filters/time_synchronizer.hpp"
-#include "message_filters/pass_through.hpp"
-#include "message_filters/message_traits.hpp"
+#include "message_filters/time_synchronizer.h"
+#include "message_filters/pass_through.h"
+#include "message_filters/message_traits.h"
 #include <rclcpp/rclcpp.hpp>
 
 struct Header
@@ -55,20 +61,20 @@ namespace message_traits
 template<>
 struct TimeStamp<Msg>
 {
-  static rclcpp::Time value(const Msg & m)
+  static rclcpp::Time value(const Msg& m)
   {
     return m.header.stamp;
   }
 };
-}  // namespace message_traits
-}  // namespace message_filters
+}
+}
 
 class Helper
 {
 public:
   Helper()
   : count_(0)
-    , drop_count_(0)
+  , drop_count_(0)
   {}
 
   void cb()
@@ -88,75 +94,59 @@ public:
 TEST(TimeSynchronizer, compile2)
 {
   message_filters::NullFilter<Msg> f0, f1;
-  message_filters::TimeSynchronizer<Msg, Msg> sync(1, f0, f1);
+  message_filters::TimeSynchronizer<Msg, Msg> sync(f0, f1, 1);
 }
 
 TEST(TimeSynchronizer, compile3)
 {
   message_filters::NullFilter<Msg> f0, f1, f2;
-  message_filters::TimeSynchronizer<Msg, Msg, Msg> sync(1, f0, f1, f2);
+  message_filters::TimeSynchronizer<Msg, Msg, Msg> sync(f0, f1, f2, 1);
 }
 
 TEST(TimeSynchronizer, compile4)
 {
   message_filters::NullFilter<Msg> f0, f1, f2, f3;
-  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg> sync(1, f0, f1, f2, f3);
+  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg> sync(f0, f1, f2, f3, 1);
 }
 
 TEST(TimeSynchronizer, compile5)
 {
   message_filters::NullFilter<Msg> f0, f1, f2, f3, f4;
-  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg> sync(1, f0, f1, f2, f3, f4);
+  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg> sync(f0, f1, f2, f3, f4, 1);
 }
 
 TEST(TimeSynchronizer, compile6)
 {
   message_filters::NullFilter<Msg> f0, f1, f2, f3, f4, f5;
-  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg> sync(1, f0, f1, f2, f3, f4, f5);
+  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg> sync(f0, f1, f2, f3, f4, f5, 1);
 }
 
 TEST(TimeSynchronizer, compile7)
 {
   message_filters::NullFilter<Msg> f0, f1, f2, f3, f4, f5, f6;
-  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg, Msg> sync(1, f0, f1, f2, f3, f4,
-    f5, f6);
+  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg, Msg> sync(f0, f1, f2, f3, f4, f5, f6, 1);
 }
 
 TEST(TimeSynchronizer, compile8)
 {
   message_filters::NullFilter<Msg> f0, f1, f2, f3, f4, f5, f6, f7;
-  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg, Msg, Msg> sync(1, f0, f1, f2, f3,
-    f4, f5, f6, f7);
+  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg, Msg, Msg> sync(f0, f1, f2, f3, f4, f5, f6, f7, 1);
 }
 
 TEST(TimeSynchronizer, compile9)
 {
   message_filters::NullFilter<Msg> f0, f1, f2, f3, f4, f5, f6, f7, f8;
-  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg, Msg, Msg, Msg> sync(1, f0, f1, f2,
-    f3, f4, f5, f6, f7, f8);
+  message_filters::TimeSynchronizer<Msg, Msg, Msg, Msg, Msg, Msg, Msg, Msg, Msg> sync(f0, f1, f2, f3, f4, f5, f6, f7, f8, 1);
 }
 
-void function2(const MsgConstPtr &, const MsgConstPtr &) {}
-void function3(const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &) {}
-void function4(const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &)
-{
-}
-void function5(
-  const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &,
-  const MsgConstPtr &) {}
-void function6(
-  const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &,
-  const MsgConstPtr &, const MsgConstPtr &) {}
-void function7(
-  const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &,
-  const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &) {}
-void function8(
-  const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &,
-  const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &) {}
-void function9(
-  const MsgConstPtr &, MsgConstPtr, const MsgPtr &, MsgPtr, const Msg &, Msg,
-  const message_filters::MessageEvent<Msg const> &,
-  const message_filters::MessageEvent<Msg> &, const MsgConstPtr &) {}
+void function2(const MsgConstPtr&, const MsgConstPtr&) {}
+void function3(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+void function4(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+void function5(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+void function6(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+void function7(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+void function8(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+void function9(const MsgConstPtr&, MsgConstPtr, const MsgPtr&, MsgPtr, const Msg&, Msg, const message_filters::MessageEvent<Msg const>&, const message_filters::MessageEvent<Msg>&, const MsgConstPtr&) {}
 
 TEST(TimeSynchronizer, compileFunction2)
 {
@@ -208,24 +198,13 @@ TEST(TimeSynchronizer, compileFunction9)
 
 struct MethodHelper
 {
-  void method2(const MsgConstPtr &, const MsgConstPtr &) {}
-  void method3(const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &) {}
-  void method4(const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &)
-  {
-  }
-  void method5(
-    const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &,
-    const MsgConstPtr &) {}
-  void method6(
-    const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &,
-    const MsgConstPtr &, const MsgConstPtr &) {}
-  void method7(
-    const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &,
-    const MsgConstPtr &, const MsgConstPtr &, const MsgConstPtr &) {}
-  void method8(
-    const MsgConstPtr &, MsgConstPtr, const MsgPtr &, MsgPtr, const Msg &, Msg,
-    const message_filters::MessageEvent<Msg const> &,
-    const message_filters::MessageEvent<Msg> &) {}
+  void method2(const MsgConstPtr&, const MsgConstPtr&) {}
+  void method3(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+  void method4(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+  void method5(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+  void method6(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+  void method7(const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&, const MsgConstPtr&) {}
+  void method8(const MsgConstPtr&, MsgConstPtr, const MsgPtr&, MsgPtr, const Msg&, Msg, const message_filters::MessageEvent<Msg const>&, const message_filters::MessageEvent<Msg>&) {}
   // Can only do 8 here because the object instance counts as a parameter and bind only supports 9
 };
 
@@ -286,9 +265,9 @@ TEST(TimeSynchronizer, immediate2)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -300,11 +279,11 @@ TEST(TimeSynchronizer, immediate3)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -316,13 +295,13 @@ TEST(TimeSynchronizer, immediate4)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<3>(m);
+  sync.add3(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -334,15 +313,15 @@ TEST(TimeSynchronizer, immediate5)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<3>(m);
+  sync.add3(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<4>(m);
+  sync.add4(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -354,17 +333,17 @@ TEST(TimeSynchronizer, immediate6)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<3>(m);
+  sync.add3(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<4>(m);
+  sync.add4(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<5>(m);
+  sync.add5(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -376,19 +355,19 @@ TEST(TimeSynchronizer, immediate7)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<3>(m);
+  sync.add3(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<4>(m);
+  sync.add4(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<5>(m);
+  sync.add5(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<6>(m);
+  sync.add6(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -400,21 +379,21 @@ TEST(TimeSynchronizer, immediate8)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<3>(m);
+  sync.add3(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<4>(m);
+  sync.add4(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<5>(m);
+  sync.add5(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<6>(m);
+  sync.add6(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<7>(m);
+  sync.add7(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -426,23 +405,23 @@ TEST(TimeSynchronizer, immediate9)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Clock().now();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<3>(m);
+  sync.add3(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<4>(m);
+  sync.add4(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<5>(m);
+  sync.add5(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<6>(m);
+  sync.add6(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<7>(m);
+  sync.add7(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<8>(m);
+  sync.add8(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -458,16 +437,16 @@ TEST(TimeSynchronizer, multipleTimes)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Time();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
 
   m = std::make_shared<Msg>();
   m->header.stamp = rclcpp::Time(100000000);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 1);
 }
 
@@ -479,21 +458,21 @@ TEST(TimeSynchronizer, queueSize)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Time();
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
 
   m = std::make_shared<Msg>();
   m->header.stamp = rclcpp::Time(100000000);
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
 
   m = std::make_shared<Msg>();
   m->header.stamp = rclcpp::Time();
-  sync.add<1>(m);
+  sync.add1(m);
   ASSERT_EQ(h.count_, 0);
-  sync.add<2>(m);
+  sync.add2(m);
   ASSERT_EQ(h.count_, 0);
 }
 
@@ -506,19 +485,17 @@ TEST(TimeSynchronizer, dropCallback)
   MsgPtr m(std::make_shared<Msg>());
   m->header.stamp = rclcpp::Time(0, 0);
 
-  sync.add<0>(m);
+  sync.add0(m);
   ASSERT_EQ(h.drop_count_, 0);
   m->header.stamp = rclcpp::Time(100000000);
-  sync.add<0>(m);
+  sync.add0(m);
 
   ASSERT_EQ(h.drop_count_, 1);
 }
 
 struct EventHelper
 {
-  void callback(
-    const message_filters::MessageEvent<Msg const> & e1,
-    const message_filters::MessageEvent<Msg const> & e2)
+  void callback(const message_filters::MessageEvent<Msg const> & e1, const message_filters::MessageEvent<Msg const> & e2)
   {
     e1_ = e1;
     e2_ = e2;
@@ -547,7 +524,7 @@ TEST(TimeSynchronizer, eventInEventOut)
 TEST(TimeSynchronizer, connectConstructor)
 {
   message_filters::PassThrough<Msg> pt1, pt2;
-  message_filters::TimeSynchronizer<Msg, Msg> sync(1, pt1, pt2);
+  message_filters::TimeSynchronizer<Msg, Msg> sync(pt1, pt2, 1);
   Helper h;
   sync.registerCallback(std::bind(&Helper::cb, &h));
   MsgPtr m(std::make_shared<Msg>());
@@ -559,7 +536,7 @@ TEST(TimeSynchronizer, connectConstructor)
   ASSERT_EQ(h.count_, 1);
 }
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
   rclcpp::init(argc, argv);
@@ -567,3 +544,6 @@ int main(int argc, char ** argv)
   rclcpp::shutdown();
   return ret;
 }
+
+
+
