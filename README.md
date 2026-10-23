@@ -1,3 +1,26 @@
+## message_filters (jazzy) - 4.11.18-1
+
+The packages in the `message_filters` repository were released into the `jazzy` distro by running `/usr/bin/bloom-release --rosdistro jazzy --track jazzy message_filters` on `Fri, 23 Oct 2026 10:38:54 -0000`
+
+The `message_filters` package was released.
+
+Version of package(s) in repository `message_filters`:
+
+- upstream repository: https://github.com/ros2/message_filters.git
+- release repository: https://github.com/ros2-gbp/ros2_message_filters-release.git
+- rosdistro version: `4.11.17-1`
+- old version: `4.11.17-1`
+- new version: `4.11.18-1`
+
+Versions of tools used:
+
+- bloom version: `0.14.4`
+- catkin_pkg version: `1.1.1`
+- rosdep version: `0.27.0`
+- rosdistro version: `1.1.0`
+- vcstools version: `0.1.42`
+
+
 ## message_filters (kilted) - 7.1.12-1
 
 The packages in the `message_filters` repository were released into the `kilted` distro by running `/usr/bin/bloom-release --rosdistro kilted --track kilted message_filters` on `Fri, 23 Oct 2026 10:37:13 -0000`
